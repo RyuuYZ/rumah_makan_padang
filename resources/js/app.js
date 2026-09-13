@@ -6,6 +6,7 @@ window.Alpine = Alpine;
 document.addEventListener('alpine:init', () => {
     Alpine.data('restaurantApp', () => ({
         selectedBranch: 'Jakarta Selatan',
+        selectedBranchId: 1,
         selectedCategory: 'all',
         searchQuery: '',
         isCartOpen: false,
@@ -19,6 +20,12 @@ document.addEventListener('alpine:init', () => {
         cart: [],
         notificationMessage: '',
         showNotification: false,
+
+        selectBranch(city, id) {
+            this.selectedBranch = city;
+            this.selectedBranchId = id;
+            this.notify(`Cabang diubah ke ${city}`);
+        },
 
         init() {
             // Load saved cart from localStorage if available
@@ -127,9 +134,8 @@ document.addEventListener('alpine:init', () => {
             this.notify('Memproses pesanan...');
             
             try {
-                // Untuk versi MVP, asumsi branch_id = 1 karena data cabang belum dinamis di frontend
                 const payload = {
-                    branch_id: 1, 
+                    branch_id: this.selectedBranchId || 1, 
                     order_type: this.orderType === 'dine-in' ? 'dine_in' : 'takeaway',
                     table_number: this.tableNumber,
                     customer_name: this.customerName,

@@ -13,7 +13,7 @@
         <!-- Branches Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
             @foreach($branches as $branch)
-            <button @click="selectedBranch = '{{ $branch->kota }}'"
+            <button @click="selectBranch('{{ $branch->kota }}', {{ $branch->id }})"
                     :class="selectedBranch === '{{ $branch->kota }}' 
                         ? 'border-[#7A1F2B] bg-[#7A1F2B] text-white shadow-songket scale-[1.03]' 
                         : 'border-[#C9A227]/30 bg-white hover:border-[#C9A227] hover:bg-[#F5EFE2]/60 text-[#241B16]'"

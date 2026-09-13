@@ -26,6 +26,6 @@ class BranchMenuPrice extends Model
 
     public function menuItem(): BelongsTo
     {
-        return $this->belongsTo(MenuItem::class, 'menu_item_id');
+        return $this->belongsTo(MenuItem::class, 'menu_item_id')->withTrashed();
     }
 }

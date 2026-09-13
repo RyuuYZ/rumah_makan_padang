@@ -26,6 +26,6 @@ class PackageItem extends Model
 
     public function menuItem(): BelongsTo
     {
-        return $this->belongsTo(MenuItem::class);
+        return $this->belongsTo(MenuItem::class)->withTrashed();
     }
 }

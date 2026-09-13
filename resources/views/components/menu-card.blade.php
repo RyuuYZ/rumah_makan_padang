@@ -1,6 +1,6 @@
 @props(['item'])
 
-<div x-show="((selectedCategory === 'all' && '{{ $item->kategori }}' !== 'topping') || selectedCategory === '{{ $item->kategori }}') && 
+<div x-show="(selectedCategory === 'all' || selectedCategory === '{{ $item->kategori }}') && 
              ('{{ strtolower(addslashes($item->nama)) }}'.includes(searchQuery.toLowerCase()) || '{{ strtolower(addslashes($item->deskripsi)) }}'.includes(searchQuery.toLowerCase()))"
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0 scale-95"

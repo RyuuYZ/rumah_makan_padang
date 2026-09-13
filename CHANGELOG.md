@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- **POS Kasir & Logika Transaksi**:
+  - Memperbaiki parsing data scanner POS pada `PosController::findOrder` (`$item->menuItem->nama` dan `$order->branch->nama`) sehingga tidak lagi memunculkan label keliru *"Menu Dihapus"* dan cabang kosong.
+  - Memperbaiki perhitungan subtotal item di antarmuka POS scanner dari `$item->price * $item->quantity`.
+  - Memperbaiki status bayar yang macet: menyelesaikan pesanan (`status = completed`) kini otomatis mensinkronkan `payment_status = paid`, mencatat `cashier_id`, membuat/memperbarui entitas `Payment`, serta membebaskan status meja menjadi `available`.
+  - Mengatasi pembatalan pesanan (`status = cancelled`) dengan otomatis merilis meja dan memperbarui status pembayaran yang belum dibayar menjadi `voided`.
+
+- **Integritas Data & Database**:
+  - Menambahkan trait `SoftDeletes` dan kolom `deleted_at` pada model `MenuItem` sehingga penghapusan hidangan menu tidak menghapus atau merusak riwayat transaksi `order_items` masa lalu.
+  - Menambahkan `withTrashed()` pada relasi `menuItem` di `OrderItem`, `BranchMenuPrice`, dan `PackageItem`.
+  - Memperbaiki kegagalan `TableSeeder` pada `DatabaseSeeder.php` dengan memindahkan pemanggilannya setelah cabang (`Branch`) selesai dibuat, sehingga meja di seluruh cabang terisi dengan sempurna (120 meja).
+
+- **Bisnis & Penetapan Harga**:
+  - Memperbaiki penambahan cabang baru di `BranchController::store` yang sebelumnya mematok semua harga menu secara statis menjadi Rp 25.000, kini otomatis menyalin harga dasar menu yang sudah ada dari cabang utama.
+  - Mengotomatiskan inisialisasi 20 meja untuk setiap cabang baru yang didaftarkan.
+  - Menghilangkan *revenue* palsu di `DashboardController::index` dengan menghitung pendapatan bersih eksklusif hanya dari pesanan yang berstatus `completed` atau `payment_status = paid` (dan bukan pesanan yang dibatalkan/pending belum dibayar).
+  - Memfilter daftar hidangan terlaris (*Top Dishes*) agar tidak menyertakan pesanan yang dibatalkan.
+
+- **Frontend & Fitur Terputus**:
+  - Memperbaiki bug order luar kota yang selalu masuk ke cabang 1 (Jakarta) pada `resources/js/app.js` dengan menghubungkan `selectedBranchId` dinamis dari komponen pemilih cabang (`branch-selector.blade.php`) ke payload checkout API.
+  - Memperbaiki kategori utama yang hilang: menghapus filter pembatas `'topping'` pada tab *Semua Hidangan* di `menu-card.blade.php` sehingga seluruh lauk, sayur, dan minuman tampil lengkap.
+  - Menyelaraskan seluruh kategori menu (`daging`, `ayam`, `ikan`, `sayur`, `topping`, `minuman`, `nasi-padang`) di `HomeController.php`, `Admin/MenuController.php`, `DatabaseSeeder.php`, dan form modal admin menu.
+
 ### Added
 - Komponen paginasi kustom (`x-admin-pagination`) dengan lencana `TOTAL: X [ENTITY]`, tombol `< Prev` dan `Next >`, serta kotak lompat halaman interaktif `KE HAL: [input] / Y [Go]` yang mempertahankan parameter filter URL.
 - Alpine.js helper `adminTablePagination` pada layout admin untuk navigasi halaman instan.

@@ -7,6 +7,7 @@ use App\Models\BranchMenuPrice;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\Table;
 use Illuminate\Http\Request;
 
@@ -200,7 +201,44 @@ class OrderController extends Controller
         ]);
 
         $order = Order::findOrFail($id);
-        $order->update(['status' => $validated['status']]);
+        $updateData = ['status' => $validated['status']];
+
+        if ($validated['status'] === 'completed') {
+            $updateData['payment_status'] = 'paid';
+            if (auth()->check() && ! $order->cashier_id) {
+                $updateData['cashier_id'] = auth()->id();
+            }
+
+            Payment::updateOrCreate(
+                ['order_id' => $order->id],
+                [
+                    'cashier_id' => auth()->id() ?? $order->cashier_id,
+                    'method' => 'cash',
+                    'amount' => $order->total,
+                    'cash_given' => $order->total,
+                    'change_amount' => 0,
+                    'status' => 'completed',
+                    'paid_at' => now(),
+                ]
+            );
+
+            if ($order->table_number && $order->branch_id) {
+                Table::where('branch_id', $order->branch_id)
+                    ->where('table_number', $order->table_number)
+                    ->update(['status' => 'available']);
+            }
+        } elseif ($validated['status'] === 'cancelled') {
+            if ($order->payment_status === 'unpaid') {
+                $updateData['payment_status'] = 'voided';
+            }
+            if ($order->table_number && $order->branch_id) {
+                Table::where('branch_id', $order->branch_id)
+                    ->where('table_number', $order->table_number)
+                    ->update(['status' => 'available']);
+            }
+        }
+
+        $order->update($updateData);
 
         return response()->json([
             'success' => true,

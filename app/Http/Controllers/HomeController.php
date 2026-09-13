@@ -36,10 +36,11 @@ class HomeController extends Controller
 
         $categories = [
             ['id' => 'all', 'name' => 'Semua Hidangan'],
+            ['id' => 'daging', 'name' => 'Daging Sapi'],
             ['id' => 'ayam', 'name' => 'Ayam'],
             ['id' => 'ikan', 'name' => 'Ikan'],
-            ['id' => 'daging', 'name' => 'Daging Sapi'],
-            ['id' => 'topping', 'name' => 'Topping & Bumbu'],
+            ['id' => 'sayur', 'name' => 'Sayur & Sambal'],
+            ['id' => 'topping', 'name' => 'Lauk Tambahan'],
             ['id' => 'minuman', 'name' => 'Minuman Tradisional'],
         ];
 

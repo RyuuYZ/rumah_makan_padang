@@ -29,10 +29,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $this->call([
-            TableSeeder::class,
-        ]);
-
         // 1. Seed Branches
         $branchesData = [
             [
@@ -89,6 +85,11 @@ class DatabaseSeeder extends Seeder
         foreach ($branchesData as $bData) {
             $branches[] = Branch::create($bData);
         }
+
+        // Seed Tables for all created branches
+        $this->call([
+            TableSeeder::class,
+        ]);
 
         // 2. Seed Menu Items
         $menuData = [
@@ -332,7 +333,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nama' => 'Sambal Ijo & Merah',
-                'kategori' => 'topping',
+                'kategori' => 'sayur',
                 'deskripsi' => 'Sambal cabe hijau dan merah ulek kasar.',
                 'foto' => '/items/sambel-ijo-merah.webp',
                 'badge' => 'Favorit',
@@ -341,7 +342,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nama' => 'Daun Singkong Rebus',
-                'kategori' => 'topping',
+                'kategori' => 'sayur',
                 'deskripsi' => 'Pucuk daun singkong muda rebus ekstra.',
                 'foto' => '/items/daun-singkong-rebus.webp',
                 'badge' => null,
@@ -350,7 +351,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nama' => 'Nangka Cubadak Gulai',
-                'kategori' => 'topping',
+                'kategori' => 'sayur',
                 'deskripsi' => 'Gulai nangka muda ekstra.',
                 'foto' => '/items/nangka-cubadak.webp',
                 'badge' => null,
@@ -359,7 +360,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'nama' => 'Teh Plastik Khas Minang',
-                'kategori' => 'topping',
+                'kategori' => 'minuman',
                 'deskripsi' => 'Teh manis dingin di plastik es.',
                 'foto' => '/items/teh-plastik.webp',
                 'badge' => null,

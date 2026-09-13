@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\BranchMenuPrice;
 use App\Models\MenuItem;
+use App\Models\Table;
 use Illuminate\Http\Request;
 
 class BranchController extends Controller
@@ -29,14 +30,27 @@ class BranchController extends Controller
 
         $branch = Branch::create(array_merge($validated, ['is_active' => true]));
 
-        // Copy menu pricing for this new branch
-        $menuItems = MenuItem::all();
+        // Copy menu pricing for this new branch using existing item prices
+        $menuItems = MenuItem::with('branchPrices')->get();
         foreach ($menuItems as $item) {
+            $basePrice = $item->branchPrices->first()?->harga ?? 25000;
             BranchMenuPrice::create([
                 'branch_id' => $branch->id,
                 'menu_item_id' => $item->id,
-                'harga' => 25000,
+                'harga' => $basePrice,
                 'is_available' => true,
+            ]);
+        }
+
+        // Generate initial default tables for new branch
+        for ($i = 1; $i <= 20; $i++) {
+            Table::firstOrCreate([
+                'branch_id' => $branch->id,
+                'table_number' => 'Meja '.str_pad($i, 2, '0', STR_PAD_LEFT),
+            ], [
+                'capacity' => ($i % 4 == 0) ? 6 : 4,
+                'status' => 'available',
+                'is_active' => true,
             ]);
         }
 

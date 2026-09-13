@@ -208,7 +208,9 @@
                                 <option value="ayam">Lauk Ayam</option>
                                 <option value="ikan">Lauk Ikan</option>
                                 <option value="sayur">Sayur & Sambal</option>
+                                <option value="topping">Lauk Tambahan</option>
                                 <option value="minuman">Minuman Tradisional</option>
+                                <option value="nasi-padang">Paket Nasi Padang</option>
                             </select>
                         </div>
                         <div>
@@ -296,7 +298,9 @@
                                 <option value="ayam">Lauk Ayam</option>
                                 <option value="ikan">Lauk Ikan</option>
                                 <option value="sayur">Sayur & Sambal</option>
+                                <option value="topping">Lauk Tambahan</option>
                                 <option value="minuman">Minuman Tradisional</option>
+                                <option value="nasi-padang">Paket Nasi Padang</option>
                             </select>
                         </div>
                         <div>

@@ -14,7 +14,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalRevenue = Order::where('status', '!=', 'cancelled')->sum('total');
+        $totalRevenue = Order::where(function ($query) {
+            $query->where('status', 'completed')
+                ->orWhere('payment_status', 'paid');
+        })->where('status', '!=', 'cancelled')->sum('total');
         $totalOrders = Order::count();
         $pendingOrders = Order::where('status', 'pending')->count();
         $totalMenuItems = MenuItem::where('is_active', true)->count();
@@ -37,8 +40,11 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
 
-        // Top dishes
+        // Top dishes (excluding cancelled orders)
         $topDishes = OrderItem::select('menu_item_id', DB::raw('SUM(quantity) as total_qty'))
+            ->whereHas('order', function ($query) {
+                $query->where('status', '!=', 'cancelled');
+            })
             ->groupBy('menu_item_id')
             ->orderByDesc('total_qty')
             ->with('menuItem')

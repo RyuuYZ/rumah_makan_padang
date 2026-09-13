@@ -33,7 +33,9 @@ class MenuController extends Controller
             'ayam' => 'Lauk Ayam',
             'ikan' => 'Lauk Ikan',
             'sayur' => 'Sayur & Sambal',
+            'topping' => 'Lauk Tambahan',
             'minuman' => 'Minuman Tradisional',
+            'nasi-padang' => 'Paket Nasi Padang',
         ];
 
         return view('admin.menu.index', compact('menuItems', 'categories'));
@@ -43,7 +45,7 @@ class MenuController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kategori' => 'required|in:daging,ayam,ikan,sayur,minuman,nasi-padang',
+            'kategori' => 'required|in:daging,ayam,ikan,sayur,topping,minuman,nasi-padang',
             'deskripsi' => 'nullable|string',
             'foto' => 'nullable|string',
             'foto_file' => 'nullable|image|mimes:webp,png,jpg,jpeg,gif,bmp,svg|max:10240',
@@ -100,7 +102,7 @@ class MenuController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kategori' => 'required|in:daging,ayam,ikan,sayur,minuman,nasi-padang',
+            'kategori' => 'required|in:daging,ayam,ikan,sayur,topping,minuman,nasi-padang',
             'deskripsi' => 'nullable|string',
             'foto' => 'nullable|string',
             'foto_file' => 'nullable|image|mimes:webp,png,jpg,jpeg,gif,bmp,svg|max:10240',
