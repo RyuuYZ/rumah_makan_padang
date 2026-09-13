@@ -404,6 +404,19 @@
                 }
             }
         }));
+        Alpine.data('adminTablePagination', (currentPage, lastPage) => ({
+            targetPage: currentPage,
+            lastPage: lastPage,
+            goToPage() {
+                let page = parseInt(this.targetPage);
+                if (isNaN(page) || page < 1) page = 1;
+                if (page > this.lastPage) page = this.lastPage;
+                
+                const url = new URL(window.location.href);
+                url.searchParams.set('page', page);
+                window.location.href = url.toString();
+            }
+        }));
     });
 
     window.showToast = function(message, type = 'success') {

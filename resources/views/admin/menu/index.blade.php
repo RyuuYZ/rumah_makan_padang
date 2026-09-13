@@ -50,16 +50,16 @@
 
     <!-- Clean Menu Table -->
     <div class="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-neutral-50/70 border-b border-neutral-200/80 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
+        <div class="w-full">
+            <table class="w-full text-left text-xs table-fixed">
+                <thead class="bg-neutral-50/70 border-b border-neutral-200/80 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider font-serif">
                     <tr>
-                        <th class="py-3 px-5">Hidangan</th>
-                        <th class="py-3 px-5">Kategori</th>
-                        <th class="py-3 px-5">Badge & Rating</th>
-                        <th class="py-3 px-5">Harga Porsi</th>
-                        <th class="py-3 px-5 text-center">Stok & Status</th>
-                        <th class="py-3 px-5 text-right">Aksi</th>
+                        <th class="w-[32%] py-3 px-4">Hidangan</th>
+                        <th class="w-[14%] py-3 px-4">Kategori</th>
+                        <th class="w-[15%] py-3 px-4">Badge & Rating</th>
+                        <th class="w-[14%] py-3 px-4">Harga Porsi</th>
+                        <th class="w-[18%] py-3 px-4 text-center">Stok & Status</th>
+                        <th class="w-[7%] py-3 px-4 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-neutral-100">
@@ -68,21 +68,21 @@
                         $basePrice = $item->branchPrices->first()->harga ?? 25000;
                     @endphp
                     <tr class="hover:bg-neutral-50/50 transition-colors">
-                        <td class="py-3 px-5">
+                        <td class="py-3 px-4">
                             <div class="flex items-center space-x-3">
-                                <img src="{{ $item->foto }}" alt="{{ $item->nama }}" class="w-11 h-11 rounded-xl object-cover flex-shrink-0 bg-neutral-100">
-                                <div>
-                                    <h4 class="font-semibold text-neutral-900 text-xs">{{ $item->nama }}</h4>
-                                    <p class="text-[11px] text-neutral-500 line-clamp-1 max-w-xs">{{ $item->deskripsi }}</p>
+                                <img src="{{ $item->foto }}" alt="{{ $item->nama }}" class="w-10 h-10 rounded-xl object-cover flex-shrink-0 bg-neutral-100">
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-bold text-neutral-900 text-xs truncate">{{ $item->nama }}</h4>
+                                    <p class="text-[11px] text-neutral-500 truncate" title="{{ $item->deskripsi }}">{{ $item->deskripsi }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="py-3 px-5">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-neutral-100 text-neutral-700">
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-700">
                                 {{ $item->kategori }}
                             </span>
                         </td>
-                        <td class="py-3 px-5 whitespace-nowrap">
+                        <td class="py-3 px-4 whitespace-nowrap">
                             <div class="flex items-center space-x-1.5">
                                 @if($item->badge)
                                 <span class="px-1.5 py-0.5 rounded text-[10px] font-bold text-white
@@ -97,10 +97,10 @@
                                 </span>
                             </div>
                         </td>
-                        <td class="py-3 px-5 font-bold text-neutral-900 whitespace-nowrap">
+                        <td class="py-3 px-4 font-bold text-neutral-900 whitespace-nowrap">
                             Rp {{ number_format($basePrice, 0, ',', '.') }}
                         </td>
-                        <td class="py-3 px-5 text-center whitespace-nowrap space-y-1.5">
+                        <td class="py-3 px-4 text-center whitespace-nowrap space-y-1">
                             <div class="text-[11px] font-bold text-neutral-700">
                                 @if($item->stock_quantity !== null)
                                     Sisa Stok: <span class="{{ $item->stock_quantity <= 5 ? 'text-rose-600' : 'text-emerald-600' }}">{{ $item->stock_quantity }} porsi</span>
@@ -117,12 +117,12 @@
                                 </button>
                             </form>
                         </td>
-                        <td class="py-3 px-5 text-right whitespace-nowrap">
+                        <td class="py-3 px-4 text-right whitespace-nowrap">
                             <div x-data="{ openMenu: false }" class="inline-block text-left relative">
                                 <button @click="openMenu = !openMenu" @click.away="openMenu = false" 
-                                        class="p-2 rounded-xl text-neutral-400 hover:text-[#7A1F2B] hover:bg-[#F5EFE2] transition-colors focus:outline-none"
+                                        class="p-1.5 rounded-xl text-neutral-400 hover:text-[#7A1F2B] hover:bg-[#F5EFE2] transition-colors focus:outline-none"
                                         title="Opsi Aksi">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
                                     </svg>
                                 </button>
@@ -176,9 +176,7 @@
             </table>
         </div>
 
-        <div class="p-4 border-t border-neutral-100">
-            {{ $menuItems->links() }}
-        </div>
+        <x-admin-pagination :paginator="$menuItems" entity="Menu" />
     </div>
 
     <!-- Modal Tambah Menu Baru -->

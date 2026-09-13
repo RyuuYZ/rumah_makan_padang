@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Komponen paginasi kustom (`x-admin-pagination`) dengan lencana `TOTAL: X [ENTITY]`, tombol `< Prev` dan `Next >`, serta kotak lompat halaman interaktif `KE HAL: [input] / Y [Go]` yang mempertahankan parameter filter URL.
+- Alpine.js helper `adminTablePagination` pada layout admin untuk navigasi halaman instan.
 - Pembaruan status pesanan berbasis *asynchronous* (AJAX / Fetch API) di panel Admin tanpa *page refresh* dan tanpa *scroll jump* (posisi *scroll* tetap stabil).
 - Sistem *Global Floating Toast Notification* animasi berbasis Alpine.js pada layout Admin (`adminGlobalToast`) dengan helper `window.showToast(message, type)` dan event listener `@notify.window`.
 - Feature test `AdminOrderStatusTest` untuk memvalidasi endpoint pembaruan status pesanan via JSON, validasi input, autentikasi, dan fallback form.
@@ -19,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Penambahan tautan ke *Buku Panduan* dan *Log Sistem* di bagian *Sidebar* Menu Dasbor Admin.
 
 ### Changed
+- Penyesuaian layout seluruh tabel data Admin (`orders`, `menu`, `reviews`, `logs`, dan `dashboard`) menjadi `table-fixed` non-scrollable (tanpa scrollbar horizontal yang mengganggu estetika) dengan proporsi kolom yang presisi dan rapi.
+- Mengganti seluruh kontrol paginasi standar di panel admin dengan komponen paginasi modern bertema Raso Mandeh (`#7A1F2B` dan `#C9A227`).
 - Mengubah form pembaruan status pesanan di halaman Pesanan Masuk (`admin/orders/index`), Dashboard Admin (`admin/dashboard`), dan POS Scanner (`admin/pos/index`) menggunakan Alpine.js component (`orderStatusRow`, `dashboardOrderRow`, `completeOrder`) dengan perubahan warna badge/select status secara instan dan mini spinner loading.
 - Sinkronisasi lencana (*badge*) jumlah pesanan *pending* pada *sidebar* Dasbor Admin secara *real-time* via event `@order-status-updated`.
 - Method `updateStatus` pada `OrderController` mengembalikan response JSON terstruktur (`success`, `message`, `order`, dan `pending_count`) untuk request AJAX/JSON.

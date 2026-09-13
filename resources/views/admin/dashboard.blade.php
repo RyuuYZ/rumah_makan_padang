@@ -139,45 +139,45 @@
                 </a>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
+            <div class="w-full">
+                <table class="w-full text-left text-xs table-fixed">
                     <thead>
-                        <tr class="bg-neutral-50/70 border-b border-neutral-200/80 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
-                            <th class="py-3 px-5">ID & Pelanggan</th>
-                            <th class="py-3 px-5">Cabang</th>
-                            <th class="py-3 px-5">Total</th>
-                            <th class="py-3 px-5">Status</th>
-                            <th class="py-3 px-5 text-right">Perbarui</th>
+                        <tr class="bg-neutral-50/70 border-b border-neutral-200/80 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider font-serif">
+                            <th class="w-[32%] py-3 px-4">ID & Pelanggan</th>
+                            <th class="w-[18%] py-3 px-4">Cabang</th>
+                            <th class="w-[18%] py-3 px-4">Total</th>
+                            <th class="w-[16%] py-3 px-4">Status</th>
+                            <th class="w-[16%] py-3 px-4 text-right">Perbarui</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-100">
                         @forelse($recentOrders as $order)
                         <tr class="hover:bg-neutral-50/50 transition-colors" x-data="dashboardOrderRow({{ $order->id }}, '{{ $order->status }}')">
-                            <td class="py-3.5 px-5">
-                                <span class="font-semibold text-neutral-900">#{{ $order->id }}</span>
-                                <span class="text-neutral-500"> - {{ $order->customer_name ?? 'Walk-in' }}</span>
+                            <td class="py-3 px-4">
+                                <span class="font-bold text-neutral-900">#{{ $order->id }}</span>
+                                <span class="text-neutral-600 font-medium"> - {{ $order->customer_name ?? 'Walk-in' }}</span>
                                 <span class="text-[10px] text-neutral-400 block mt-0.5">{{ $order->created_at->diffForHumans() }} ({{ ucfirst($order->method) }})</span>
                             </td>
-                            <td class="py-3.5 px-5 font-medium text-neutral-700">
+                            <td class="py-3 px-4 font-medium text-neutral-700 truncate">
                                 {{ $order->branch->kota ?? '-' }}
                             </td>
-                            <td class="py-3.5 px-5 font-bold text-neutral-900">
+                            <td class="py-3 px-4 font-bold text-neutral-900 whitespace-nowrap">
                                 Rp {{ number_format($order->total, 0, ',', '.') }}
                             </td>
-                            <td class="py-3.5 px-5">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium transition-all"
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold transition-all"
                                       :class="badgeClasses[status] || 'bg-neutral-50 text-neutral-700 border border-neutral-200'"
                                       x-text="status.charAt(0).toUpperCase() + status.slice(1)">
                                     {{ ucfirst($order->status) }}
                                 </span>
                             </td>
-                            <td class="py-3.5 px-5 text-right">
+                            <td class="py-3 px-4 text-right whitespace-nowrap">
                                 <div class="inline-flex items-center relative">
                                     <select 
                                         x-model="status" 
                                         @change="updateStatus($event.target.value)" 
                                         :disabled="saving"
-                                        class="text-[11px] py-1 pl-2 pr-6 rounded-lg border border-neutral-300 bg-white font-medium focus:ring-1 focus:ring-[#7A1F2B] outline-none disabled:opacity-60 cursor-pointer">
+                                        class="text-[11px] font-bold py-1 pl-2 pr-6 rounded-lg border border-neutral-300 bg-white focus:ring-1 focus:ring-[#7A1F2B] outline-none disabled:opacity-60 cursor-pointer shadow-2xs">
                                         @foreach(\App\Models\Order::STATUSES as $st)
                                             <option value="{{ $st }}">{{ ucfirst($st) }}</option>
                                         @endforeach

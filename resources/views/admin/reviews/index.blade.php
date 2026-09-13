@@ -33,29 +33,29 @@
 
     <!-- Clean Reviews Table -->
     <div class="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-neutral-50/70 border-b border-neutral-200/80 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
+        <div class="w-full">
+            <table class="w-full text-left text-xs table-fixed">
+                <thead class="bg-neutral-50/70 border-b border-neutral-200/80 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider font-serif">
                     <tr>
-                        <th class="py-3 px-5">Pelanggan</th>
-                        <th class="py-3 px-5">Cabang</th>
-                        <th class="py-3 px-5">Rating</th>
-                        <th class="py-3 px-5">Ulasan</th>
-                        <th class="py-3 px-5">Status Web</th>
-                        <th class="py-3 px-5 text-right">Aksi</th>
+                        <th class="w-[18%] py-3 px-4">Pelanggan</th>
+                        <th class="w-[15%] py-3 px-4">Cabang</th>
+                        <th class="w-[15%] py-3 px-4">Rating</th>
+                        <th class="w-[35%] py-3 px-4">Ulasan & Testimoni</th>
+                        <th class="w-[11%] py-3 px-4">Status</th>
+                        <th class="w-[6%] py-3 px-4 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-neutral-100">
                     @forelse($reviews as $review)
                     <tr class="hover:bg-neutral-50/50 transition-colors">
-                        <td class="py-3.5 px-5 whitespace-nowrap">
-                            <span class="font-semibold text-neutral-900 block">{{ $review->nama_pelanggan }}</span>
-                            <span class="text-[10px] text-neutral-400">{{ $review->created_at->format('d M Y') }}</span>
+                        <td class="py-3 px-4">
+                            <span class="font-bold text-neutral-900 block truncate">{{ $review->nama_pelanggan }}</span>
+                            <span class="text-[10px] text-neutral-400 block">{{ $review->created_at->format('d M Y') }}</span>
                         </td>
-                        <td class="py-3.5 px-5 text-neutral-600 font-medium whitespace-nowrap">
+                        <td class="py-3 px-4 text-neutral-600 font-medium truncate">
                             {{ $review->branch->kota ?? 'Umum' }}
                         </td>
-                        <td class="py-3.5 px-5 whitespace-nowrap">
+                        <td class="py-3 px-4 whitespace-nowrap">
                             <div class="flex items-center space-x-0.5 text-amber-400">
                                 @for($i = 0; $i < $review->rating; $i++)
                                 <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
@@ -64,23 +64,23 @@
                                 @endfor
                             </div>
                         </td>
-                        <td class="py-3.5 px-5">
-                            <p class="text-neutral-700 max-w-md line-clamp-2 leading-relaxed">
+                        <td class="py-3 px-4">
+                            <p class="text-neutral-700 text-xs truncate leading-relaxed" title="{{ $review->komentar }}">
                                 "{{ $review->komentar }}"
                             </p>
                         </td>
-                        <td class="py-3.5 px-5 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
+                        <td class="py-3 px-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold
                                 {{ $review->is_approved ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60' }}">
                                 {{ $review->is_approved ? '● Tampil' : '○ Menunggu' }}
                             </span>
                         </td>
-                        <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                        <td class="py-3 px-4 text-right whitespace-nowrap">
                             <div x-data="{ openMenu: false }" class="inline-block text-left relative">
                                 <button @click="openMenu = !openMenu" @click.away="openMenu = false" 
-                                        class="p-2 rounded-xl text-neutral-400 hover:text-[#7A1F2B] hover:bg-[#F5EFE2] transition-colors focus:outline-none"
+                                        class="p-1.5 rounded-xl text-neutral-400 hover:text-[#7A1F2B] hover:bg-[#F5EFE2] transition-colors focus:outline-none"
                                         title="Opsi Aksi">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
                                     </svg>
                                 </button>
@@ -125,9 +125,7 @@
             </table>
         </div>
 
-        <div class="p-4 border-t border-neutral-100">
-            {{ $reviews->links() }}
-        </div>
+        <x-admin-pagination :paginator="$reviews" entity="Ulasan" />
     </div>
 
 </div>

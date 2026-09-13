@@ -93,8 +93,8 @@
     </div>
 
     <!-- Pagination -->
-    <div class="mt-6">
-        {{ $tables->links() }}
+    <div class="mt-6 bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-xs">
+        <x-admin-pagination :paginator="$tables" entity="Meja" />
     </div>
 
     <!-- ADD MODAL -->

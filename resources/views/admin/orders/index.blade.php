@@ -57,73 +57,67 @@
 
     <!-- Orders Table -->
     <div class="bg-white rounded-3xl border border-[#C9A227]/20 shadow-[0_4px_20px_rgba(201,162,39,0.05)] overflow-hidden">
-        <div class="p-4 border-b border-neutral-200/80 flex items-center justify-between">
-            <span class="text-xs font-semibold text-neutral-500">
-                Menampilkan <strong class="text-neutral-900">{{ $orders->total() }}</strong> total pesanan
-            </span>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead class="bg-[#F5EFE2]/50 border-b border-[#C9A227]/20 text-xs font-bold text-[#7A1F2B] uppercase tracking-widest font-serif">
+        <div class="w-full">
+            <table class="w-full text-left text-xs table-fixed">
+                <thead class="bg-[#F5EFE2]/50 border-b border-[#C9A227]/20 text-[11px] font-bold text-[#7A1F2B] uppercase tracking-wider font-serif">
                     <tr>
-                        <th class="py-4 px-6">ID & Waktu</th>
-                        <th class="py-4 px-6">Pelanggan</th>
-                        <th class="py-4 px-6">Cabang & Metode</th>
-                        <th class="py-4 px-6">Menu Dipesan</th>
-                        <th class="py-4 px-6">Total Tagihan</th>
-                        <th class="py-4 px-6">Status Dapur</th>
-                        <th class="py-4 px-6 text-right">Aksi</th>
+                        <th class="w-[12%] py-3.5 px-3">ID & Waktu</th>
+                        <th class="w-[14%] py-3.5 px-3">Pelanggan</th>
+                        <th class="w-[14%] py-3.5 px-3">Cabang & Metode</th>
+                        <th class="w-[26%] py-3.5 px-3">Menu Dipesan</th>
+                        <th class="w-[13%] py-3.5 px-3">Total Tagihan</th>
+                        <th class="w-[15%] py-3.5 px-3">Status Dapur</th>
+                        <th class="w-[6%] py-3.5 px-3 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-neutral-100">
                     @forelse($orders as $order)
                     <tr class="hover:bg-neutral-50/50 transition-colors">
-                        <td class="py-3.5 px-5">
-                            <span class="font-semibold text-neutral-900">#{{ $order->id }}</span>
-                            <span class="text-[10px] text-neutral-400 block mt-0.5">{{ $order->created_at->format('d M Y, H:i') }}</span>
+                        <td class="py-3 px-3">
+                            <span class="font-bold text-neutral-900">#{{ $order->id }}</span>
+                            <span class="text-[10px] text-neutral-400 block mt-0.5">{{ $order->created_at->format('d M, H:i') }}</span>
                         </td>
-                        <td class="py-3.5 px-5">
-                            <span class="font-medium text-neutral-900 block">{{ $order->customer_name ?? 'Walk-in' }}</span>
-                            <span class="text-[10px] text-neutral-400">{{ $order->customer_phone ?? '-' }}</span>
+                        <td class="py-3 px-3">
+                            <span class="font-semibold text-neutral-900 block truncate">{{ $order->customer_name ?? 'Walk-in' }}</span>
+                            <span class="text-[10px] text-neutral-400 block truncate">{{ $order->customer_phone ?? '-' }}</span>
                         </td>
-                        <td class="py-3.5 px-5">
-                            <span class="font-medium text-neutral-800 block">{{ $order->branch->kota ?? '-' }}</span>
-                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase mt-0.5
+                        <td class="py-3 px-3">
+                            <span class="font-medium text-neutral-800 block truncate">{{ $order->branch->kota ?? '-' }}</span>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase mt-0.5
                                 @if($order->method === 'dine-in') bg-purple-50 text-purple-700
                                 @elseif($order->method === 'delivery') bg-blue-50 text-blue-700
                                 @else bg-teal-50 text-teal-700 @endif">
                                 {{ $order->method }}
                             </span>
                         </td>
-                        <td class="py-4 px-6 max-w-xs">
-                            <p class="truncate text-neutral-600 font-normal">
+                        <td class="py-3 px-3">
+                            <p class="truncate text-neutral-600 font-normal" title="@foreach($order->items as $it){{ $it->quantity }}x {{ $it->menuItem->nama ?? 'Item' }}{{ !$loop->last ? ', ' : '' }}@endforeach">
                                 @foreach($order->items as $idx => $it)
                                     {{ $it->quantity }}x {{ $it->menuItem->nama ?? 'Item' }}{{ !$loop->last ? ',' : '' }}
                                 @endforeach
                             </p>
                             @if($order->notes)
-                            <span class="text-[11px] text-[#7A1F2B] font-medium block truncate mt-1">
+                            <span class="text-[10px] text-[#7A1F2B] font-medium block truncate mt-0.5" title="{{ $order->notes }}">
                                 Catatan: {{ $order->notes }}
                             </span>
                             @endif
                         </td>
-                        <td class="py-4 px-6 font-bold text-[#7A1F2B] text-base whitespace-nowrap">
+                        <td class="py-3 px-3 font-bold text-[#7A1F2B] text-sm whitespace-nowrap">
                             Rp {{ number_format($order->total, 0, ',', '.') }}
                         </td>
-                        <td class="py-4 px-6 whitespace-nowrap" x-data="orderStatusRow({{ $order->id }}, '{{ $order->status }}')">
-                            <div class="relative inline-flex items-center">
+                        <td class="py-3 px-3" x-data="orderStatusRow({{ $order->id }}, '{{ $order->status }}')">
+                            <div class="relative inline-flex items-center w-full max-w-[130px]">
                                 <select 
                                     x-model="status" 
                                     @change="updateStatus($event.target.value)" 
                                     :disabled="saving"
-                                    class="text-xs font-bold py-1.5 pl-3 pr-8 rounded-full border cursor-pointer outline-none shadow-xs transition-all disabled:opacity-60"
+                                    class="w-full text-[11px] font-bold py-1.5 pl-2.5 pr-7 rounded-full border cursor-pointer outline-none shadow-2xs transition-all disabled:opacity-60"
                                     :class="statusClasses[status] || 'bg-neutral-50 text-neutral-700 border-neutral-200'">
                                     @foreach(\App\Models\Order::STATUSES as $st)
                                         <option value="{{ $st }}">{{ ucfirst($st) }}</option>
                                     @endforeach
                                 </select>
-                                <div x-show="saving" class="absolute right-2.5 pointer-events-none" style="display: none;" x-cloak>
+                                <div x-show="saving" class="absolute right-2 pointer-events-none" style="display: none;" x-cloak>
                                     <svg class="animate-spin h-3.5 w-3.5 text-current opacity-80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -131,12 +125,12 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="py-4 px-6 text-right whitespace-nowrap relative">
+                        <td class="py-3 px-3 text-right whitespace-nowrap relative">
                             <div x-data="{ openMenu: false }" class="inline-block text-left relative">
                                 <button @click="openMenu = !openMenu" @click.away="openMenu = false" 
-                                        class="p-2 rounded-xl text-neutral-400 hover:text-[#7A1F2B] hover:bg-[#F5EFE2] transition-colors focus:outline-none"
+                                        class="p-1.5 rounded-xl text-neutral-400 hover:text-[#7A1F2B] hover:bg-[#F5EFE2] transition-colors focus:outline-none"
                                         title="Opsi Aksi">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
                                     </svg>
                                 </button>
@@ -180,9 +174,7 @@
             </table>
         </div>
 
-        <div class="p-4 border-t border-neutral-100">
-            {{ $orders->links() }}
-        </div>
+        <x-admin-pagination :paginator="$orders" entity="Pesanan" />
     </div>
 
     <!-- Clean Detail Order Modal -->
