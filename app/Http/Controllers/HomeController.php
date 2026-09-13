@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\MenuItem;
+use App\Models\Reservation;
 use App\Models\Review;
 use Illuminate\Http\Request;
 
@@ -53,10 +54,10 @@ class HomeController extends Controller
             'customer_phone' => 'required|string|max:20',
             'reservation_time' => 'required|date|after:now',
             'guest_count' => 'required|integer|min:1|max:20',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
-        \App\Models\Reservation::create($validated);
+        Reservation::create($validated);
 
         return redirect()->back()->withFragment('booking-section')->with('success_booking', 'Terima kasih, permintaan reservasi meja Anda berhasil dikirim. Tim kami akan segera menghubungi Anda untuk konfirmasi!');
     }

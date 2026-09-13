@@ -74,14 +74,14 @@
                                 </svg>
                                 <span>Pesanan Masuk</span>
                             </div>
-                            @php
-                                $pendingOrdersCount = \App\Models\Order::where('status', 'pending')->count();
-                            @endphp
-                            @if($pendingOrdersCount > 0)
-                            <span class="bg-[#C9A227] text-white shadow-sm text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-[#C9A227]/50">
-                                {{ $pendingOrdersCount }}
-                            </span>
-                            @endif
+                            <div x-data="{ pendingCount: {{ \App\Models\Order::where('status', 'pending')->count() }} }"
+                                 @order-status-updated.window="if ($event.detail && typeof $event.detail.pendingCount !== 'undefined') pendingCount = $event.detail.pendingCount">
+                                <span x-show="pendingCount > 0" 
+                                      class="bg-[#C9A227] text-white shadow-sm text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-[#C9A227]/50"
+                                      x-text="pendingCount">
+                                    {{ \App\Models\Order::where('status', 'pending')->count() }}
+                                </span>
+                            </div>
                         </a>
 
                         <!-- Kasir POS Scanner -->
@@ -325,5 +325,92 @@
 
     </div>
 
+    <!-- Floating Global Toast Notification Container -->
+    <div x-data="adminGlobalToast()" 
+         class="fixed top-5 right-5 z-50 flex flex-col space-y-3 max-w-sm w-full pointer-events-none"
+         @notify.window="addToast($event.detail)"
+         x-cloak>
+        <template x-for="toast in toasts" :key="toast.id">
+            <div x-show="toast.visible"
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+                 class="pointer-events-auto p-4 rounded-2xl shadow-xl border flex items-center justify-between gap-3 text-xs font-semibold backdrop-blur-md"
+                 :class="{
+                     'bg-emerald-900/95 text-white border-emerald-500/30 shadow-emerald-950/20': toast.type === 'success',
+                     'bg-rose-900/95 text-white border-rose-500/30 shadow-rose-950/20': toast.type === 'error',
+                     'bg-[#7A1F2B]/95 text-white border-[#C9A227]/40 shadow-stone-950/20': toast.type === 'info' || !toast.type
+                 }">
+                <div class="flex items-center gap-3">
+                    <template x-if="toast.type === 'success'">
+                        <div class="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </template>
+                    <template x-if="toast.type === 'error'">
+                        <div class="w-7 h-7 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                    </template>
+                    <template x-if="toast.type !== 'success' && toast.type !== 'error'">
+                        <div class="w-7 h-7 rounded-full bg-[#C9A227]/20 flex items-center justify-center text-[#C9A227] shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </template>
+                    <span class="leading-relaxed" x-text="toast.message"></span>
+                </div>
+                <button @click="removeToast(toast.id)" class="text-white/60 hover:text-white shrink-0 p-1 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </template>
+    </div>
+
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('adminGlobalToast', () => ({
+            toasts: [],
+            init() {
+                @if(session('success'))
+                    this.addToast({ message: "{{ session('success') }}", type: 'success' });
+                @endif
+                @if(session('error'))
+                    this.addToast({ message: "{{ session('error') }}", type: 'error' });
+                @endif
+            },
+            addToast(detail) {
+                const id = Date.now() + Math.random();
+                const toast = {
+                    id: id,
+                    message: typeof detail === 'string' ? detail : (detail?.message || 'Berhasil diperbarui'),
+                    type: (detail && detail.type) ? detail.type : 'success',
+                    visible: true
+                };
+                this.toasts.push(toast);
+                setTimeout(() => {
+                    this.removeToast(id);
+                }, 3500);
+            },
+            removeToast(id) {
+                const index = this.toasts.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    this.toasts[index].visible = false;
+                    setTimeout(() => {
+                        this.toasts = this.toasts.filter(t => t.id !== id);
+                    }, 300);
+                }
+            }
+        }));
+    });
+
+    window.showToast = function(message, type = 'success') {
+        window.dispatchEvent(new CustomEvent('notify', {
+            detail: { message, type }
+        }));
+    };
+    </script>
 </body>
 </html>

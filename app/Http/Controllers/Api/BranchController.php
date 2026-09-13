@@ -13,7 +13,7 @@ class BranchController extends Controller
         $query = Branch::query()->where('is_active', true);
 
         if ($request->has('kota')) {
-            $query->where('kota', 'like', '%' . $request->kota . '%');
+            $query->where('kota', 'like', '%'.$request->kota.'%');
         }
 
         $branches = $query->orderBy('kota')->get();

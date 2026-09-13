@@ -28,9 +28,10 @@ class ReviewController extends Controller
     public function toggleApprove($id)
     {
         $review = Review::findOrFail($id);
-        $review->update(['is_approved' => !$review->is_approved]);
+        $review->update(['is_approved' => ! $review->is_approved]);
 
         $status = $review->is_approved ? 'disetujui dan kini tampil di website publik' : 'dibatalkan persetujuannya';
+
         return redirect()->back()->with('success', "Ulasan dari {$review->nama_pelanggan} telah {$status}.");
     }
 
@@ -39,6 +40,6 @@ class ReviewController extends Controller
         $review = Review::findOrFail($id);
         $review->delete();
 
-        return redirect()->back()->with('success', "Ulasan berhasil dihapus.");
+        return redirect()->back()->with('success', 'Ulasan berhasil dihapus.');
     }
 }

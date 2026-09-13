@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemLog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use PragmaRX\Google2FA\Google2FA;
 
 class AuthController extends Controller
 {
@@ -45,9 +50,10 @@ class AuthController extends Controller
                 // User has 2FA enabled, don't login fully yet
                 $request->session()->put([
                     '2fa_user_id' => $user->id,
-                    '2fa_remember' => $remember
+                    '2fa_remember' => $remember,
                 ]);
                 $this->clearRateLimit($request);
+
                 return back()->with('show_2fa_modal', true);
             }
 
@@ -55,15 +61,15 @@ class AuthController extends Controller
             Auth::login($user, $remember);
             $this->clearRateLimit($request);
             $request->session()->regenerate();
-            
-            \App\Models\SystemLog::create([
+
+            SystemLog::create([
                 'user_id' => $user->id,
                 'action' => 'Login',
                 'description' => 'Berhasil masuk melalui form login (Password).',
-                'ip_address' => $request->ip()
+                'ip_address' => $request->ip(),
             ]);
 
-            return redirect()->intended(route('admin.dashboard'))->with('success', 'Selamat datang kembali, ' . $user->name . '!');
+            return redirect()->intended(route('admin.dashboard'))->with('success', 'Selamat datang kembali, '.$user->name.'!');
         }
 
         $this->hitRateLimit($request);
@@ -79,31 +85,31 @@ class AuthController extends Controller
     public function qrLogin(Request $request)
     {
         $request->validate([
-            'login_token' => 'required|string'
+            'login_token' => 'required|string',
         ]);
 
-        $user = \App\Models\User::where('login_token', $request->login_token)->first();
+        $user = User::where('login_token', $request->login_token)->first();
 
         if ($user) {
             Auth::login($user, true);
             $request->session()->regenerate();
-            
+
             // Clear rate limits if they had any for their email, though IP might be different
             // We'll just let it expire on its own or clear it based on email
-            $failsKey = 'login_fails:' . \Illuminate\Support\Str::lower($user->email) . '|' . $request->ip();
-            $lockKey = 'login_locked:' . \Illuminate\Support\Str::lower($user->email) . '|' . $request->ip();
+            $failsKey = 'login_fails:'.Str::lower($user->email).'|'.$request->ip();
+            $lockKey = 'login_locked:'.Str::lower($user->email).'|'.$request->ip();
             cache()->forget($failsKey);
             cache()->forget($lockKey);
 
             return response()->json([
                 'success' => true,
-                'redirect' => route('admin.dashboard')
+                'redirect' => route('admin.dashboard'),
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Token QR tidak valid atau sudah kadaluarsa.'
+            'message' => 'Token QR tidak valid atau sudah kadaluarsa.',
         ], 401);
     }
 
@@ -112,7 +118,7 @@ class AuthController extends Controller
      */
     public function show2faVerify(Request $request)
     {
-        if (!$request->session()->has('2fa_user_id')) {
+        if (! $request->session()->has('2fa_user_id')) {
             return redirect()->route('login');
         }
 
@@ -124,33 +130,33 @@ class AuthController extends Controller
      */
     public function verify2fa(Request $request)
     {
-        if (!$request->session()->has('2fa_user_id')) {
+        if (! $request->session()->has('2fa_user_id')) {
             return redirect()->route('login');
         }
 
         $request->validate(['code' => 'required|string|size:6']);
 
-        $user = \App\Models\User::find($request->session()->get('2fa_user_id'));
-        if (!$user || !$user->two_factor_secret) {
+        $user = User::find($request->session()->get('2fa_user_id'));
+        if (! $user || ! $user->two_factor_secret) {
             return redirect()->route('login')->withErrors(['email' => 'Sesi tidak valid.']);
         }
 
-        $google2fa = new \PragmaRX\Google2FA\Google2FA();
+        $google2fa = new Google2FA;
         $valid = $google2fa->verifyKey($user->two_factor_secret, $request->code);
 
         if ($valid) {
             Auth::login($user, $request->session()->get('2fa_remember', false));
             $request->session()->forget(['2fa_user_id', '2fa_remember']);
             $request->session()->regenerate();
-            
-            \App\Models\SystemLog::create([
+
+            SystemLog::create([
                 'user_id' => $user->id,
                 'action' => 'Login',
                 'description' => 'Berhasil masuk melalui verifikasi Dua Langkah (2FA OTP).',
-                'ip_address' => $request->ip()
+                'ip_address' => $request->ip(),
             ]);
 
-            return redirect()->intended(route('admin.dashboard'))->with('success', 'Verifikasi berhasil. Selamat datang kembali, ' . Auth::user()->name . '!');
+            return redirect()->intended(route('admin.dashboard'))->with('success', 'Verifikasi berhasil. Selamat datang kembali, '.Auth::user()->name.'!');
         }
 
         return back()->with('error', 'Kode OTP tidak valid atau sudah kadaluarsa.');
@@ -162,6 +168,7 @@ class AuthController extends Controller
     public function cancel2fa(Request $request)
     {
         $request->session()->forget(['2fa_user_id', '2fa_remember']);
+
         return redirect()->route('login');
     }
 
@@ -170,15 +177,15 @@ class AuthController extends Controller
      */
     protected function checkRateLimit(Request $request)
     {
-        $lockKey = 'login_locked:' . \Illuminate\Support\Str::lower($request->input('email', '')) . '|' . $request->ip();
-        
+        $lockKey = 'login_locked:'.Str::lower($request->input('email', '')).'|'.$request->ip();
+
         if (cache()->has($lockKey)) {
             $unlockTime = cache()->get($lockKey);
             $seconds = $unlockTime - time();
-            
+
             if ($seconds > 0) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'email' => "Terlalu banyak percobaan login salah. Akun dikunci sementara. Silakan coba lagi dalam " . ceil($seconds / 60) . " menit.",
+                throw ValidationException::withMessages([
+                    'email' => 'Terlalu banyak percobaan login salah. Akun dikunci sementara. Silakan coba lagi dalam '.ceil($seconds / 60).' menit.',
                 ]);
             } else {
                 cache()->forget($lockKey);
@@ -191,22 +198,26 @@ class AuthController extends Controller
      */
     protected function hitRateLimit(Request $request)
     {
-        $failsKey = 'login_fails:' . \Illuminate\Support\Str::lower($request->input('email', '')) . '|' . $request->ip();
-        $lockKey = 'login_locked:' . \Illuminate\Support\Str::lower($request->input('email', '')) . '|' . $request->ip();
-        
-        if (!cache()->has($failsKey)) {
-            cache()->put($failsKey, 0, now()->addHours(6)); 
+        $failsKey = 'login_fails:'.Str::lower($request->input('email', '')).'|'.$request->ip();
+        $lockKey = 'login_locked:'.Str::lower($request->input('email', '')).'|'.$request->ip();
+
+        if (! cache()->has($failsKey)) {
+            cache()->put($failsKey, 0, now()->addHours(6));
         }
-        
+
         $fails = cache()->increment($failsKey);
-        
+
         if ($fails >= 5) {
-            $multiplier = $fails - 5; 
-            if ($multiplier > 4) $multiplier = 4; // Max 5 hours
-            
+            $multiplier = $fails - 5;
+            if ($multiplier > 4) {
+                $multiplier = 4;
+            } // Max 5 hours
+
             $minutes = pow(5, $multiplier);
-            if ($minutes > 300) $minutes = 300;
-            
+            if ($minutes > 300) {
+                $minutes = 300;
+            }
+
             cache()->put($lockKey, time() + ($minutes * 60), now()->addMinutes($minutes));
         }
     }
@@ -216,9 +227,9 @@ class AuthController extends Controller
      */
     protected function clearRateLimit(Request $request)
     {
-        $failsKey = 'login_fails:' . \Illuminate\Support\Str::lower($request->input('email', '')) . '|' . $request->ip();
-        $lockKey = 'login_locked:' . \Illuminate\Support\Str::lower($request->input('email', '')) . '|' . $request->ip();
-        
+        $failsKey = 'login_fails:'.Str::lower($request->input('email', '')).'|'.$request->ip();
+        $lockKey = 'login_locked:'.Str::lower($request->input('email', '')).'|'.$request->ip();
+
         cache()->forget($failsKey);
         cache()->forget($lockKey);
     }

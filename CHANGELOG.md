@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Pembaruan status pesanan berbasis *asynchronous* (AJAX / Fetch API) di panel Admin tanpa *page refresh* dan tanpa *scroll jump* (posisi *scroll* tetap stabil).
+- Sistem *Global Floating Toast Notification* animasi berbasis Alpine.js pada layout Admin (`adminGlobalToast`) dengan helper `window.showToast(message, type)` dan event listener `@notify.window`.
+- Feature test `AdminOrderStatusTest` untuk memvalidasi endpoint pembaruan status pesanan via JSON, validasi input, autentikasi, dan fallback form.
 - Integrasi *Two-Factor Authentication* (2FA) menggunakan *Google Authenticator* (Chillerlan QRCode) yang ditautkan ke akun masing-masing admin (mendukung banyak *device* untuk akun yang sama).
 - Tampilan notifikasi *banner* kuning peringatan 2FA (otomatis muncul di semua halaman admin jika 2FA belum aktif).
 - Fitur *System Logs* (Log Sistem) terpusat untuk melacak semua aktivitas Admin (Login, aksi, dll) termasuk IP Address, menggunakan model `SystemLog`.
@@ -16,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Penambahan tautan ke *Buku Panduan* dan *Log Sistem* di bagian *Sidebar* Menu Dasbor Admin.
 
 ### Changed
+- Mengubah form pembaruan status pesanan di halaman Pesanan Masuk (`admin/orders/index`), Dashboard Admin (`admin/dashboard`), dan POS Scanner (`admin/pos/index`) menggunakan Alpine.js component (`orderStatusRow`, `dashboardOrderRow`, `completeOrder`) dengan perubahan warna badge/select status secara instan dan mini spinner loading.
+- Sinkronisasi lencana (*badge*) jumlah pesanan *pending* pada *sidebar* Dasbor Admin secara *real-time* via event `@order-status-updated`.
+- Method `updateStatus` pada `OrderController` mengembalikan response JSON terstruktur (`success`, `message`, `order`, dan `pending_count`) untuk request AJAX/JSON.
 - Perombakan total antarmuka UI *ID Card* profil menjadi lebih premium bergaya kopdes, dengan foto asli pengguna, desain kartu 100% responsif, serta pengaturan ulang tombol navigasi.
 - Mengubah mekanisme cetak *ID Card* (menggunakan `html2canvas`); menyembunyikan QR code dari layar namun secara dinamis menempatkannya langsung di dalam hasil file `.png` (unduhan akhir kartu ID).
 - Menghapus badge/tulisan indikator "Sistem Kasir Aktif" dari struktur atas *header* navigasi Admin.

@@ -36,6 +36,6 @@ class MenuItem extends Model
 
     public function formatHarga(int|float $price): string
     {
-        return "Rp " . number_format((int) $price, 0, ',', '.');
+        return 'Rp '.number_format((int) $price, 0, ',', '.');
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Order;
+use Illuminate\Http\Request;
 
 class PosController extends Controller
 {
@@ -33,7 +33,7 @@ class PosController extends Controller
             ->orWhere('qr_code_token', $code)
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             return response()->json([
                 'success' => false,
                 'message' => 'Pesanan tidak ditemukan dengan kode tersebut.',
@@ -50,7 +50,7 @@ class PosController extends Controller
             'table_number' => $order->table_number ?: '-',
             'status' => $order->status,
             'total' => $order->total,
-            'total_formatted' => 'Rp ' . number_format($order->total, 0, ',', '.'),
+            'total_formatted' => 'Rp '.number_format($order->total, 0, ',', '.'),
             'created_at' => $order->created_at->format('d M Y, H:i'),
             'branch' => [
                 'name' => $order->branch->name ?? '-',
@@ -60,8 +60,8 @@ class PosController extends Controller
                     'id' => $item->id,
                     'name' => $item->menuItem->name ?? 'Menu Dihapus',
                     'quantity' => $item->quantity,
-                    'price_formatted' => 'Rp ' . number_format($item->price, 0, ',', '.'),
-                    'subtotal_formatted' => 'Rp ' . number_format($item->subtotal, 0, ',', '.'),
+                    'price_formatted' => 'Rp '.number_format($item->price, 0, ',', '.'),
+                    'subtotal_formatted' => 'Rp '.number_format($item->subtotal, 0, ',', '.'),
                     'notes' => $item->notes,
                 ];
             }),

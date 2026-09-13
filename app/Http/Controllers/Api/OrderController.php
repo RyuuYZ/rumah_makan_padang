@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BranchMenuPrice;
+use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Table;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -51,7 +53,7 @@ class OrderController extends Controller
             $price = BranchMenuPrice::where('branch_id', $validated['branch_id'])
                 ->where('menu_item_id', $item['menu_item_id'])
                 ->first();
-            $menuModel = \App\Models\MenuItem::find($item['menu_item_id']);
+            $menuModel = MenuItem::find($item['menu_item_id']);
 
             if (! $price || ! $price->is_available || ($menuModel && $menuModel->availability_status === 'habis')) {
                 return response()->json([
@@ -97,7 +99,7 @@ class OrderController extends Controller
             ]);
 
             // Decrement Stock
-            $menuModel = \App\Models\MenuItem::find($item['menu_item_id']);
+            $menuModel = MenuItem::find($item['menu_item_id']);
             if ($menuModel && $menuModel->stock_quantity !== null) {
                 $newStock = max(0, $menuModel->stock_quantity - $item['quantity']);
                 $status = 'tersedia';
@@ -109,13 +111,13 @@ class OrderController extends Controller
 
                 $menuModel->update([
                     'stock_quantity' => $newStock,
-                    'availability_status' => $status
+                    'availability_status' => $status,
                 ]);
             }
         }
 
         if ($order->method === 'dine-in' && $request->table_number) {
-            \App\Models\Table::where('branch_id', $order->branch_id)
+            Table::where('branch_id', $order->branch_id)
                 ->where('table_number', $request->table_number)
                 ->update(['status' => 'occupied']);
         }
@@ -175,7 +177,7 @@ class OrderController extends Controller
             ->orWhere('qr_code_token', $code)
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             return back()->with('error', 'Maaf, pesanan dengan kode tersebut tidak ditemukan.')->withInput();
         }
 

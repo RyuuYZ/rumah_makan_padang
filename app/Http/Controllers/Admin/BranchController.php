@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
-use App\Models\MenuItem;
 use App\Models\BranchMenuPrice;
+use App\Models\MenuItem;
 use Illuminate\Http\Request;
 
 class BranchController extends Controller
@@ -13,6 +13,7 @@ class BranchController extends Controller
     public function index()
     {
         $branches = Branch::withCount(['orders', 'reviews'])->get();
+
         return view('admin.branches.index', compact('branches'));
     }
 
@@ -61,9 +62,10 @@ class BranchController extends Controller
     public function toggleActive($id)
     {
         $branch = Branch::findOrFail($id);
-        $branch->update(['is_active' => !$branch->is_active]);
+        $branch->update(['is_active' => ! $branch->is_active]);
 
         $statusText = $branch->is_active ? 'dibuka kembali' : 'ditutup sementara';
+
         return redirect()->back()->with('success', "Status cabang '{$branch->nama}' {$statusText}.");
     }
 

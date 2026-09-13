@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Output\QRMarkupSVG;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PragmaRX\Google2FA\Google2FA;
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
 
 class TwoFactorController extends Controller
 {
@@ -23,10 +25,10 @@ class TwoFactorController extends Controller
             return redirect()->route('admin.profile')->with('info', '2FA is already active.');
         }
 
-        $google2fa = new Google2FA();
+        $google2fa = new Google2FA;
 
         // Generate secret if doesn't exist
-        if (!$user->two_factor_secret) {
+        if (! $user->two_factor_secret) {
             $user->two_factor_secret = $google2fa->generateSecretKey();
             $user->save();
         }
@@ -40,17 +42,17 @@ class TwoFactorController extends Controller
 
         // Generate SVG string using chillerlan
         $options = new QROptions([
-            'outputType' => \chillerlan\QRCode\Output\QRMarkupSVG::class,
-            'eccLevel'   => \chillerlan\QRCode\Common\EccLevel::L,
+            'outputType' => QRMarkupSVG::class,
+            'eccLevel' => EccLevel::L,
             'svgViewBoxSize' => 300,
         ]);
-        
+
         $qrcode = new QRCode($options);
         $qrImage = $qrcode->render($qrCodeUrl);
 
         return view('admin.profile.2fa-setup', [
             'secret' => $user->two_factor_secret,
-            'qrImage' => $qrImage
+            'qrImage' => $qrImage,
         ]);
     }
 
@@ -60,11 +62,11 @@ class TwoFactorController extends Controller
     public function confirm(Request $request)
     {
         $request->validate([
-            'code' => 'required|string|size:6'
+            'code' => 'required|string|size:6',
         ]);
 
         $user = Auth::user();
-        $google2fa = new Google2FA();
+        $google2fa = new Google2FA;
 
         $valid = $google2fa->verifyKey($user->two_factor_secret, $request->code);
 

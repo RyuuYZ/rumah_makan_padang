@@ -13,9 +13,9 @@ class TableController extends Controller
     {
         $branchId = $request->query('branch_id');
         $branches = Branch::where('is_active', true)->get();
-        
+
         $query = Table::with('branch');
-        
+
         if ($branchId) {
             $query->where('branch_id', $branchId);
         }
@@ -38,7 +38,7 @@ class TableController extends Controller
         $exists = Table::where('branch_id', $request->branch_id)
             ->where('table_number', $request->table_number)
             ->exists();
-            
+
         if ($exists) {
             return back()->with('error', 'Nomor meja sudah ada di cabang ini.');
         }
@@ -61,7 +61,7 @@ class TableController extends Controller
             $exists = Table::where('branch_id', $table->branch_id)
                 ->where('table_number', $request->table_number)
                 ->exists();
-                
+
             if ($exists) {
                 return back()->with('error', 'Nomor meja sudah ada di cabang ini.');
             }
@@ -75,6 +75,7 @@ class TableController extends Controller
     public function destroy(Table $table)
     {
         $table->delete();
+
         return back()->with('success', 'Meja berhasil dihapus.');
     }
 }

@@ -63,9 +63,9 @@ class MenuController extends Controller
         $stock = $validated['stock_quantity'] ?? null;
         $status = 'tersedia';
         if ($stock !== null) {
-            if ((int)$stock === 0) {
+            if ((int) $stock === 0) {
                 $status = 'habis';
-            } elseif ((int)$stock <= 5) {
+            } elseif ((int) $stock <= 5) {
                 $status = 'hampir_habis';
             }
         }
@@ -122,9 +122,9 @@ class MenuController extends Controller
         $stock = $validated['stock_quantity'] ?? null;
         $status = 'tersedia';
         if ($stock !== null) {
-            if ((int)$stock === 0) {
+            if ((int) $stock === 0) {
                 $status = 'habis';
-            } elseif ((int)$stock <= 5) {
+            } elseif ((int) $stock <= 5) {
                 $status = 'hampir_habis';
             }
         }

@@ -1,14 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Api\OrderController as ApiOrderController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\BranchController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\KasirController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\TableController;
+use App\Http\Controllers\Admin\TwoFactorController;
+use App\Http\Controllers\Api\OrderController as ApiOrderController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SystemLogController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,25 +55,26 @@ Route::prefix('admin')->group(function () {
 */
 // Kasir POS (Dedicated Interface)
 Route::middleware('auth')->group(function () {
-    Route::get('/kasir', [\App\Http\Controllers\Admin\KasirController::class, 'index'])->name('kasir.index');
+    Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
 });
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profile', function () { 
+    Route::get('/profile', function () {
         $user = Auth::user();
         if (empty($user->login_token)) {
-            $user->login_token = \Illuminate\Support\Str::random(60);
+            $user->login_token = Str::random(60);
             $user->save();
         }
-        return view('admin.profile.index'); 
+
+        return view('admin.profile.index');
     })->name('profile');
-    Route::post('/profile/photo', [\App\Http\Controllers\Admin\AdminController::class, 'updatePhoto'])->name('profile.photo');
+    Route::post('/profile/photo', [AdminController::class, 'updatePhoto'])->name('profile.photo');
 
     // 2FA Management Routes
-    Route::get('/profile/2fa/setup', [\App\Http\Controllers\Admin\TwoFactorController::class, 'setup'])->name('2fa.setup');
-    Route::post('/profile/2fa/confirm', [\App\Http\Controllers\Admin\TwoFactorController::class, 'confirm'])->name('2fa.confirm');
-    Route::post('/profile/2fa/disable', [\App\Http\Controllers\Admin\TwoFactorController::class, 'disable'])->name('2fa.disable');
+    Route::get('/profile/2fa/setup', [TwoFactorController::class, 'setup'])->name('2fa.setup');
+    Route::post('/profile/2fa/confirm', [TwoFactorController::class, 'confirm'])->name('2fa.confirm');
+    Route::post('/profile/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
 
     // Orders Management
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -75,8 +83,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     // POS Cashier Scanner
-    Route::get('/pos', [\App\Http\Controllers\Admin\PosController::class, 'index'])->name('pos.index');
-    Route::post('/pos/find-order', [\App\Http\Controllers\Admin\PosController::class, 'findOrder'])->name('pos.findOrder');
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::post('/pos/find-order', [PosController::class, 'findOrder'])->name('pos.findOrder');
 
     // Menu Management
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
@@ -86,11 +94,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::delete('/menu/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
 
     // System Logs & Guide
-    Route::get('/logs', [\App\Http\Controllers\SystemLogController::class, 'index'])->name('logs.index');
+    Route::get('/logs', [SystemLogController::class, 'index'])->name('logs.index');
     Route::view('/guide', 'admin.guide.index')->name('guide.index');
 
     // Tables Management
-    Route::resource('tables', \App\Http\Controllers\Admin\TableController::class)->except(['create', 'show', 'edit']);
+    Route::resource('tables', TableController::class)->except(['create', 'show', 'edit']);
 
     // Branches Management
     Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');

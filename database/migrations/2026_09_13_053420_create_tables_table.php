@@ -16,7 +16,7 @@ return new class extends Migration
             $table->enum('status', ['available', 'occupied', 'reserved'])->default('available');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             // A branch can't have duplicate table numbers
             $table->unique(['branch_id', 'table_number']);
         });

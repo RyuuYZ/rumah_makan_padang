@@ -152,7 +152,7 @@
                     </thead>
                     <tbody class="divide-y divide-neutral-100">
                         @forelse($recentOrders as $order)
-                        <tr class="hover:bg-neutral-50/50 transition-colors">
+                        <tr class="hover:bg-neutral-50/50 transition-colors" x-data="dashboardOrderRow({{ $order->id }}, '{{ $order->status }}')">
                             <td class="py-3.5 px-5">
                                 <span class="font-semibold text-neutral-900">#{{ $order->id }}</span>
                                 <span class="text-neutral-500"> - {{ $order->customer_name ?? 'Walk-in' }}</span>
@@ -165,27 +165,30 @@
                                 Rp {{ number_format($order->total, 0, ',', '.') }}
                             </td>
                             <td class="py-3.5 px-5">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium
-                                    @if($order->status === 'pending') bg-amber-50 text-amber-700 border border-amber-200/60
-                                    @elseif($order->status === 'confirmed') bg-blue-50 text-blue-700 border border-blue-200/60
-                                    @elseif($order->status === 'cooking') bg-orange-50 text-orange-700 border border-orange-200/60
-                                    @elseif($order->status === 'ready') bg-purple-50 text-purple-700 border border-purple-200/60
-                                    @elseif($order->status === 'completed') bg-emerald-50 text-emerald-700 border border-emerald-200/60
-                                    @else bg-rose-50 text-rose-700 border border-rose-200/60 @endif">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium transition-all"
+                                      :class="badgeClasses[status] || 'bg-neutral-50 text-neutral-700 border border-neutral-200'"
+                                      x-text="status.charAt(0).toUpperCase() + status.slice(1)">
                                     {{ ucfirst($order->status) }}
                                 </span>
                             </td>
                             <td class="py-3.5 px-5 text-right">
-                                <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    <select name="status" onchange="this.form.submit()" class="text-[11px] py-1 px-2 rounded-lg border border-neutral-300 bg-white font-medium focus:ring-1 focus:ring-[#7A1F2B] outline-none">
+                                <div class="inline-flex items-center relative">
+                                    <select 
+                                        x-model="status" 
+                                        @change="updateStatus($event.target.value)" 
+                                        :disabled="saving"
+                                        class="text-[11px] py-1 pl-2 pr-6 rounded-lg border border-neutral-300 bg-white font-medium focus:ring-1 focus:ring-[#7A1F2B] outline-none disabled:opacity-60 cursor-pointer">
                                         @foreach(\App\Models\Order::STATUSES as $st)
-                                            <option value="{{ $st }}" {{ $order->status === $st ? 'selected' : '' }}>
-                                                {{ ucfirst($st) }}
-                                            </option>
+                                            <option value="{{ $st }}">{{ ucfirst($st) }}</option>
                                         @endforeach
                                     </select>
-                                </form>
+                                    <div x-show="saving" class="absolute right-1.5 pointer-events-none" style="display: none;" x-cloak>
+                                        <svg class="animate-spin h-3 w-3 text-neutral-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -247,5 +250,72 @@
 
     </div>
 
+    <script>
+    (function() {
+        function initDashboardOrderStatus() {
+            if (typeof Alpine !== 'undefined' && !Alpine._dashboardOrderStatusRegistered) {
+                Alpine._dashboardOrderStatusRegistered = true;
+                Alpine.data('dashboardOrderRow', (orderId, initialStatus) => ({
+                    orderId: orderId,
+                    status: initialStatus,
+                    previousStatus: initialStatus,
+                    saving: false,
+                    badgeClasses: {
+                        'pending': 'bg-amber-50 text-amber-700 border border-amber-200/60',
+                        'confirmed': 'bg-blue-50 text-blue-700 border border-blue-200/60',
+                        'cooking': 'bg-orange-50 text-orange-700 border border-orange-200/60',
+                        'ready': 'bg-purple-50 text-purple-700 border border-purple-200/60',
+                        'completed': 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
+                        'cancelled': 'bg-rose-50 text-rose-700 border border-rose-200/60'
+                    },
+                    async updateStatus(newStatus) {
+                        if (this.saving) return;
+                        this.saving = true;
+                        const targetStatus = newStatus;
+                        try {
+                            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                            const res = await fetch(`/admin/orders/${this.orderId}/status`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': token
+                                },
+                                body: JSON.stringify({ status: targetStatus })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                this.status = targetStatus;
+                                this.previousStatus = targetStatus;
+                                if (window.showToast) {
+                                    window.showToast(data.message || 'Status pesanan berhasil diperbarui!', 'success');
+                                }
+                                window.dispatchEvent(new CustomEvent('order-status-updated', {
+                                    detail: { orderId: this.orderId, status: targetStatus, pendingCount: data.pending_count }
+                                }));
+                            } else {
+                                throw new Error(data.message || 'Gagal memperbarui status');
+                            }
+                        } catch (err) {
+                            console.error('Error updating dashboard order status:', err);
+                            this.status = this.previousStatus;
+                            if (window.showToast) {
+                                window.showToast(err.message || 'Gagal memperbarui status pesanan', 'error');
+                            }
+                        } finally {
+                            this.saving = false;
+                        }
+                    }
+                }));
+            }
+        }
+
+        if (window.Alpine) {
+            initDashboardOrderStatus();
+        } else {
+            document.addEventListener('alpine:init', initDashboardOrderStatus);
+        }
+    })();
+    </script>
 </div>
 @endsection
