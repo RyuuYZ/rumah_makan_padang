@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (request()->hasHeader('x-forwarded-host') || request()->hasHeader('x-forwarded-proto') || str_contains(request()->header('host', ''), 'loca.lt')) {
+            \URL::forceScheme('https');
+        }
     }
 }

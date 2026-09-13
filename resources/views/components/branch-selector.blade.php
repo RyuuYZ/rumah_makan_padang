@@ -44,9 +44,9 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <h4 class="font-bold text-lg text-[#241B16]">Cabang Terpilih: Raso Mandeh - <span x-text="selectedBranch"></span></h4>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">Buka Hari Ini</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+                        <h4 class="font-bold text-lg text-[#241B16] leading-tight">Cabang Terpilih: Raso Mandeh - <span x-text="selectedBranch"></span></h4>
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 w-fit whitespace-nowrap">Buka Hari Ini</span>
                     </div>
                     <p class="text-sm text-[#241B16]/75 mt-0.5">
                         Pesanan dan layanan makan di tempat akan diproses langsung oleh tim dapur cabang <span class="font-semibold" x-text="selectedBranch"></span>.

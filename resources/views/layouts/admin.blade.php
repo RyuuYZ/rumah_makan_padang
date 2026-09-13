@@ -191,23 +191,23 @@
         <div class="lg:pl-64 flex-1 flex flex-col min-w-0 min-h-screen bg-[#F5EFE2]/30">
             
             <!-- Premium Topbar -->
-            <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#C9A227]/20 h-16 px-8 flex items-center justify-between flex-shrink-0 shadow-sm">
-                <div class="flex items-center space-x-4">
+            <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#C9A227]/20 h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between flex-shrink-0 shadow-sm">
+                <div class="flex items-center space-x-2 sm:space-x-4">
                     <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-xl text-[#7A1F2B] bg-[#7A1F2B]/5 hover:bg-[#7A1F2B]/10 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     </button>
                     <div>
-                        <div class="flex items-center space-x-2 text-sm text-neutral-500 font-medium font-serif">
-                            <span>Admin</span>
-                            <span class="text-[#C9A227]">•</span>
-                            <span class="text-[#7A1F2B] font-bold text-lg">@yield('header_title', 'Dashboard')</span>
+                        <div class="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-neutral-500 font-medium font-serif">
+                            <span class="hidden sm:inline">Admin</span>
+                            <span class="hidden sm:inline text-[#C9A227]">•</span>
+                            <span class="text-[#7A1F2B] font-bold text-base sm:text-lg truncate max-w-[150px] sm:max-w-none">@yield('header_title', 'Dashboard')</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 sm:space-x-4">
                     <div class="text-sm font-bold text-neutral-700 hidden md:block border-l border-neutral-200 pl-4 font-serif">
                         {{ date('d M Y') }}
                     </div>
