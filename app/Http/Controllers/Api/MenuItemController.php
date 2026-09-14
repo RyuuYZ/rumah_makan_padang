@@ -95,7 +95,7 @@ class MenuItemController extends Controller
     public function uploadImage(Request $request, WebpUploadService $webpUploadService)
     {
         $request->validate([
-            'image' => 'required|image|mimes:webp,png,jpg,jpeg,gif,bmp,svg|max:10240',
+            'image' => 'required|image|mimes:webp,png,jpg,jpeg|max:2048',
         ]);
 
         $path = $webpUploadService->uploadAndConvertToWebp($request->file('image'), 'menu');

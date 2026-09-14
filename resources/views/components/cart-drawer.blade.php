@@ -106,17 +106,14 @@
                         </div>
                     </div>
                 </template>
-            </div>
 
-            <!-- Drawer Footer / Checkout -->
-            <div x-show="cart.length > 0" class="p-6 bg-[#F5EFE2] border-t border-[#C9A227]/30 space-y-4">
-                
-                <!-- Order Options -->
-                <div class="space-y-3 pb-3 border-b border-[#C9A227]/20">
+                <!-- Order Options (Moved to scrollable area) -->
+                <div x-show="cart.length > 0" class="mt-6 pt-6 border-t border-[#C9A227]/20 space-y-3">
+                    <h3 class="font-serif font-bold text-[#7A1F2B] mb-2 text-sm">Informasi Pemesanan</h3>
                     <div>
-                        <input type="text" x-model="customerName" placeholder="Atas Nama (Mis: Budi / Gojek / Bawa Sendiri)" class="w-full text-sm px-3 py-2 rounded-lg border border-[#C9A227]/30 bg-white/60 focus:bg-white focus:border-[#C9A227] focus:ring focus:ring-[#C9A227]/20 transition-colors">
+                        <input type="text" x-model="customerName" placeholder="Atas Nama (Mis: Budi / Gojek / Bawa Sendiri)" class="w-full text-sm px-3 py-2 rounded-lg border border-[#C9A227]/30 bg-[#F5EFE2]/50 focus:bg-white focus:border-[#C9A227] focus:ring focus:ring-[#C9A227]/20 transition-colors">
                     </div>
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-4 px-1">
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="radio" x-model="orderType" value="dine-in" class="form-radio text-[#7A1F2B] focus:ring-[#7A1F2B]">
                             <span class="text-sm text-[#241B16] font-medium">Makan di Tempat</span>
@@ -128,14 +125,18 @@
                     </div>
                     
                     <div x-show="orderType === 'dine-in'" x-collapse>
-                        <input type="text" x-model="tableNumber" placeholder="Nomor Meja (opsional)" class="w-full text-sm px-3 py-2 rounded-lg border border-[#C9A227]/30 bg-white/60 focus:bg-white focus:border-[#C9A227] focus:ring focus:ring-[#C9A227]/20 transition-colors">
+                        <input type="text" x-model="tableNumber" placeholder="Nomor Meja (opsional)" class="w-full text-sm px-3 py-2 rounded-lg border border-[#C9A227]/30 bg-[#F5EFE2]/50 focus:bg-white focus:border-[#C9A227] focus:ring focus:ring-[#C9A227]/20 transition-colors">
                     </div>
                     
                     <div>
-                        <textarea x-model="orderNotes" rows="2" placeholder="Catatan pesanan (mis: Gulai dipisah, sambal banyakan...)" class="w-full text-sm px-3 py-2 rounded-lg border border-[#C9A227]/30 bg-white/60 focus:bg-white focus:border-[#C9A227] focus:ring focus:ring-[#C9A227]/20 transition-colors resize-none"></textarea>
+                        <textarea x-model="orderNotes" rows="2" placeholder="Catatan pesanan (mis: Gulai dipisah, sambal banyakan...)" class="w-full text-sm px-3 py-2 rounded-lg border border-[#C9A227]/30 bg-[#F5EFE2]/50 focus:bg-white focus:border-[#C9A227] focus:ring focus:ring-[#C9A227]/20 transition-colors resize-none"></textarea>
                     </div>
                 </div>
+            </div>
 
+            <!-- Drawer Footer / Checkout -->
+            <div x-show="cart.length > 0" class="p-6 bg-[#F5EFE2] border-t border-[#C9A227]/30 space-y-4 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10">
+                
                 <div class="flex items-center justify-between text-sm text-[#241B16]/80">
                     <span>Jumlah Menu:</span>
                     <span class="font-bold" x-text="cartCount + ' Porsi'"></span>

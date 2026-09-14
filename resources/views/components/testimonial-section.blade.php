@@ -1,15 +1,28 @@
 <section id="ulasan" class="py-20 bg-[#F5EFE2]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="text-center max-w-2xl mx-auto mb-14">
-            <span class="text-[#7A1F2B] font-semibold text-xs uppercase tracking-widest block mb-2">Suara Pelanggan</span>
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#241B16]">
-                Kata Mereka Tentang Raso Mandeh
-            </h2>
-            <p class="text-sm sm:text-base text-[#241B16]/75 mt-3">
-                Kisah kepuasan dari pecinta kuliner Minang di berbagai pelosok kota.
-            </p>
+        <div class="flex flex-col md:flex-row md:items-end justify-between max-w-7xl mx-auto mb-14 gap-6">
+            <div class="max-w-2xl">
+                <span class="text-[#7A1F2B] font-semibold text-xs uppercase tracking-widest block mb-2">Suara Pelanggan</span>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#241B16]">
+                    Kata Mereka Tentang Raso Mandeh
+                </h2>
+                <p class="text-sm sm:text-base text-[#241B16]/75 mt-3">
+                    Kisah kepuasan dari pecinta kuliner Minang di berbagai pelosok kota.
+                </p>
+            </div>
+            
+            <button onclick="document.getElementById('reviewModal').classList.remove('hidden')" class="inline-flex items-center justify-center px-6 py-3 bg-[#7A1F2B] hover:bg-[#611922] text-white font-semibold rounded-xl shadow-md transition-all whitespace-nowrap">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Tulis Ulasan Anda
+            </button>
         </div>
+
+        @if(session('success_review'))
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl mb-8 relative flex items-center justify-between" role="alert">
+            <span class="block sm:inline text-sm">{{ session('success_review') }}</span>
+        </div>
+        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($reviews as $review)
@@ -46,5 +59,73 @@
             @endforeach
         </div>
 
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm" aria-hidden="true" onclick="document.getElementById('reviewModal').classList.add('hidden')"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg leading-6 font-bold text-gray-900 font-serif" id="modal-title">
+                            Tulis Ulasan Anda
+                        </h3>
+                        <button onclick="document.getElementById('reviewModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500">
+                            <span class="sr-only">Close</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form action="{{ route('reviews.store') }}" method="POST">
+                        @csrf
+                        <div class="space-y-4 text-sm">
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2" for="nama_pelanggan">Nama Anda</label>
+                                <input class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-[#7A1F2B]" id="nama_pelanggan" name="nama_pelanggan" type="text" required placeholder="Contoh: Budi Santoso">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2" for="branch_id">Cabang Kunjungan (Opsional)</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-[#7A1F2B]" id="branch_id" name="branch_id">
+                                    <option value="">Pilih Cabang</option>
+                                    @foreach(\App\Models\Branch::all() as $b)
+                                        <option value="{{ $b->id }}">{{ $b->kota }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">Penilaian (1-5 Bintang)</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-[#7A1F2B]" name="rating" required>
+                                    <option value="5">⭐⭐⭐⭐⭐ Sangat Baik</option>
+                                    <option value="4">⭐⭐⭐⭐ Baik</option>
+                                    <option value="3">⭐⭐⭐ Cukup</option>
+                                    <option value="2">⭐⭐ Kurang</option>
+                                    <option value="1">⭐ Sangat Kurang</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2" for="komentar">Komentar / Pengalaman Anda</label>
+                                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-[#7A1F2B]" id="komentar" name="komentar" rows="4" required placeholder="Bagaimana rasa makanan dan pelayanannya?"></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button type="button" onclick="document.getElementById('reviewModal').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200">
+                                Batal
+                            </button>
+                            <button type="submit" class="px-6 py-2 bg-[#7A1F2B] text-white font-medium rounded-xl hover:bg-[#611922]">
+                                Kirim Ulasan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </section>

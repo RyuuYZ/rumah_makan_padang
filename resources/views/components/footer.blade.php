@@ -5,7 +5,7 @@
             <!-- Brand Column -->
             <div class="lg:col-span-4 space-y-4">
                 <div class="flex items-center space-x-3">
-                    <img src="/logo/Logo_Final.png" alt="Raso Mandeh Logo" class="brand-logo--footer">
+                    <img src="/logo-versi-lightmode.webp" alt="Raso Mandeh Logo" class="brand-logo--footer">
                 </div>
                 <p class="text-sm text-white/70 leading-relaxed max-w-sm">
                     Menyajikan keaslian masakan Minangkabau dengan resep turun-temurun sejak tahun 1950. Cita rasa otentik yang terjaga kehalalan, kebersihan, dan kenikmatannya di setiap suapan.

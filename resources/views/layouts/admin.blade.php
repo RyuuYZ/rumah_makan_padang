@@ -74,12 +74,12 @@
                                 </svg>
                                 <span>Pesanan Masuk</span>
                             </div>
-                            <div x-data="{ pendingCount: {{ \App\Models\Order::where('status', 'pending')->count() }} }"
+                            <div x-data="{ pendingCount: {{ $pendingOrdersCount }} }"
                                  @order-status-updated.window="if ($event.detail && typeof $event.detail.pendingCount !== 'undefined') pendingCount = $event.detail.pendingCount">
                                 <span x-show="pendingCount > 0" 
                                       class="bg-[#C9A227] text-white shadow-sm text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-[#C9A227]/50"
                                       x-text="pendingCount">
-                                    {{ \App\Models\Order::where('status', 'pending')->count() }}
+                                    {{ $pendingOrdersCount }}
                                 </span>
                             </div>
                         </a>
@@ -136,14 +136,20 @@
                                 </svg>
                                 <span>Moderasi Ulasan</span>
                             </div>
-                            @php
-                                $unapprovedCount = \App\Models\Review::where('is_approved', false)->count();
-                            @endphp
-                            @if($unapprovedCount > 0)
+                            @if($unapprovedReviewsCount > 0)
                             <span class="bg-[#C9A227] text-white shadow-sm text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-[#C9A227]/50">
-                                {{ $unapprovedCount }}
+                                {{ $unapprovedReviewsCount }}
                             </span>
                             @endif
+                        </a>
+
+                        <a href="{{ route('admin.reservations.index') }}" 
+                           class="flex items-center space-x-3 px-3 py-2.5 rounded-2xl font-medium text-[13px] transition-all duration-200
+                           {{ request()->routeIs('admin.reservations.*') ? 'bg-[#7A1F2B] text-white shadow-md shadow-[#7A1F2B]/20 font-semibold' : 'text-neutral-600 hover:bg-[#F5EFE2] hover:text-[#7A1F2B]' }}">
+                            <svg class="w-5 h-5 {{ request()->routeIs('admin.reservations.*') ? 'text-[#C9A227]' : 'text-neutral-400' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Manajemen Reservasi</span>
                         </a>
                     </div>
                 </div>
@@ -255,7 +261,8 @@
                                 </a>
                                 <div class="h-px bg-neutral-100 my-1"></div>
                                 <form action="{{ route('admin.logout') }}" method="POST">
-                                    @csrf
+    @csrf
+ @csrf
                                     <button type="submit" class="w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors">
                                         <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>

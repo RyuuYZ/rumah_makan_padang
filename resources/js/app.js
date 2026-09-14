@@ -24,6 +24,10 @@ document.addEventListener('alpine:init', () => {
         selectBranch(city, id) {
             this.selectedBranch = city;
             this.selectedBranchId = id;
+            try {
+                localStorage.setItem('raso_minang_branch_id', id);
+                localStorage.setItem('raso_minang_branch_name', city);
+            } catch(e) {}
             this.notify(`Cabang diubah ke ${city}`);
         },
 
@@ -34,8 +38,12 @@ document.addEventListener('alpine:init', () => {
                 if (savedCart) {
                     this.cart = JSON.parse(savedCart);
                 }
+                const savedBranchId = localStorage.getItem('raso_minang_branch_id');
+                const savedBranchName = localStorage.getItem('raso_minang_branch_name');
+                if (savedBranchId) this.selectedBranchId = parseInt(savedBranchId);
+                if (savedBranchName) this.selectedBranch = savedBranchName;
             } catch (e) {
-                console.warn('Could not read cart from localStorage', e);
+                console.warn('Could not read from localStorage', e);
             }
 
             let lastScrollY = window.scrollY;

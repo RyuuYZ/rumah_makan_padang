@@ -110,7 +110,6 @@
                                 <select 
                                     x-model="status" 
                                     @change="updateStatus($event.target.value)" 
-                                    :disabled="saving"
                                     class="w-full text-[11px] font-bold py-1.5 pl-2.5 pr-7 rounded-full border cursor-pointer outline-none shadow-2xs transition-all disabled:opacity-60"
                                     :class="statusClasses[status] || 'bg-neutral-50 text-neutral-700 border-neutral-200'">
                                     @foreach(\App\Models\Order::STATUSES as $st)

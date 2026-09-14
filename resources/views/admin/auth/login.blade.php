@@ -70,7 +70,8 @@
                 <!-- State: Form Login Normal -->
                 <div x-show="mode === 'form'" class="space-y-4">
                     <form method="POST" action="{{ route('admin.login.submit') }}" class="space-y-4">
-                        @csrf
+    @csrf
+ @csrf
                         
                         <div>
                             <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Email <span class="text-red-500">*</span></label>
@@ -99,13 +100,12 @@
                                 </button>
                             </div>
                         </div>
-
                         <div class="flex items-center justify-between pt-1">
                             <label class="flex items-center space-x-2 cursor-pointer">
                                 <input type="checkbox" name="remember" class="rounded-[2px] border-neutral-300 text-[#7A1F2B] focus:ring-[#7A1F2B] w-3 h-3">
                                 <span class="text-[11px] text-neutral-500">Ingat saya</span>
                             </label>
-                            <a href="#" class="text-[11px] font-bold text-[#7A1F2B] hover:underline">Lupa password?</a>
+                            <a href="#" onclick="alert('Hubungi Superadmin (admin@rasomandeh.com) atau IT Support untuk mereset password Anda. Reset otomatis dinonaktifkan demi keamanan ERP Raso Mandeh.')" class="text-[11px] font-bold text-[#7A1F2B] hover:underline">Lupa password?</a>
                         </div>
 
                         <button type="submit" class="w-full bg-[#7A1F2B] hover:bg-[#5a1620] text-white font-bold py-2.5 px-4 rounded transition-colors text-xs mt-2 shadow-sm">
@@ -195,7 +195,8 @@
                 @endif
 
                 <form action="{{ route('admin.login.2fa.submit') }}" method="POST">
-                    @csrf
+    @csrf
+ @csrf
                     <div class="mb-6">
                         <label class="block text-xs font-bold text-neutral-800 tracking-wider mb-2 uppercase">Masukkan 6 Digit Kode OTP</label>
                         <input type="text" name="code" maxlength="6" class="w-full px-4 py-4 bg-white border-2 border-neutral-200 rounded-xl text-center text-2xl tracking-[0.3em] font-mono font-bold text-neutral-800 focus:outline-none focus:ring-4 focus:ring-[#7A1F2B]/20 focus:border-[#7A1F2B] transition-all" placeholder="000000" required autocomplete="off" autofocus>
@@ -212,7 +213,8 @@
                 </form>
                 
                 <form id="cancel-2fa-form" action="{{ route('admin.login.2fa.cancel') }}" method="POST" class="hidden">
-                    @csrf
+    @csrf
+ @csrf
                 </form>
             </div>
         </div>

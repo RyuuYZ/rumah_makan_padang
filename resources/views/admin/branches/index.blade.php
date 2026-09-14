@@ -31,21 +31,6 @@
         <div class="bg-white rounded-2xl border border-neutral-200/80 shadow-xs p-5 flex flex-col justify-between space-y-4 hover:border-neutral-300 transition-colors">
             <div>
                 <div class="flex items-start justify-between gap-2 mb-2">
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">{{ $branch->kota }}</span>
-                        <h4 class="font-bold text-sm text-neutral-900 leading-tight">{{ $branch->nama }}</h4>
-                    </div>
-                    <form action="{{ route('admin.branches.toggleActive', $branch->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="px-2 py-0.5 rounded-full text-[11px] font-semibold transition-colors
-                            {{ $branch->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-neutral-100 text-neutral-500 border border-neutral-200' }}"
-                            title="Klik untuk ubah status operasional">
-                            {{ $branch->is_active ? '● Buka' : '○ Tutup' }}
-                        </button>
-                    </form>
-                </div>
-
-                <p class="text-xs text-neutral-500 leading-relaxed line-clamp-2 mb-3">
                     {{ $branch->alamat }}
                 </p>
 
@@ -115,7 +100,8 @@
                 </div>
 
                 <form action="{{ route('admin.branches.store') }}" method="POST" class="space-y-3 text-xs">
-                    @csrf
+    @csrf
+ @csrf
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Cabang *</label>
                         <input type="text" name="nama" required placeholder="Raso Mandeh - Yogyakarta" class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 outline-none">
@@ -170,7 +156,8 @@
                 </div>
 
                 <form :action="'/admin/branches/' + editBranch.id" method="POST" class="space-y-3 text-xs">
-                    @csrf
+    @csrf
+ @csrf
                     @method('PUT')
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Cabang *</label>

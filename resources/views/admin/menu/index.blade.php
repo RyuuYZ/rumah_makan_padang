@@ -194,7 +194,8 @@
                 </div>
 
                 <form action="{{ route('admin.menu.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3 text-xs">
-                    @csrf
+    @csrf
+ @csrf
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Hidangan *</label>
                         <input type="text" name="nama" required placeholder="Contoh: Gulai Tunjang" class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none">
@@ -283,7 +284,8 @@
                 </div>
 
                 <form :action="'/admin/menu/' + editItem.id" method="POST" enctype="multipart/form-data" class="space-y-3 text-xs">
-                    @csrf
+    @csrf
+ @csrf
                     @method('PUT')
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Hidangan *</label>

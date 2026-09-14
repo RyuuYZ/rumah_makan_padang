@@ -18,8 +18,8 @@
 
         <div class="p-8 text-center">
             <div class="inline-block p-4 bg-white rounded-2xl shadow-sm border border-neutral-100 mb-6">
-                <!-- QR Code generated via free API for MVP -->
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ $order->qr_code_token }}&color=7A1F2B" alt="QR Order" class="w-48 h-48 mx-auto">
+                <!-- QR Code generated via local helper -->
+                <img src="{!! \App\Helpers\QrCodeHelper::generate($order->qr_code_token, 200) !!}" alt="QR Order" class="w-48 h-48 mx-auto">
             </div>
 
             <div class="space-y-4 mb-8">
@@ -71,7 +71,7 @@
             </div>
             <div style="text-align: right;">
                 <strong style="display: block; color: #999; font-size: 10px; text-transform: uppercase;">Meja/Tipe</strong>
-                <span style="color: #333; font-weight: bold; text-transform: capitalize;">{{ $order->table_number ?: $order->service_type }}</span>
+                <span style="color: #333; font-weight: bold; text-transform: capitalize;">{{ $order->table_number ?: $order->order_type }}</span>
             </div>
         </div>
 
@@ -80,7 +80,7 @@
             <p style="font-size: 18px; font-weight: bold; color: #333; margin: 0 0 15px 0;">{{ $order->order_number }}</p>
             
             <!-- We load the QR cross-origin cleanly -->
-            <img id="ticket-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ $order->qr_code_token }}&color=7A1F2B" crossorigin="anonymous" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
+            <img id="ticket-qr-img" src="{!! \App\Helpers\QrCodeHelper::generate($order->qr_code_token, 300) !!}" crossorigin="anonymous" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; padding-bottom: 15px; border-bottom: 1px solid #eee;">

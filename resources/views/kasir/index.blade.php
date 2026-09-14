@@ -471,6 +471,8 @@
                     table_number: this.walkin.service_type === 'dine-in' ? this.walkin.table_number : null,
                     notes: 'Diproses dari kasir (Walk-in)',
                     branch_id: this.walkin.branch_id,
+                    source: 'kasir_pos',
+                    payment_status: 'paid',
                     items: this.cart.map(item => ({
                         menu_item_id: item.id,
                         quantity: item.quantity,
@@ -493,17 +495,7 @@
                 })
                 .then(data => {
                     if(data.success) {
-                        const formData = new FormData();
-                        formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-                        formData.append('status', 'completed');
-                        
-                        return fetch('/admin/orders/' + data.data.order_id + '/status', {
-                            method: 'POST',
-                            headers: {
-                                'Accept': 'application/json'
-                            },
-                            body: formData
-                        }).then(r => r.json()).then(() => data.data);
+                        return data.data;
                     } else {
                         throw new Error(data.message);
                     }
@@ -577,7 +569,7 @@
                 formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
                 formData.append('status', 'completed');
 
-                fetch('/admin/orders/' + this.scannedOrder.id + '/status', {
+                fetch('/kasir/orders/' + this.scannedOrder.id + '/status', {
                     method: 'POST',
                     body: formData
                 })

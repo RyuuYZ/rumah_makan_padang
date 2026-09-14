@@ -46,7 +46,8 @@
             @endif
 
             <form action="{{ route('admin.login.2fa.submit') }}" method="POST">
-                @csrf
+    @csrf
+ @csrf
                 <div class="mb-6">
                     <label class="block text-xs font-bold text-neutral-800 tracking-wider mb-2 uppercase">Masukkan 6 Digit Kode OTP</label>
                     <input type="text" name="code" maxlength="6" class="w-full px-4 py-4 bg-white border-2 border-neutral-200 rounded-xl text-center text-2xl tracking-[0.3em] font-mono font-bold text-neutral-800 focus:outline-none focus:ring-4 focus:ring-[#B91C1C]/20 focus:border-[#B91C1C] transition-all" placeholder="000000" required autocomplete="off" autofocus>
@@ -62,7 +63,8 @@
                 </a>
             </form>
             <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="hidden">
-                @csrf
+    @csrf
+ @csrf
             </form>
         </div>
     </div>

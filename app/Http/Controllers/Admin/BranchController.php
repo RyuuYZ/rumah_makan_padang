@@ -30,10 +30,10 @@ class BranchController extends Controller
 
         $branch = Branch::create(array_merge($validated, ['is_active' => true]));
 
-        // Copy menu pricing for this new branch using existing item prices
+        // Copy menu pricing for this new branch using the highest existing price as master
         $menuItems = MenuItem::with('branchPrices')->get();
         foreach ($menuItems as $item) {
-            $basePrice = $item->branchPrices->first()?->harga ?? 25000;
+            $basePrice = $item->branchPrices->max('harga') ?? 25000;
             BranchMenuPrice::create([
                 'branch_id' => $branch->id,
                 'menu_item_id' => $item->id,
@@ -54,6 +54,8 @@ class BranchController extends Controller
             ]);
         }
 
+        \Illuminate\Support\Facades\Cache::forget('active_branches');
+
         return redirect()->route('admin.branches.index')->with('success', "Cabang baru '{$branch->nama}' berhasil ditambahkan!");
     }
 
@@ -70,6 +72,8 @@ class BranchController extends Controller
         $branch = Branch::findOrFail($id);
         $branch->update($validated);
 
+        \Illuminate\Support\Facades\Cache::forget('active_branches');
+
         return redirect()->route('admin.branches.index')->with('success', "Data cabang '{$branch->nama}' berhasil diperbarui!");
     }
 
@@ -80,6 +84,8 @@ class BranchController extends Controller
 
         $statusText = $branch->is_active ? 'dibuka kembali' : 'ditutup sementara';
 
+        \Illuminate\Support\Facades\Cache::forget('active_branches');
+
         return redirect()->back()->with('success', "Status cabang '{$branch->nama}' {$statusText}.");
     }
 
@@ -88,6 +94,8 @@ class BranchController extends Controller
         $branch = Branch::findOrFail($id);
         $nama = $branch->nama;
         $branch->delete();
+
+        \Illuminate\Support\Facades\Cache::forget('active_branches');
 
         return redirect()->route('admin.branches.index')->with('success', "Cabang '{$nama}' berhasil dihapus.");
     }

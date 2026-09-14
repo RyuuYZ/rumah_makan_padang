@@ -29,7 +29,7 @@ class OrderItem extends Model
         return $this->belongsTo(MenuItem::class)->withTrashed();
     }
 
-    public function getTotalAttribute(): float
+    public function getSubtotalAttribute(): float
     {
         return $this->quantity * $this->price;
     }

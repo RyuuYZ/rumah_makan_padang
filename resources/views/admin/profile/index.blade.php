@@ -57,29 +57,28 @@
 
                 <!-- Details Grid -->
                 <div class="px-8 pb-6 text-left space-y-3.5">
-                    <div class="grid grid-cols-12 gap-2 items-center">
-                        <span class="col-span-4 text-[11px] font-bold text-[#334155] tracking-wide">EMAIL</span>
-                        <span class="col-span-8 text-[12px] font-medium text-[#475569] break-words">: {{ Auth::user()->email }}</span>
+                    <div class="grid grid-cols-12 gap-1 items-start">
+                        <span class="col-span-3 text-[11px] font-bold text-[#334155] tracking-wide pt-0.5">EMAIL</span>
+                        <span class="col-span-1 text-[11px] font-bold text-[#334155] text-center pt-0.5">:</span>
+                        <span class="col-span-8 text-[12px] font-medium text-[#475569] break-all pt-0.5">{{ Auth::user()->email }}</span>
                     </div>
-                    <div class="grid grid-cols-12 gap-2 items-center">
-                        <span class="col-span-4 text-[11px] font-bold text-[#334155] tracking-wide">STATUS</span>
+                    <div class="grid grid-cols-12 gap-1 items-start">
+                        <span class="col-span-3 text-[11px] font-bold text-[#334155] tracking-wide pt-1">STATUS</span>
+                        <span class="col-span-1 text-[11px] font-bold text-[#334155] text-center pt-1">:</span>
                         <span class="col-span-8 text-[11px] font-bold text-emerald-600 flex items-center gap-1.5">
-                            <span>:</span> 
                             <span class="px-2 py-0.5 bg-emerald-100 rounded text-emerald-700">Aktif</span>
                         </span>
                     </div>
-                    <div class="grid grid-cols-12 gap-2 items-center">
-                        <span class="col-span-4 text-[11px] font-bold text-[#334155] tracking-wide">ROLE</span>
-                        <span class="col-span-8 text-[12px] font-medium text-[#475569] capitalize">: {{ Auth::user()->role ?? 'Admin' }}</span>
+                    <div class="grid grid-cols-12 gap-1 items-start">
+                        <span class="col-span-3 text-[11px] font-bold text-[#334155] tracking-wide pt-0.5">ROLE</span>
+                        <span class="col-span-1 text-[11px] font-bold text-[#334155] text-center pt-0.5">:</span>
+                        <span class="col-span-8 text-[12px] font-medium text-[#475569] capitalize pt-0.5">{{ Auth::user()->role ?? 'Admin' }}</span>
                     </div>
                 </div>
 
                 <!-- Action Buttons & Info (Will be excluded on download) -->
                 <div id="action-buttons-section" class="px-6 pb-8 space-y-3">
-                    <button type="button" class="w-full py-3 bg-[#0284C7] hover:bg-[#0369A1] text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                        <span>Edit Profil Saya</span>
-                    </button>
+                    <!-- B23: Tombol Edit Profil Saya telah dihapus karena fitur belum tersedia (Dead Button) -->
                     
                     @if(Auth::user()->login_token)
                     <button onclick="downloadIDCard()" id="btnDownloadID" class="w-full py-3 bg-[#10B981] hover:bg-[#059669] text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center justify-center space-x-2">
@@ -91,7 +90,7 @@
                     </p>
 
                     <!-- Hidden QR for Download generation -->
-                    <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ Auth::user()->login_token }}&color=241B16" crossorigin="anonymous" class="hidden" alt="Login QR">
+                    <img id="qr-image" src="{!! \App\Helpers\QrCodeHelper::generate(Auth::user()->login_token, 300) !!}" crossorigin="anonymous" class="hidden" alt="Login QR">
                     @else
                     <div class="w-full p-3 bg-rose-50 text-rose-600 rounded-lg text-center border border-rose-100">
                         <p class="text-[10px] font-bold">Token Login Belum Tersedia</p>
@@ -142,9 +141,10 @@
                     </div>
                     <div class="flex items-center space-x-3 shrink-0">
                         @if(Auth::user()->two_factor_confirmed_at)
-                            <form action="{{ route('admin.2fa.disable') }}" method="POST">
+                            <form action="{{ route('admin.2fa.disable') }}" method="POST" onsubmit="return confirmDisable2FA(this)">
                                 @csrf
-                                <button type="submit" onclick="return confirm('Yakin ingin menonaktifkan 2FA? Keamanan akun Anda akan menurun.')" class="px-4 py-2 bg-[#E14848] hover:bg-[#c93b3b] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm flex items-center space-x-2">
+                                <input type="hidden" name="password" id="disable_2fa_password">
+                                <button type="submit" class="px-4 py-2 bg-[#E14848] hover:bg-[#c93b3b] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm flex items-center space-x-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
                                     <span>Nonaktifkan 2FA</span>
                                 </button>
@@ -226,6 +226,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+function confirmDisable2FA(form) {
+    const pwd = prompt('Masukkan password Anda untuk menonaktifkan 2FA:');
+    if (pwd) {
+        document.getElementById('disable_2fa_password').value = pwd;
+        return true;
+    }
+    return false;
+}
+
 // --- CROPPER JS LOGIC ---
 let cropper;
 const inputImage = document.getElementById('profilePhotoInput');

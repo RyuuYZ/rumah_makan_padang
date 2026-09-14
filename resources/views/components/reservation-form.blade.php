@@ -47,7 +47,8 @@
                 @endif
 
                 <form action="{{ route('reservation.store') }}" method="POST" class="space-y-5">
-                    @csrf
+    @csrf
+ @csrf
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <!-- Name -->

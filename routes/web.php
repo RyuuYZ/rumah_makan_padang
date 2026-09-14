@@ -9,11 +9,13 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\TwoFactorController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SystemLogController;
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -23,8 +25,14 @@ use Illuminate\Support\Str;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/orders', [ApiOrderController::class, 'store'])->name('orders.store');
-Route::post('/reservation', [HomeController::class, 'storeReservation'])->name('reservation.store');
+Route::post('/orders', [ApiOrderController::class, 'store'])->name('orders.store')->middleware('throttle:10,1');
+Route::post('/reservation', [HomeController::class, 'storeReservation'])->name('reservation.store')->middleware('throttle:5,1');
+Route::post('/reviews', [HomeController::class, 'storeReview'])->name('reviews.store')->middleware('throttle:3,1');
+
+// Health Check
+Route::get('/up', function () {
+    return response()->json(['status' => 'healthy', 'timestamp' => now()]);
+})->name('health.check');
 
 // Halaman form cari pesanan pelanggan
 Route::get('/cek-pesanan', [ApiOrderController::class, 'showSearch'])->name('order.search.form');
@@ -40,8 +48,8 @@ Route::get('/pesanan/{token}', [ApiOrderController::class, 'orderStatus'])->name
 */
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
-    Route::post('/login/qr', [AuthController::class, 'qrLogin'])->name('admin.login.qr');
+    Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit')->middleware('throttle:5,1');
+    Route::post('/login/qr', [AuthController::class, 'qrLogin'])->name('admin.login.qr')->middleware('throttle:5,1');
     Route::get('/login/2fa', [AuthController::class, 'show2faVerify'])->name('admin.login.2fa');
     Route::post('/login/2fa', [AuthController::class, 'verify2fa'])->name('admin.login.2fa.submit');
     Route::post('/login/2fa/cancel', [AuthController::class, 'cancel2fa'])->name('admin.login.2fa.cancel');
@@ -56,9 +64,10 @@ Route::prefix('admin')->group(function () {
 // Kasir POS (Dedicated Interface)
 Route::middleware('auth')->group(function () {
     Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
+    Route::post('/kasir/orders/{id}/status', [ApiOrderController::class, 'updateStatus'])->name('kasir.orders.updateStatus');
 });
 
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', IsAdmin::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', function () {
         $user = Auth::user();
@@ -111,4 +120,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
     Route::post('/reviews/{id}/toggle-approve', [ReviewController::class, 'toggleApprove'])->name('reviews.toggleApprove');
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // Reservations
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::post('/reservations/{id}/status', [ReservationController::class, 'updateStatus'])->name('reservations.updateStatus');
+    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 });

@@ -106,16 +106,7 @@
                     @endif
                 </span>
                 
-                <!-- Go To Page Input -->
-                <div class="ml-4 inline-flex items-center space-x-2">
-                    <span class="text-sm text-gray-700 dark:text-gray-400">Pergi ke:</span>
-                    <form onsubmit="event.preventDefault(); const page = this.page.value; if(page) { const url = new URL(window.location.href); url.searchParams.set('page', page); window.location.href = url.href; }" class="inline-flex">
-                        <input type="number" name="page" min="1" max="{{ $paginator->lastPage() }}" 
-                               class="w-16 px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                        <button type="submit" class="ml-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">Go</button>
-                    </form>
-                </div>
-            </div>
+                <!-- Go To Page Input Removed -->
         </div>
     </nav>
 @endif

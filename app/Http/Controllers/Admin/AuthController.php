@@ -7,9 +7,9 @@ use App\Models\SystemLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use PragmaRX\Google2FA\Google2FA;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -45,6 +45,10 @@ class AuthController extends Controller
 
         if (Auth::validate($credentials)) {
             $user = Auth::getProvider()->retrieveByCredentials($credentials);
+
+            if (! $user->is_active) {
+                return back()->withErrors(['email' => 'Akun Anda dinonaktifkan. Silakan hubungi pengelola.']);
+            }
 
             if ($user->two_factor_confirmed_at) {
                 // User has 2FA enabled, don't login fully yet
@@ -91,6 +95,20 @@ class AuthController extends Controller
         $user = User::where('login_token', $request->login_token)->first();
 
         if ($user) {
+            $user->update(['login_token' => null]);
+            
+            if ($user->two_factor_confirmed_at) {
+                $request->session()->put([
+                    '2fa_user_id' => $user->id,
+                    '2fa_remember' => true,
+                ]);
+                $this->clearRateLimit($request);
+                return response()->json([
+                    'success' => true,
+                    'redirect' => route('admin.login.2fa'),
+                ]);
+            }
+
             Auth::login($user, true);
             $request->session()->regenerate();
 
@@ -141,10 +159,18 @@ class AuthController extends Controller
             return redirect()->route('login')->withErrors(['email' => 'Sesi tidak valid.']);
         }
 
-        $google2fa = new Google2FA;
+        $google2fa = new \PragmaRX\Google2FA\Google2FA();
+        $rateLimitKey = '2fa_attempts:'.$user->id;
+
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+            $seconds = RateLimiter::availableIn($rateLimitKey);
+            return back()->with('error', 'Terlalu banyak percobaan. Silakan coba lagi dalam '.ceil($seconds / 60).' menit.');
+        }
+
         $valid = $google2fa->verifyKey($user->two_factor_secret, $request->code);
 
         if ($valid) {
+            RateLimiter::clear($rateLimitKey);
             Auth::login($user, $request->session()->get('2fa_remember', false));
             $request->session()->forget(['2fa_user_id', '2fa_remember']);
             $request->session()->regenerate();
@@ -158,6 +184,8 @@ class AuthController extends Controller
 
             return redirect()->intended(route('admin.dashboard'))->with('success', 'Verifikasi berhasil. Selamat datang kembali, '.Auth::user()->name.'!');
         }
+
+        RateLimiter::hit($rateLimitKey, 3600); // Lock out for 1 hour after 5 fails
 
         return back()->with('error', 'Kode OTP tidak valid atau sudah kadaluarsa.');
     }

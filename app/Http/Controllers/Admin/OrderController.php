@@ -13,7 +13,7 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['branch', 'items.menuItem'])->latest();
+        $query = Order::with(['branch', 'items.menuItem'])->orderBy('id', 'asc');
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -42,12 +42,30 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'status' => 'required|in:pending,confirmed,cooking,ready,completed,cancelled',
         ]);
 
         $order = Order::findOrFail($id);
-        $updateData = ['status' => $request->status];
+        
+        // Bug 14: Status Order Bisa Loncat-Loncat (State Machine Validation)
+        $validTransitions = [
+            'pending' => ['confirmed', 'cancelled'],
+            'confirmed' => ['cooking', 'cancelled'],
+            'cooking' => ['ready', 'cancelled'],
+            'ready' => ['completed', 'cancelled'],
+            'completed' => [],
+            'cancelled' => [],
+        ];
+        
+        if (!in_array($validated['status'], $validTransitions[$order->status] ?? [])) {
+            return response()->json([
+                'success' => false,
+                'message' => "Transisi status dari {$order->status} ke {$validated['status']} tidak diizinkan.",
+            ], 422);
+        }
+
+        $updateData = ['status' => $validated['status']];
 
         if ($request->status === 'completed') {
             $updateData['payment_status'] = 'paid';
@@ -85,6 +103,24 @@ class OrderController extends Controller
                     ->where('table_number', $order->table_number)
                     ->update(['status' => 'available']);
             }
+            
+            // Return stock
+            foreach ($order->items as $item) {
+                $menuModel = \App\Models\MenuItem::lockForUpdate()->find($item->menu_item_id);
+                if ($menuModel && $menuModel->stock_quantity !== null) {
+                    $newStock = $menuModel->stock_quantity + $item->quantity;
+                    $status = 'tersedia';
+                    if ($newStock === 0) {
+                        $status = 'habis';
+                    } elseif ($newStock <= 5) {
+                        $status = 'hampir_habis';
+                    }
+                    $menuModel->update([
+                        'stock_quantity' => $newStock,
+                        'availability_status' => $status,
+                    ]);
+                }
+            }
         }
 
         $order->update($updateData);
@@ -109,6 +145,16 @@ class OrderController extends Controller
     public function destroy($id)
     {
         $order = Order::findOrFail($id);
+        
+        // Free table if dine-in and not already completed/cancelled
+        if ($order->status !== 'completed' && $order->status !== 'cancelled') {
+            if ($order->table_number && $order->branch_id) {
+                Table::where('branch_id', $order->branch_id)
+                    ->where('table_number', $order->table_number)
+                    ->update(['status' => 'available']);
+            }
+        }
+        
         $order->delete();
 
         return redirect()->back()->with('success', "Pesanan #{$id} berhasil dihapus.");

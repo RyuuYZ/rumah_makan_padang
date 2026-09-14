@@ -73,7 +73,8 @@
                     @endif
 
                     <form action="{{ route('admin.2fa.confirm') }}" method="POST" class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        @csrf
+    @csrf
+ @csrf
                         <div class="w-full max-w-[200px]">
                             <input type="text" name="code" maxlength="6" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-center text-lg tracking-[0.25em] font-mono text-neutral-800 focus:outline-none focus:ring-2 focus:ring-[#B91C1C]/50 focus:border-[#B91C1C] transition-all" placeholder="000000" required autocomplete="off">
                         </div>

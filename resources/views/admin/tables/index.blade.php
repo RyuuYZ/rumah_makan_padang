@@ -99,14 +99,15 @@
 
     <!-- ADD MODAL -->
     <div x-show="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center" style="display: none;">
-        <div x-show="showAddModal" @click="showAddModal = false" class="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm"></div>
+        <div x-show="showAddModal" class="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm"></div>
         <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden z-10">
             <div class="bg-[#7A1F2B] px-6 py-4 flex justify-between items-center">
                 <h3 class="text-lg font-bold text-white">Tambah Meja</h3>
                 <button @click="showAddModal = false" class="text-white/70 hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form action="{{ route('admin.tables.store') }}" method="POST" class="p-6">
-                @csrf
+    @csrf
+ @csrf
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-bold text-neutral-700 mb-1">Pilih Cabang</label>
@@ -144,14 +145,15 @@
 
     <!-- EDIT MODAL -->
     <div x-show="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center" style="display: none;">
-        <div x-show="showEditModal" @click="showEditModal = false" class="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm"></div>
+        <div x-show="showEditModal" class="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm"></div>
         <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden z-10" x-if="editData">
             <div class="bg-neutral-100 px-6 py-4 flex justify-between items-center border-b border-neutral-200">
                 <h3 class="text-lg font-bold text-neutral-800">Edit Meja</h3>
                 <button @click="showEditModal = false" class="text-neutral-400 hover:text-neutral-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form :action="`/admin/tables/${editData?.id}`" method="POST" class="p-6">
-                @csrf
+    @csrf
+ @csrf
                 @method('PUT')
                 <div class="space-y-4">
                     <div>

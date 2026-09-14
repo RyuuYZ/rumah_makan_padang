@@ -55,7 +55,7 @@ class WebpUploadService
                 $image = @imagecreatefrompng($realPath);
                 if ($image) {
                     imagepalettetotruecolor($image);
-                    imagealphablending($image, true);
+                    imagealphablending($image, false);
                     imagesavealpha($image, true);
                 }
                 break;
@@ -76,7 +76,7 @@ class WebpUploadService
         }
 
         // Fallback: move file directly if GD conversion isn't possible
-        $fallbackFilename = $basename.'-'.time().'.'.$file->getClientOriginalExtension();
+        $fallbackFilename = $basename.'-'.time().'.'.$file->extension();
         $file->move($destinationPath, $fallbackFilename);
 
         return '/'.$folderPath.'/'.$fallbackFilename;

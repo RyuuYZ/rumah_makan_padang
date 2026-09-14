@@ -27,7 +27,7 @@ class TableController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'branch_id' => 'required|exists:branches,id',
             'table_number' => 'required|string|max:50',
             'capacity' => 'required|integer|min:1',
@@ -43,14 +43,14 @@ class TableController extends Controller
             return back()->with('error', 'Nomor meja sudah ada di cabang ini.');
         }
 
-        Table::create($request->all());
+        Table::create($validated);
 
         return back()->with('success', 'Meja berhasil ditambahkan.');
     }
 
     public function update(Request $request, Table $table)
     {
-        $request->validate([
+        $validated = $request->validate([
             'table_number' => 'required|string|max:50',
             'capacity' => 'required|integer|min:1',
             'status' => 'required|in:available,occupied,reserved',
@@ -67,7 +67,7 @@ class TableController extends Controller
             }
         }
 
-        $table->update($request->all());
+        $table->update($validated);
 
         return back()->with('success', 'Data meja berhasil diperbarui.');
     }

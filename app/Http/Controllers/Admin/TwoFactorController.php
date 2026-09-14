@@ -85,6 +85,10 @@ class TwoFactorController extends Controller
      */
     public function disable(Request $request)
     {
+        $request->validate([
+            'password' => 'required|current_password',
+        ]);
+
         $user = Auth::user();
         $user->two_factor_secret = null;
         $user->two_factor_confirmed_at = null;

@@ -13,7 +13,7 @@
         <div class="bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-xs flex items-center justify-between">
             <div>
                 <span class="text-xs font-medium text-neutral-500 block">Total Pendapatan</span>
-                <h3 class="text-2xl font-bold text-neutral-900 tracking-tight mt-1">
+                <h3 class="text-xl font-bold text-neutral-900 tracking-tight mt-1 whitespace-nowrap">
                     Rp {{ number_format($totalRevenue, 0, ',', '.') }}
                 </h3>
                 <span class="text-[11px] font-medium text-emerald-600 mt-1 inline-block">Transaksi Berhasil</span>
@@ -176,7 +176,6 @@
                                     <select 
                                         x-model="status" 
                                         @change="updateStatus($event.target.value)" 
-                                        :disabled="saving"
                                         class="text-[11px] font-bold py-1 pl-2 pr-6 rounded-lg border border-neutral-300 bg-white focus:ring-1 focus:ring-[#7A1F2B] outline-none disabled:opacity-60 cursor-pointer shadow-2xs">
                                         @foreach(\App\Models\Order::STATUSES as $st)
                                             <option value="{{ $st }}">{{ ucfirst($st) }}</option>

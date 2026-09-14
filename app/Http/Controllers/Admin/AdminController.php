@@ -15,8 +15,12 @@ class AdminController extends Controller
         ]);
 
         $image_parts = explode(';base64,', $request->photo);
+        if (count($image_parts) < 2) {
+            return response()->json(['success' => false, 'message' => 'Format foto tidak valid. Pastikan format Base64 benar.'], 400);
+        }
+
         $image_type_aux = explode('image/', $image_parts[0]);
-        $image_type = $image_type_aux[1];
+        $image_type = isset($image_type_aux[1]) ? $image_type_aux[1] : 'png';
         $image_base64 = base64_decode($image_parts[1]);
 
         $fileName = 'profile-photos/'.uniqid().'.png';

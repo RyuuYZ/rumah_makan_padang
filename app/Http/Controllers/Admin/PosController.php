@@ -54,12 +54,12 @@ class PosController extends Controller
             'total_formatted' => 'Rp '.number_format($order->total, 0, ',', '.'),
             'created_at' => $order->created_at->format('d M Y, H:i'),
             'branch' => [
-                'name' => $order->branch->nama ?? $order->branch->name ?? '-',
+                'name' => $order->branch->nama ?? '-',
             ],
             'items' => $order->items->map(function ($item) {
                 return [
                     'id' => $item->id,
-                    'name' => $item->menuItem->nama ?? $item->menuItem->name ?? 'Menu Dihapus',
+                    'name' => $item->menuItem->nama ?? 'Menu Dihapus',
                     'quantity' => $item->quantity,
                     'price_formatted' => 'Rp '.number_format($item->price, 0, ',', '.'),
                     'subtotal_formatted' => 'Rp '.number_format($item->price * $item->quantity, 0, ',', '.'),
