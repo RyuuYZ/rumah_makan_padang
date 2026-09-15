@@ -37,6 +37,11 @@ class MenuItem extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function formatHarga(int|float $price): string
     {
         return 'Rp '.number_format((int) $price, 0, ',', '.');

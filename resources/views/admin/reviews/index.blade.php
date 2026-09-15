@@ -65,15 +65,21 @@
                             </div>
                         </td>
                         <td class="py-3 px-4">
-                            <p class="text-neutral-700 text-xs truncate leading-relaxed" title="{{ $review->komentar }}">
-                                "{{ $review->komentar }}"
+                            <p class="text-neutral-700 text-xs leading-relaxed" title="{{ $review->komentar }}">
+                                "{{ \Illuminate\Support\Str::limit($review->komentar, 100) }}"
                             </p>
                         </td>
                         <td class="py-3 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold mb-1
                                 {{ $review->is_approved ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60' }}">
                                 {{ $review->is_approved ? '● Tampil' : '○ Menunggu' }}
                             </span>
+                            @if($review->is_pinned)
+                            <br>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#7A1F2B]/10 text-[#7A1F2B] border border-[#7A1F2B]/20 mt-1">
+                                📌 Disematkan
+                            </span>
+                            @endif
                         </td>
                         <td class="py-3 px-4 text-right whitespace-nowrap">
                             <div x-data="{ openMenu: false }" class="inline-block text-left relative">
@@ -99,15 +105,22 @@
                                     <form action="{{ route('admin.reviews.toggleApprove', $review->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-neutral-700 hover:bg-[#F5EFE2] hover:text-[#7A1F2B] transition-colors">
-                                            {{ $review->is_approved ? 'Sembunyikan' : 'Setujui Tampil' }}
+                                            {{ $review->is_approved ? 'Sembunyikan Ulasan' : 'Setujui (Tampilkan)' }}
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('admin.reviews.togglePin', $review->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-neutral-700 hover:bg-[#F5EFE2] hover:text-[#7A1F2B] transition-colors">
+                                            {{ $review->is_pinned ? 'Lepas Sematan' : 'Sematkan ke Beranda' }}
                                         </button>
                                     </form>
                                     
-                                    <form action="{{ route('admin.reviews.destroy', $review->id) }}" method="POST" onsubmit="return confirm('Hapus ulasan ini?')">
+                                    <form action="{{ route('admin.reviews.destroy', $review->id) }}" method="POST" onsubmit="return confirm('Hapus ulasan ini secara permanen?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors">
-                                            Hapus
+                                            Hapus Ulasan
                                         </button>
                                     </form>
                                 </div>

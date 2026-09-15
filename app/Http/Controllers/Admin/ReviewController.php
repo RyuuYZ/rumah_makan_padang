@@ -35,6 +35,24 @@ class ReviewController extends Controller
         return redirect()->back()->with('success', "Ulasan dari {$review->nama_pelanggan} telah {$status}.");
     }
 
+    public function togglePin($id)
+    {
+        $review = Review::findOrFail($id);
+        
+        if (!$review->is_pinned) {
+            $pinnedCount = Review::where('is_pinned', true)->count();
+            if ($pinnedCount >= 4) {
+                return redirect()->back()->with('error', 'Maksimal 4 ulasan dapat disematkan. Harap lepas sematan ulasan lain terlebih dahulu.');
+            }
+        }
+
+        $review->update(['is_pinned' => ! $review->is_pinned]);
+
+        $status = $review->is_pinned ? 'disematkan di halaman utama' : 'dilepas sematannya';
+
+        return redirect()->back()->with('success', "Ulasan dari {$review->nama_pelanggan} berhasil {$status}.");
+    }
+
     public function destroy($id)
     {
         $review = Review::findOrFail($id);

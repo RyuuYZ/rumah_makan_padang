@@ -78,18 +78,18 @@ body {
 /* Brand Logo Sizing */
 .brand-logo {
   width: 150px;
-  margin: -60px 0;
+  margin: -20px 0;
   object-fit: contain;
 }
 
 .brand-logo--footer {
   width: 200px;
-  margin: -80px 0;
+  margin: -30px 0;
   object-fit: contain;
 }
 
 .brand-logo--admin {
   width: 130px;
-  margin: -50px 0;
+  margin: -20px 0;
   object-fit: contain;
 }

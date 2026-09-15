@@ -50,10 +50,10 @@ class OrderController extends Controller
         
         // Bug 14: Status Order Bisa Loncat-Loncat (State Machine Validation)
         $validTransitions = [
-            'pending' => ['confirmed', 'cancelled'],
-            'confirmed' => ['cooking', 'cancelled'],
-            'cooking' => ['ready', 'cancelled'],
-            'ready' => ['completed', 'cancelled'],
+            'pending' => ['confirmed', 'cooking', 'ready', 'completed', 'cancelled'],
+            'confirmed' => ['pending', 'cooking', 'ready', 'completed', 'cancelled'],
+            'cooking' => ['pending', 'ready', 'completed', 'cancelled'],
+            'ready' => ['pending', 'completed', 'cancelled'],
             'completed' => [],
             'cancelled' => [],
         ];

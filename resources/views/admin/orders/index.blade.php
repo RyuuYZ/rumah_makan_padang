@@ -61,7 +61,7 @@
             <table class="w-full text-left text-xs table-fixed">
                 <thead class="bg-[#F5EFE2]/50 border-b border-[#C9A227]/20 text-[11px] font-bold text-[#7A1F2B] uppercase tracking-wider font-serif">
                     <tr>
-                        <th class="w-[12%] py-3.5 px-3">ID & Waktu</th>
+                        <th class="w-[12%] py-3.5 px-3">ID & Kode</th>
                         <th class="w-[14%] py-3.5 px-3">Pelanggan</th>
                         <th class="w-[14%] py-3.5 px-3">Cabang & Metode</th>
                         <th class="w-[26%] py-3.5 px-3">Menu Dipesan</th>
@@ -75,7 +75,8 @@
                     <tr class="hover:bg-neutral-50/50 transition-colors">
                         <td class="py-3 px-3">
                             <span class="font-bold text-neutral-900">#{{ $order->id }}</span>
-                            <span class="text-[10px] text-neutral-400 block mt-0.5">{{ $order->created_at->format('d M, H:i') }}</span>
+                            <span class="text-xs font-mono text-[#7A1F2B] font-bold block mt-1 px-1.5 py-0.5 bg-[#7A1F2B]/10 rounded inline-block" title="Kode Pesanan">{{ $order->order_number }}</span>
+                            <span class="text-[10px] text-neutral-400 block mt-1">{{ $order->created_at->format('d M, H:i') }}</span>
                         </td>
                         <td class="py-3 px-3">
                             <span class="font-semibold text-neutral-900 block truncate">{{ $order->customer_name ?? 'Walk-in' }}</span>
@@ -185,8 +186,9 @@
         <div class="flex min-h-screen items-center justify-center p-4">
             <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-5 space-y-4 border border-neutral-200">
                 <div class="flex items-center justify-between border-b border-neutral-100 pb-3">
-                    <h3 class="font-bold text-base text-neutral-900">
+                    <h3 class="font-bold text-base text-neutral-900 flex items-center gap-2">
                         Rincian Pesanan #<span x-text="selectedOrder?.id"></span>
+                        <span class="text-[11px] font-mono bg-neutral-100 px-2 py-0.5 rounded text-neutral-500 border border-neutral-200" title="Kode Pesanan" x-text="selectedOrder?.order_number"></span>
                     </h3>
                     <button @click="isDetailModalOpen = false" class="text-neutral-400 hover:text-neutral-700">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
