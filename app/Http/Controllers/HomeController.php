@@ -35,18 +35,14 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        $categories = [
-            ['id' => 'all', 'name' => 'Semua Hidangan'],
-            ['id' => 'daging', 'name' => 'Daging Sapi'],
-            ['id' => 'ayam', 'name' => 'Ayam'],
-            ['id' => 'ikan', 'name' => 'Ikan'],
-            ['id' => 'sayur', 'name' => 'Sayur & Sambal'],
-            ['id' => 'topping', 'name' => 'Lauk Tambahan'],
-            ['id' => 'minuman', 'name' => 'Minuman Tradisional'],
-            ['id' => 'nasi-padang', 'name' => 'Paket Nasi Padang'],
-        ];
+        $categories = \App\Models\MenuCategory::select('id', 'nama as name', 'slug')->get();
+        // Add "Semua Hidangan" at the beginning
+        $allCategories = collect([['id' => 'all', 'name' => 'Semua Hidangan', 'slug' => 'all']]);
+        $categories = $allCategories->concat($categories);
 
-        return view('pages.home', compact('branches', 'menuItems', 'reviews', 'categories'));
+        $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
+
+        return view('pages.home', compact('branches', 'menuItems', 'reviews', 'categories', 'settings'));
     }
 
     public function storeReservation(Request $request)

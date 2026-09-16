@@ -1,6 +1,6 @@
 @props(['item'])
 
-<div x-show="(selectedCategory === 'all' || selectedCategory === '{{ $item->kategori }}') && 
+<div x-show="(selectedCategory === 'all' || selectedCategory == '{{ $item->menu_category_id }}') && 
              ('{{ strtolower(addslashes($item->nama)) }}'.includes(searchQuery.toLowerCase()) || '{{ strtolower(addslashes($item->deskripsi)) }}'.includes(searchQuery.toLowerCase()))"
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0 scale-95"
@@ -16,7 +16,7 @@
         
         <!-- Category Badge -->
         <span class="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-[11px] font-medium px-2.5 py-1 rounded-full uppercase tracking-wider">
-            {{ $item->kategori }}
+            {{ $item->category->nama ?? '-' }}
         </span>
 
         <!-- Special Highlight Badge -->

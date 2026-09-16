@@ -5,11 +5,13 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\KasirController;
+use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ReservationController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\TwoFactorController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
@@ -103,9 +105,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', IsAdmin::class])->gr
     Route::post('/menu/{id}/toggle', [MenuController::class, 'toggleActive'])->name('menu.toggleActive');
     Route::delete('/menu/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
 
-    // System Logs & Guide
+    // System Logs, Guide, & Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::get('/logs', [SystemLogController::class, 'index'])->name('logs.index');
     Route::view('/guide', 'admin.guide.index')->name('guide.index');
+
+    // Menu Categories
+    Route::resource('menu-categories', MenuCategoryController::class)->except(['show']);
 
     // Tables Management
     Route::resource('tables', TableController::class)->except(['create', 'show', 'edit']);

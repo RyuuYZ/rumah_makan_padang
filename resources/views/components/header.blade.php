@@ -1,10 +1,10 @@
 <header :class="[
-            isScrolled ? 'bg-[#F5EFE2]/95 backdrop-blur-md shadow-md border-b border-[#C9A227]/20 py-3' : 'bg-transparent py-5',
+            isScrolled ? 'bg-[#F5EFE2]/95 backdrop-blur-md shadow-md border-b border-[#C9A227]/20' : 'bg-transparent',
             isNavbarHidden ? '-translate-y-full' : 'translate-y-0'
         ]"
-        class="fixed top-0 left-0 right-0 z-40 transition-transform duration-300 ease-in-out">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between">
+        class="fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-in-out h-[70px] flex items-center">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="flex items-center justify-between h-full">
             <!-- Brand Logo -->
             <a href="#" class="flex items-center space-x-3 group">
                 <img src="/logo/Logo_Final.png" alt="Raso Mandeh Logo" class="brand-logo group-hover:scale-105 transition-transform">

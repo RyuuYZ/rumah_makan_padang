@@ -7,7 +7,7 @@
 <div x-data="{ 
         isAddModalOpen: false, 
         isEditModalOpen: false, 
-        editItem: { id: null, nama: '', kategori: 'daging', deskripsi: '', foto: '', badge: '', rating: 5.0, harga: 30000, stock_quantity: null } 
+        editItem: { id: null, nama: '', menu_category_id: '', deskripsi: '', foto: '', badge: '', rating: 5.0, harga: 30000, stock_quantity: null } 
      }" 
      class="space-y-5">
     
@@ -79,7 +79,7 @@
                         </td>
                         <td class="py-3 px-4">
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-700">
-                                {{ $item->kategori }}
+                                {{ $item->category->nama ?? '-' }}
                             </span>
                         </td>
                         <td class="py-3 px-4 whitespace-nowrap">
@@ -142,7 +142,7 @@
                                     <button @click="editItem = {
                                                 id: {{ $item->id }},
                                                 nama: '{{ addslashes($item->nama) }}',
-                                                kategori: '{{ $item->kategori }}',
+                                                menu_category_id: '{{ $item->menu_category_id }}',
                                                 deskripsi: '{{ addslashes($item->deskripsi) }}',
                                                 foto: '{{ $item->foto }}',
                                                 badge: '{{ $item->badge }}',
@@ -204,14 +204,10 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block font-semibold text-neutral-700 mb-1">Kategori *</label>
-                            <select name="kategori" required class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 bg-white outline-none">
-                                <option value="daging">Lauk Daging</option>
-                                <option value="ayam">Lauk Ayam</option>
-                                <option value="ikan">Lauk Ikan</option>
-                                <option value="sayur">Sayur & Sambal</option>
-                                <option value="topping">Lauk Tambahan</option>
-                                <option value="minuman">Minuman Tradisional</option>
-                                <option value="nasi-padang">Paket Nasi Padang</option>
+                            <select name="menu_category_id" required class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 bg-white outline-none">
+                                @foreach($categories as $id => $name)
+                                    <option value="{{ $id }}">{{ $name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
@@ -295,14 +291,10 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block font-semibold text-neutral-700 mb-1">Kategori *</label>
-                            <select name="kategori" required x-model="editItem.kategori" class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 bg-white outline-none">
-                                <option value="daging">Lauk Daging</option>
-                                <option value="ayam">Lauk Ayam</option>
-                                <option value="ikan">Lauk Ikan</option>
-                                <option value="sayur">Sayur & Sambal</option>
-                                <option value="topping">Lauk Tambahan</option>
-                                <option value="minuman">Minuman Tradisional</option>
-                                <option value="nasi-padang">Paket Nasi Padang</option>
+                            <select name="menu_category_id" required x-model="editItem.menu_category_id" class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 bg-white outline-none">
+                                @foreach($categories as $id => $name)
+                                    <option value="{{ $id }}">{{ $name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>

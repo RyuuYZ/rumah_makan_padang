@@ -13,10 +13,10 @@ class MenuController extends Controller
 {
     public function index(Request $request)
     {
-        $query = MenuItem::with('branchPrices')->latest();
+        $query = MenuItem::with(['branchPrices', 'category'])->latest();
 
         if ($request->filled('kategori') && $request->kategori !== 'all') {
-            $query->where('kategori', $request->kategori);
+            $query->where('menu_category_id', $request->kategori);
         }
 
         if ($request->filled('search')) {
@@ -28,15 +28,7 @@ class MenuController extends Controller
 
         $menuItems = $query->latest()->paginate(10)->withQueryString();
 
-        $categories = [
-            'daging' => 'Lauk Daging',
-            'ayam' => 'Lauk Ayam',
-            'ikan' => 'Lauk Ikan',
-            'sayur' => 'Sayur & Sambal',
-            'topping' => 'Lauk Tambahan',
-            'minuman' => 'Minuman Tradisional',
-            'nasi-padang' => 'Paket Nasi Padang',
-        ];
+        $categories = \App\Models\MenuCategory::pluck('nama', 'id')->toArray();
 
         return view('admin.menu.index', compact('menuItems', 'categories'));
     }
@@ -45,7 +37,7 @@ class MenuController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kategori' => 'required|in:daging,ayam,ikan,sayur,topping,minuman,nasi-padang',
+            'menu_category_id' => 'required|exists:menu_categories,id',
             'deskripsi' => 'nullable|string',
             'foto' => 'nullable|string',
             'foto_file' => 'nullable|image|mimes:webp,png,jpg,jpeg,gif,bmp,svg|max:10240',
@@ -74,7 +66,7 @@ class MenuController extends Controller
 
         $menuItem = MenuItem::create([
             'nama' => $validated['nama'],
-            'kategori' => $validated['kategori'],
+            'menu_category_id' => $validated['menu_category_id'],
             'deskripsi' => $validated['deskripsi'] ?? null,
             'foto' => $fotoPath,
             'badge' => $validated['badge'] ?? null,
@@ -104,7 +96,7 @@ class MenuController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kategori' => 'required|in:daging,ayam,ikan,sayur,topping,minuman,nasi-padang',
+            'menu_category_id' => 'required|exists:menu_categories,id',
             'deskripsi' => 'nullable|string',
             'foto' => 'nullable|string',
             'foto_file' => 'nullable|image|mimes:webp,png,jpg,jpeg,gif,bmp,svg|max:10240',
@@ -135,7 +127,7 @@ class MenuController extends Controller
 
         $menuItem->update([
             'nama' => $validated['nama'],
-            'kategori' => $validated['kategori'],
+            'menu_category_id' => $validated['menu_category_id'],
             'deskripsi' => $validated['deskripsi'] ?? null,
             'foto' => $fotoPath,
             'badge' => $validated['badge'] ?? null,

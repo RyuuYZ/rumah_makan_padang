@@ -13,6 +13,7 @@ class MenuItem extends Model
     protected $fillable = [
         'nama',
         'kategori',
+        'menu_category_id',
         'deskripsi',
         'foto',
         'badge',
@@ -26,6 +27,11 @@ class MenuItem extends Model
         'rating' => 'decimal:1',
         'is_active' => 'boolean',
     ];
+
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(MenuCategory::class, 'menu_category_id');
+    }
 
     public function branchPrices(): HasMany
     {

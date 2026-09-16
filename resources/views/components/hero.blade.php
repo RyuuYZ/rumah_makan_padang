@@ -15,13 +15,11 @@
                 </div>
 
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#241B16] leading-[1.15]">
-                    Rasa Autentik <br class="hidden sm:block"/>
-                    <span class="text-[#7A1F2B] italic underline decoration-[#C9A227]/50 decoration-wavy decoration-2">Minangkabau</span> <br class="hidden sm:block"/>
-                    dalam Setiap Gigitan
+                    {!! nl2br(e($settings['home_title'] ?? "Rasa Autentik\nMinangkabau\ndalam Setiap Gigitan")) !!}
                 </h1>
 
                 <p class="text-lg text-[#241B16]/80 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
-                    Nikmati kelezatan masakan Padang legendaris dengan resep warisan leluhur yang telah dijaga selama lebih dari 7 dekade. Dimasak dengan santan kental dan rempah pilihan langsung dari Sumatera Barat.
+                    {{ $settings['home_subtitle'] ?? 'Nikmati kelezatan masakan Padang legendaris dengan resep warisan leluhur yang telah dijaga selama lebih dari 7 dekade. Dimasak dengan santan kental dan rempah pilihan langsung dari Sumatera Barat.' }}
                 </p>
 
                 <!-- Stats Highlights -->
@@ -70,7 +68,7 @@
 
                     <!-- Main Dish Image -->
                     <div class="relative z-10 overflow-hidden rounded-3xl shadow-2xl border-4 border-white/60">
-                        <img src="/main-foto.webp" 
+                        <img src="{{ $settings['home_hero_image'] ?? '/main-foto.webp' }}" 
                              alt="Nasi Padang Komplit Raso Mandeh" 
                              class="w-full h-[420px] object-cover hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

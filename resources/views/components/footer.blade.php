@@ -8,7 +8,7 @@
                     <img src="/logo-versi-lightmode.webp" alt="Raso Mandeh Logo" class="brand-logo--footer">
                 </div>
                 <p class="text-sm text-white/70 leading-relaxed max-w-sm">
-                    Menyajikan keaslian masakan Minangkabau dengan resep turun-temurun sejak tahun 1950. Cita rasa otentik yang terjaga kehalalan, kebersihan, dan kenikmatannya di setiap suapan.
+                    {{ $settings['footer_text'] ?? 'Menyajikan keaslian masakan Minangkabau dengan resep turun-temurun sejak tahun 1950. Cita rasa otentik yang terjaga kehalalan, kebersihan, dan kenikmatannya di setiap suapan.' }}
                 </p>
                 <div class="text-xs text-[#C9A227] font-semibold tracking-wider uppercase">
                     100% Halal Certified MUI & BPJPH
