@@ -19,9 +19,9 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'home_title' => 'nullable|string|max:255',
-            'home_subtitle' => 'nullable|string',
-            'footer_text' => 'nullable|string',
+            'home_title' => 'nullable|string|max:100',
+            'home_subtitle' => 'nullable|string|max:300',
+            'footer_text' => 'nullable|string|max:500',
             'hero_image_base64' => 'nullable|string', // Contains base64 from cropper
         ]);
 

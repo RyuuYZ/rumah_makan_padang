@@ -23,7 +23,7 @@
             <select name="kategori" onchange="this.form.submit()" class="text-xs py-2 px-3 rounded-xl border border-neutral-300 bg-white font-medium outline-none">
                 <option value="all">Semua Kategori</option>
                 @foreach($categories as $key => $name)
-                <option value="{{ $key }}" {{ request('kategori') === $key ? 'selected' : '' }}>
+                <option value="{{ $key }}" {{ request('kategori') == $key ? 'selected' : '' }}>
                     {{ $name }}
                 </option>
                 @endforeach
@@ -195,7 +195,6 @@
 
                 <form action="{{ route('admin.menu.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3 text-xs">
     @csrf
- @csrf
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Hidangan *</label>
                         <input type="text" name="nama" required placeholder="Contoh: Gulai Tunjang" class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none">
@@ -281,7 +280,6 @@
 
                 <form :action="'/admin/menu/' + editItem.id" method="POST" enctype="multipart/form-data" class="space-y-3 text-xs">
     @csrf
- @csrf
                     @method('PUT')
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Hidangan *</label>

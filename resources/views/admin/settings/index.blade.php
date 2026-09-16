@@ -53,17 +53,17 @@
 
             <div>
                 <label class="block font-semibold text-neutral-700 text-sm mb-1.5">Judul Utama (Title)</label>
-                <textarea name="home_title" rows="2" class="w-full text-sm p-3 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none" placeholder="Rasa Autentik Minangkabau dalam Setiap Gigitan">{{ old('home_title', $settings['home_title'] ?? 'Rasa Autentik Minangkabau dalam Setiap Gigitan') }}</textarea>
+                <textarea name="home_title" rows="2" maxlength="100" class="w-full text-sm p-3 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none" placeholder="Rasa Autentik Minangkabau dalam Setiap Gigitan">{{ old('home_title', $settings['home_title'] ?? 'Rasa Autentik Minangkabau dalam Setiap Gigitan') }}</textarea>
             </div>
 
             <div>
                 <label class="block font-semibold text-neutral-700 text-sm mb-1.5">Deskripsi Singkat (Subtitle)</label>
-                <textarea name="home_subtitle" rows="3" class="w-full text-sm p-3 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none" placeholder="Nikmati kelezatan masakan Padang legendaris...">{{ old('home_subtitle', $settings['home_subtitle'] ?? 'Nikmati kelezatan masakan Padang legendaris dengan resep warisan leluhur yang telah dijaga selama lebih dari 7 dekade. Dimasak dengan santan kental dan rempah pilihan langsung dari Sumatera Barat.') }}</textarea>
+                <textarea name="home_subtitle" rows="3" maxlength="300" class="w-full text-sm p-3 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none" placeholder="Nikmati kelezatan masakan Padang legendaris...">{{ old('home_subtitle', $settings['home_subtitle'] ?? 'Nikmati kelezatan masakan Padang legendaris dengan resep warisan leluhur yang telah dijaga selama lebih dari 7 dekade. Dimasak dengan santan kental dan rempah pilihan langsung dari Sumatera Barat.') }}</textarea>
             </div>
 
             <div>
                 <label class="block font-semibold text-neutral-700 text-sm mb-1.5">Teks Footer</label>
-                <textarea name="footer_text" rows="2" class="w-full text-sm p-3 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none" placeholder="Menyajikan keaslian masakan Minangkabau...">{{ old('footer_text', $settings['footer_text'] ?? 'Menyajikan keaslian masakan Minangkabau dengan resep turun-temurun sejak tahun 1950. Cita rasa otentik yang terjaga kehalalan, kebersihan, dan kenikmatannya di setiap suapan.') }}</textarea>
+                <textarea name="footer_text" rows="2" maxlength="500" class="w-full text-sm p-3 rounded-xl border border-neutral-300 focus:ring-1 focus:ring-[#7A1F2B] outline-none" placeholder="Menyajikan keaslian masakan Minangkabau...">{{ old('footer_text', $settings['footer_text'] ?? 'Menyajikan keaslian masakan Minangkabau dengan resep turun-temurun sejak tahun 1950. Cita rasa otentik yang terjaga kehalalan, kebersihan, dan kenikmatannya di setiap suapan.') }}</textarea>
             </div>
 
             <div class="pt-4 flex justify-end">
