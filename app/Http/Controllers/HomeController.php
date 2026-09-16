@@ -19,7 +19,7 @@ class HomeController extends Controller
         $branches = Branch::where('is_active', true)->get();
 
         $menuItems = MenuItem::where('is_active', true)
-            ->with(['branchPrices'])
+            ->with(['branchPrices', 'category'])
             ->get()
             ->map(function ($item) {
                 // Determine a display price (from first branch price or default)
