@@ -83,7 +83,7 @@
                                         Edit Kategori
                                     </button>
                                     
-                                    <form action="{{ route('menu-categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
+                                    <form action="{{ route('admin.menu-categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors">
@@ -120,7 +120,7 @@
                     </button>
                 </div>
 
-                <form action="{{ route('menu-categories.store') }}" method="POST" class="space-y-3 text-xs">
+                <form action="{{ route('admin.menu-categories.store') }}" method="POST" class="space-y-3 text-xs">
                     @csrf
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Kategori *</label>

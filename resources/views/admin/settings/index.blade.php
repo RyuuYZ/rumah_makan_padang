@@ -16,7 +16,7 @@
             <p class="text-xs text-neutral-500 mt-1">Sesuaikan konten yang akan ditampilkan di halaman depan restoran.</p>
         </div>
 
-        <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-5" x-data="imageCropper()">
+        <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-5" x-data="imageCropper()">
             @csrf
 
             <!-- Hero Image with Cropper -->

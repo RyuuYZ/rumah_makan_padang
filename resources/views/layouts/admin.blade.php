@@ -109,10 +109,10 @@
                             <span>Menu Masakan</span>
                         </a>
 
-                        <a href="{{ route('menu-categories.index') }}" 
+                        <a href="{{ route('admin.menu-categories.index') }}" 
                            class="flex items-center space-x-3 px-3 py-2.5 rounded-2xl font-medium text-[13px] transition-all duration-200
-                           {{ request()->routeIs('menu-categories.*') ? 'bg-[#7A1F2B] text-white shadow-md shadow-[#7A1F2B]/20 font-semibold' : 'text-neutral-600 hover:bg-[#F5EFE2] hover:text-[#7A1F2B]' }}">
-                            <svg class="w-5 h-5 {{ request()->routeIs('menu-categories.*') ? 'text-[#C9A227]' : 'text-neutral-400' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           {{ request()->routeIs('admin.menu-categories.*') ? 'bg-[#7A1F2B] text-white shadow-md shadow-[#7A1F2B]/20 font-semibold' : 'text-neutral-600 hover:bg-[#F5EFE2] hover:text-[#7A1F2B]' }}">
+                            <svg class="w-5 h-5 {{ request()->routeIs('admin.menu-categories.*') ? 'text-[#C9A227]' : 'text-neutral-400' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/>
                             </svg>
                             <span>Kategori Menu</span>
@@ -167,10 +167,10 @@
                 <div>
                     <span class="px-4 text-[10px] font-bold tracking-widest uppercase text-[#C9A227] block mb-3 font-serif">Sistem</span>
                     <div class="space-y-1">
-                        <a href="{{ route('settings.index') }}" 
+                        <a href="{{ route('admin.settings.index') }}" 
                            class="flex items-center space-x-3 px-3 py-2.5 rounded-2xl font-medium text-[13px] transition-all duration-200
-                           {{ request()->routeIs('settings.*') ? 'bg-[#7A1F2B] text-white shadow-md shadow-[#7A1F2B]/20 font-semibold' : 'text-neutral-600 hover:bg-[#F5EFE2] hover:text-[#7A1F2B]' }}">
-                            <svg class="w-5 h-5 {{ request()->routeIs('settings.*') ? 'text-[#C9A227]' : 'text-neutral-400' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           {{ request()->routeIs('admin.settings.*') ? 'bg-[#7A1F2B] text-white shadow-md shadow-[#7A1F2B]/20 font-semibold' : 'text-neutral-600 hover:bg-[#F5EFE2] hover:text-[#7A1F2B]' }}">
+                            <svg class="w-5 h-5 {{ request()->routeIs('admin.settings.*') ? 'text-[#C9A227]' : 'text-neutral-400' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
@@ -280,8 +280,7 @@
                                 </a>
                                 <div class="h-px bg-neutral-100 my-1"></div>
                                 <form action="{{ route('admin.logout') }}" method="POST">
-    @csrf
- @csrf
+                                    @csrf
                                     <button type="submit" class="w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors">
                                         <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>

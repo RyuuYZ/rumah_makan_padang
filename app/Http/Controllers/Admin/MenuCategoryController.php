@@ -12,6 +12,7 @@ class MenuCategoryController extends Controller
     public function index()
     {
         $categories = MenuCategory::withCount('items')->latest()->get();
+
         return view('admin.menu_categories.index', compact('categories'));
     }
 
@@ -26,7 +27,7 @@ class MenuCategoryController extends Controller
             'slug' => Str::slug($request->nama),
         ]);
 
-        return redirect()->route('menu-categories.index')->with('success', 'Kategori menu berhasil ditambahkan.');
+        return redirect()->route('admin.menu-categories.index')->with('success', 'Kategori menu berhasil ditambahkan.');
     }
 
     public function update(Request $request, MenuCategory $menuCategory)
@@ -40,17 +41,17 @@ class MenuCategoryController extends Controller
             'slug' => Str::slug($request->nama),
         ]);
 
-        return redirect()->route('menu-categories.index')->with('success', 'Kategori menu berhasil diperbarui.');
+        return redirect()->route('admin.menu-categories.index')->with('success', 'Kategori menu berhasil diperbarui.');
     }
 
     public function destroy(MenuCategory $menuCategory)
     {
         if ($menuCategory->items()->count() > 0) {
-            return redirect()->route('menu-categories.index')->with('error', 'Tidak dapat menghapus kategori yang masih memiliki menu.');
+            return redirect()->route('admin.menu-categories.index')->with('error', 'Tidak dapat menghapus kategori yang masih memiliki menu.');
         }
 
         $menuCategory->delete();
 
-        return redirect()->route('menu-categories.index')->with('success', 'Kategori menu berhasil dihapus.');
+        return redirect()->route('admin.menu-categories.index')->with('success', 'Kategori menu berhasil dihapus.');
     }
 }
