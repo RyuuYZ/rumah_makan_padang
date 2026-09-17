@@ -27,7 +27,7 @@ class AdminOrderStatusTest extends TestCase
 
     public function test_admin_can_update_order_status_via_json()
     {
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'email' => 'admin@rasomandeh.com',
         ]);
 
@@ -68,7 +68,7 @@ class AdminOrderStatusTest extends TestCase
 
     public function test_admin_cannot_update_order_status_with_invalid_value()
     {
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'email' => 'admin@rasomandeh.com',
         ]);
 
@@ -122,7 +122,7 @@ class AdminOrderStatusTest extends TestCase
 
     public function test_admin_can_update_order_status_via_traditional_form()
     {
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'email' => 'admin@rasomandeh.com',
         ]);
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\User;
 use App\Services\WebpUploadService;
@@ -31,14 +32,16 @@ class WebpUploadTest extends TestCase
 
     public function test_admin_can_upload_menu_image_in_webp_format()
     {
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'email' => 'admin@rasomandeh.com',
         ]);
 
+        $category = MenuCategory::firstOrCreate(['slug' => 'daging'], ['nama' => 'Daging Sapi']);
         $fakeFile = UploadedFile::fake()->image('gulai_tunjang.jpg', 200, 200);
 
         $response = $this->actingAs($admin)->post(route('admin.menu.store'), [
             'nama' => 'Gulai Tunjang Special',
+            'menu_category_id' => $category->id,
             'kategori' => 'daging',
             'deskripsi' => 'Gulai tunjang lezat',
             'harga' => 35000,
@@ -60,9 +63,10 @@ class WebpUploadTest extends TestCase
 
     public function test_api_upload_image_returns_webp_format()
     {
+        $admin = User::factory()->admin()->create();
         $fakeFile = UploadedFile::fake()->image('rendang_sapi.png', 150, 150);
 
-        $response = $this->postJson('/api/v1/menu-items/upload-image', [
+        $response = $this->actingAs($admin)->postJson('/api/v1/menu-items/upload-image', [
             'image' => $fakeFile,
         ]);
 
