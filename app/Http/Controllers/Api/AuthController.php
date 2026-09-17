@@ -23,6 +23,14 @@ class AuthController extends Controller
             'id_token' => 'nullable|string',
         ]);
 
+        $existingUser = User::where('email', $validated['email'])->first();
+        if ($existingUser && ! $existingUser->isCustomer()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun staf/admin tidak diizinkan masuk melalui login Google aplikasi mobile.',
+            ], 403);
+        }
+
         $user = User::firstOrCreate(
             ['email' => $validated['email']],
             [
