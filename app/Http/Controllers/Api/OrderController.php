@@ -56,9 +56,9 @@ class OrderController extends Controller
                 $id = $item['menu_item_id'];
                 if (isset($groupedItems[$id])) {
                     $groupedItems[$id]['quantity'] += $item['quantity'];
-                    if (!empty($item['notes'])) {
-                        $groupedItems[$id]['notes'] = !empty($groupedItems[$id]['notes']) 
-                            ? $groupedItems[$id]['notes'] . ' | ' . $item['notes'] 
+                    if (! empty($item['notes'])) {
+                        $groupedItems[$id]['notes'] = ! empty($groupedItems[$id]['notes'])
+                            ? $groupedItems[$id]['notes'].' | '.$item['notes']
                             : $item['notes'];
                     }
                 } else {
@@ -68,125 +68,134 @@ class OrderController extends Controller
             $validated['items'] = array_values($groupedItems);
 
             $items = [];
-        foreach ($validated['items'] as $item) {
-            $price = BranchMenuPrice::where('branch_id', $validated['branch_id'])
-                ->where('menu_item_id', $item['menu_item_id'])
-                ->first();
-            $menuModel = MenuItem::lockForUpdate()->find($item['menu_item_id']);
+            foreach ($validated['items'] as $item) {
+                $price = BranchMenuPrice::where('branch_id', $validated['branch_id'])
+                    ->where('menu_item_id', $item['menu_item_id'])
+                    ->first();
+                $menuModel = MenuItem::lockForUpdate()->find($item['menu_item_id']);
 
-            if (! $price || ! $price->is_available || ($menuModel && $menuModel->availability_status === 'habis')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Menu dengan ID {$item['menu_item_id']} tidak tersedia.",
-                ], 422);
-            }
-
-            if ($menuModel && $menuModel->stock_quantity !== null && $menuModel->stock_quantity < $item['quantity']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Stok untuk menu {$menuModel->nama} tidak mencukupi. Sisa stok: {$menuModel->stock_quantity} porsi.",
-                ], 422);
-            }
-
-            $items[] = array_merge($item, ['price' => (float) $price->harga]);
-        }
-        
-        $orderMethod = $validated['order_type'] ?? 'dine_in';
-        $tableNum = $validated['table_number'] ?? null;
-        
-        // B8: Validasi Ketersediaan Meja
-        if ($orderMethod === 'dine_in' && $tableNum) {
-            $table = \App\Models\Table::lockForUpdate()
-                ->where('branch_id', $validated['branch_id'])
-                ->where('table_number', $tableNum)
-                ->first();
-                
-            if (!$table || $table->status !== 'available') {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Maaf, Meja {$tableNum} sudah terisi atau tidak tersedia.",
-                ], 422);
-            }
-        }
-
-        $total = collect($items)->sum(fn ($item) => $item['quantity'] * $item['price']);
-
-        // Buat order; order_number & qr_code_token digenerate otomatis via Order::booted()
-        $order = Order::create([
-            'branch_id' => $validated['branch_id'],
-            'order_type' => $validated['order_type'] ?? 'dine_in',
-            'table_number' => $validated['table_number'] ?? null,
-            'source' => $request->input('source', 'customer_web'),
-            'method' => 'dine-in',
-            'customer_name' => isset($validated['customer_name']) ? strip_tags($validated['customer_name']) : null,
-            'customer_phone' => isset($validated['customer_phone']) ? strip_tags($validated['customer_phone']) : null,
-            'notes' => isset($validated['notes']) ? strip_tags($validated['notes']) : null,
-            'total' => $total,
-            'status' => $request->input('payment_status') === 'paid' ? 'completed' : 'pending',
-            'payment_status' => $request->input('payment_status', 'unpaid'),
-            'cashier_id' => $request->input('source') === 'kasir_pos' && auth()->check() ? auth()->id() : null,
-        ]);
-
-        if ($order->payment_status === 'paid') {
-            Payment::create([
-                'order_id' => $order->id,
-                'cashier_id' => $order->cashier_id,
-                'method' => 'cash',
-                'amount' => $order->total,
-                'cash_given' => $order->total,
-                'change_amount' => 0,
-                'status' => 'completed',
-                'paid_at' => now(),
-            ]);
-        }
-
-        foreach ($items as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'menu_item_id' => $item['menu_item_id'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'notes' => isset($item['notes']) ? strip_tags($item['notes']) : null,
-            ]);
-
-            // Decrement Stock
-            $menuModel = MenuItem::lockForUpdate()->find($item['menu_item_id']);
-            if ($menuModel && $menuModel->stock_quantity !== null) {
-                $newStock = max(0, $menuModel->stock_quantity - $item['quantity']);
-                $status = 'tersedia';
-                if ($newStock === 0) {
-                    $status = 'habis';
-                } elseif ($newStock <= 5) {
-                    $status = 'hampir_habis';
+                if (! $price || ! $price->is_available || ($menuModel && $menuModel->availability_status === 'habis')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Menu dengan ID {$item['menu_item_id']} tidak tersedia.",
+                    ], 422);
                 }
 
-                $menuModel->update([
-                    'stock_quantity' => $newStock,
-                    'availability_status' => $status,
+                if ($menuModel && $menuModel->stock_quantity !== null && $menuModel->stock_quantity < $item['quantity']) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Stok untuk menu {$menuModel->nama} tidak mencukupi. Sisa stok: {$menuModel->stock_quantity} porsi.",
+                    ], 422);
+                }
+
+                $items[] = array_merge($item, ['price' => (float) $price->harga]);
+            }
+
+            $orderMethod = $validated['order_type'] ?? 'dine_in';
+            $tableNum = $validated['table_number'] ?? null;
+
+            // B8: Validasi Ketersediaan Meja
+            if ($orderMethod === 'dine_in' && $tableNum) {
+                $table = Table::lockForUpdate()
+                    ->where('branch_id', $validated['branch_id'])
+                    ->where('table_number', $tableNum)
+                    ->first();
+
+                if (! $table || $table->status !== 'available') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Maaf, Meja {$tableNum} sudah terisi atau tidak tersedia.",
+                    ], 422);
+                }
+            }
+
+            $total = collect($items)->sum(fn ($item) => $item['quantity'] * $item['price']);
+
+            $isCashierPos = $request->input('source') === 'kasir_pos'
+                && auth()->check()
+                && (auth()->user()->isCashier() || auth()->user()->isAdmin());
+
+            $paymentStatus = ($isCashierPos && $request->input('payment_status') === 'paid') ? 'paid' : 'unpaid';
+            $orderStatus = ($paymentStatus === 'paid') ? 'completed' : 'pending';
+            $cashierId = $isCashierPos ? auth()->id() : null;
+            $source = $isCashierPos ? 'kasir_pos' : ($request->input('source') === 'mobile_app' ? 'mobile_app' : 'customer_web');
+
+            // Buat order; order_number & qr_code_token digenerate otomatis via Order::booted()
+            $order = Order::create([
+                'branch_id' => $validated['branch_id'],
+                'order_type' => $validated['order_type'] ?? 'dine_in',
+                'table_number' => $validated['table_number'] ?? null,
+                'source' => $source,
+                'method' => 'dine-in',
+                'customer_name' => isset($validated['customer_name']) ? strip_tags($validated['customer_name']) : null,
+                'customer_phone' => isset($validated['customer_phone']) ? strip_tags($validated['customer_phone']) : null,
+                'notes' => isset($validated['notes']) ? strip_tags($validated['notes']) : null,
+                'total' => $total,
+                'status' => $orderStatus,
+                'payment_status' => $paymentStatus,
+                'cashier_id' => $cashierId,
+            ]);
+
+            if ($order->payment_status === 'paid' && $isCashierPos) {
+                Payment::create([
+                    'order_id' => $order->id,
+                    'cashier_id' => $order->cashier_id,
+                    'method' => 'cash',
+                    'amount' => $order->total,
+                    'cash_given' => $order->total,
+                    'change_amount' => 0,
+                    'status' => 'completed',
+                    'paid_at' => now(),
                 ]);
             }
-        }
 
-        if ($order->method === 'dine-in' && $request->table_number) {
-            Table::where('branch_id', $order->branch_id)
-                ->where('table_number', $request->table_number)
-                ->update(['status' => 'occupied']);
-        }
+            foreach ($items as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'menu_item_id' => $item['menu_item_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'notes' => isset($item['notes']) ? strip_tags($item['notes']) : null,
+                ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Pesanan berhasil dibuat!',
-            'data' => [
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-                'qr_code_token' => $order->qr_code_token,
-                'total' => $order->total,
-                'status' => $order->status,
-                'payment_status' => $order->payment_status,
-                'order_type' => $order->order_type,
-                'table_number' => $order->table_number,
-            ],
-        ], 201);
+                // Decrement Stock
+                $menuModel = MenuItem::lockForUpdate()->find($item['menu_item_id']);
+                if ($menuModel && $menuModel->stock_quantity !== null) {
+                    $newStock = max(0, $menuModel->stock_quantity - $item['quantity']);
+                    $status = 'tersedia';
+                    if ($newStock === 0) {
+                        $status = 'habis';
+                    } elseif ($newStock <= 5) {
+                        $status = 'hampir_habis';
+                    }
+
+                    $menuModel->update([
+                        'stock_quantity' => $newStock,
+                        'availability_status' => $status,
+                    ]);
+                }
+            }
+
+            if ($order->method === 'dine-in' && $request->table_number) {
+                Table::where('branch_id', $order->branch_id)
+                    ->where('table_number', $request->table_number)
+                    ->update(['status' => 'occupied']);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil dibuat!',
+                'data' => [
+                    'order_id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'qr_code_token' => $order->qr_code_token,
+                    'total' => $order->total,
+                    'status' => $order->status,
+                    'payment_status' => $order->payment_status,
+                    'order_type' => $order->order_type,
+                    'table_number' => $order->table_number,
+                ],
+            ], 201);
         });
     }
 
@@ -252,7 +261,7 @@ class OrderController extends Controller
         ]);
 
         $order = Order::findOrFail($id);
-        
+
         // Bug 14: Status Order Bisa Loncat-Loncat (State Machine Validation)
         $validTransitions = [
             'pending' => ['confirmed', 'cooking', 'ready', 'completed', 'cancelled'],
@@ -262,8 +271,8 @@ class OrderController extends Controller
             'completed' => [],
             'cancelled' => [],
         ];
-        
-        if (!in_array($validated['status'], $validTransitions[$order->status] ?? [])) {
+
+        if (! in_array($validated['status'], $validTransitions[$order->status] ?? [])) {
             return response()->json([
                 'success' => false,
                 'message' => "Transisi status dari {$order->status} ke {$validated['status']} tidak diizinkan.",
@@ -305,7 +314,7 @@ class OrderController extends Controller
                     ->where('table_number', $order->table_number)
                     ->update(['status' => 'available']);
             }
-            
+
             // Return stock
             foreach ($order->items as $item) {
                 $menuModel = MenuItem::lockForUpdate()->find($item->menu_item_id);
