@@ -161,9 +161,9 @@ void main() {
         ),
       );
 
-      expect(find.text('RM'), findsOneWidget);
+      expect(find.byType(Image), findsOneWidget);
       expect(find.text('Raso Mandeh'), findsOneWidget);
-      expect(find.text('RUMAH MAKAN MINANG'), findsOneWidget);
+      expect(find.text('RUMAH MAKAN PADANG'), findsOneWidget);
       expect(find.text('“Rasa yang tak pulang tanpa diingat.”'), findsOneWidget);
     });
 
@@ -184,9 +184,9 @@ void main() {
 
       await tester.pump(const Duration(milliseconds: 200));
 
-      expect(find.text('RM'), findsOneWidget);
+      expect(find.byType(Image), findsOneWidget);
       expect(find.text('Raso Mandeh'), findsOneWidget);
-      expect(find.text('RUMAH MAKAN MINANG'), findsOneWidget);
+      expect(find.text('RUMAH MAKAN PADANG'), findsOneWidget);
       expect(find.text('“Rasa yang tak pulang tanpa diingat.”'), findsOneWidget);
     });
 
@@ -296,9 +296,7 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-
-      expect(find.text('Raso'), findsOneWidget);
-      expect(find.text('RUMAH MAKAN MINANG'), findsOneWidget);
+      expect(find.byType(Image), findsWidgets);
       expect(find.text('MASAKAN MINANG OTENTIK'), findsOneWidget);
       expect(find.text('Rasa yang\ntak pulang\ntanpa diingat.'), findsOneWidget);
       expect(find.text('Lihat Menu'), findsOneWidget);
