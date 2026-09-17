@@ -27,10 +27,20 @@ class AppDownloadController extends Controller
      */
     public function downloadApk(): BinaryFileResponse|RedirectResponse
     {
-        $primaryPath = public_path('downloads/rasa-mandeh.apk');
-        $fallbackPath = base_path('build/app/outputs/flutter-apk/app-debug.apk');
+        $candidatePaths = [
+            public_path('downloads/rasa-mandeh.apk'),
+            base_path('mobile/build/app/outputs/flutter-apk/app-release.apk'),
+            base_path('mobile/build/app/outputs/flutter-apk/app-debug.apk'),
+            base_path('build/app/outputs/flutter-apk/app-debug.apk'),
+        ];
 
-        $apkPath = file_exists($primaryPath) ? $primaryPath : (file_exists($fallbackPath) ? $fallbackPath : null);
+        $apkPath = null;
+        foreach ($candidatePaths as $path) {
+            if (file_exists($path)) {
+                $apkPath = $path;
+                break;
+            }
+        }
 
         if ($apkPath === null || ! file_exists($apkPath)) {
             return redirect()->route('home')->with('error', 'Berkas APK sedang dalam pembaruan tim teknis.');
