@@ -17,8 +17,8 @@ class KasirController extends Controller
         $branches = Branch::where('is_active', true)->get();
         // Mengambil semua menu yang aktif untuk ditampilkan di grid kasir
         $menuItems = MenuItem::where('is_active', true)
-            ->with(['branchPrices'])
-            ->orderBy('kategori')
+            ->with(['branchPrices', 'category'])
+            ->orderBy('menu_category_id')
             ->orderBy('nama')
             ->get()
             ->map(function ($item) {

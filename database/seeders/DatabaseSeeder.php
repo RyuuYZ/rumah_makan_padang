@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Branch;
 use App\Models\BranchMenuPrice;
+use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -91,7 +92,27 @@ class DatabaseSeeder extends Seeder
             TableSeeder::class,
         ]);
 
-        // 2. Seed Menu Items
+        // 2. Seed Menu Categories
+        $categoriesMap = [
+            'ayam' => 'Ayam & Olahan',
+            'daging' => 'Daging Sapi',
+            'ikan' => 'Ikan & Seafood',
+            'sayur' => 'Sayur & Kuah',
+            'topping' => 'Lauk Tambahan',
+            'minuman' => 'Minuman Tradisional',
+            'nasi-padang' => 'Paket Nasi Padang',
+        ];
+
+        $categoryIds = [];
+        foreach ($categoriesMap as $slug => $nama) {
+            $cat = MenuCategory::firstOrCreate(
+                ['slug' => $slug],
+                ['nama' => $nama]
+            );
+            $categoryIds[$slug] = $cat->id;
+        }
+
+        // 3. Seed Menu Items
         $menuData = [
             // === AYAM ===
             [
@@ -374,7 +395,13 @@ class DatabaseSeeder extends Seeder
             $basePrice = $mData['base_price'];
             unset($mData['base_price']);
 
-            $item = MenuItem::create(array_merge($mData, ['is_active' => true]));
+            $kategoriSlug = $mData['kategori'] ?? null;
+            unset($mData['kategori']);
+
+            $item = MenuItem::create(array_merge($mData, [
+                'menu_category_id' => $categoryIds[$kategoriSlug] ?? null,
+                'is_active' => true,
+            ]));
             $createdMenuItems[] = $item;
 
             // Seed pricing for all branches

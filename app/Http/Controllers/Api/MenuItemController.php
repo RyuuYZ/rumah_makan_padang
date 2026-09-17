@@ -24,10 +24,13 @@ class MenuItemController extends Controller
 
     public function index(Request $request)
     {
-        $query = MenuItem::query()->where('is_active', true);
+        $query = MenuItem::query()->where('is_active', true)->with('category');
 
-        if ($request->has('kategori')) {
-            $query->where('kategori', $request->kategori);
+        if ($request->has('kategori') && $request->kategori !== 'all') {
+            $slug = $request->kategori;
+            $query->whereHas('category', function ($q) use ($slug) {
+                $q->where('slug', $slug);
+            });
         }
 
         if ($request->has('branch_id')) {

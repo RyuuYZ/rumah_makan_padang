@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -28,9 +29,25 @@ class MenuItem extends Model
         'is_active' => 'boolean',
     ];
 
-    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(MenuCategory::class, 'menu_category_id');
+    }
+
+    public function getKategoriAttribute(): ?string
+    {
+        return $this->category?->slug;
+    }
+
+    public function setKategoriAttribute(?string $value): void
+    {
+        if (! empty($value)) {
+            $category = MenuCategory::firstOrCreate(
+                ['slug' => $value],
+                ['nama' => ucwords(str_replace('-', ' ', $value))]
+            );
+            $this->attributes['menu_category_id'] = $category->id;
+        }
     }
 
     public function branchPrices(): HasMany
