@@ -21,6 +21,9 @@
     <!-- Reservation Section -->
     @include('components.reservation-form')
 
+    <!-- App Download Section (Unduh Aplikasi Android Rasa Mandeh) -->
+    @include('components.app-download-section')
+
     <!-- Customer Reviews / Testimonials Section -->
     @include('components.testimonial-section')
 @endsection

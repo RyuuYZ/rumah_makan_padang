@@ -28,3 +28,4 @@ Thumbs.db
 private-note.md
 /logs
 /storage/logs
+/public/downloads/*.apk

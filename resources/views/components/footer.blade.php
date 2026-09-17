@@ -8,7 +8,7 @@
                     <img src="/logo-versi-lightmode.webp" alt="Raso Mandeh Logo" class="brand-logo--footer">
                 </div>
                 <p class="text-sm text-white/70 leading-relaxed max-w-sm">
-                    {{ $settings['footer_text'] ?? 'Menyajikan keaslian masakan Minangkabau dengan resep turun-temurun sejak tahun 1950. Cita rasa otentik yang terjaga kehalalan, kebersihan, dan kenikmatannya di setiap suapan.' }}
+                    Menyajikan keaslian masakan Minangkabau dengan resep turun-temurun sejak tahun 1950. Cita rasa otentik yang terjaga kehalalan, kebersihan, dan kenikmatannya di setiap suapan.
                 </p>
                 <div class="text-xs text-[#C9A227] font-semibold tracking-wider uppercase">
                     100% Halal Certified MUI & BPJPH
@@ -36,19 +36,30 @@
                 </div>
             </div>
 
-            <!-- Branch Contact -->
+            <!-- Branch Contact & App Download -->
             <div class="lg:col-span-3 space-y-3">
                 <h4 class="font-serif font-bold text-base text-[#C9A227]">Layanan Pelanggan</h4>
                 <p class="text-sm text-white/75 leading-relaxed">
                     Hubungi tim kami untuk reservasi meja atau pertanyaan seputar pesanan katering partai besar:
                 </p>
-                <a href="https://wa.me/6281234567890" target="_blank" 
-                   class="inline-flex items-center space-x-2 text-sm font-semibold bg-[#7A1F2B] hover:bg-[#3D0F15] text-white px-4 py-2.5 rounded-xl transition-all shadow">
-                    <svg class="w-4 h-4 fill-current text-emerald-400" viewBox="0 0 24 24">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.981.536 1.769.814 2.796.815 3.182 0 5.767-2.587 5.768-5.766.001-3.181-2.585-5.801-5.768-5.801zm3.376 8.21c-.144.405-.837.774-1.17.824-.312.045-.634.072-1.849-.434-1.554-.647-2.548-2.222-2.627-2.327-.078-.105-.626-.832-.626-1.586 0-.754.394-1.125.533-1.282.144-.158.314-.197.419-.197.105 0 .21.002.302.007.098.005.229-.037.358.272.131.315.446 1.088.486 1.168.039.079.066.171.013.276-.053.105-.079.171-.157.263-.079.092-.165.205-.236.276-.079.079-.161.165-.069.322.092.158.408.673.875 1.089.601.535 1.109.7 1.267.779.158.079.25.066.342-.039.092-.105.394-.459.5-.617.105-.158.21-.131.354-.079.144.053.918.433 1.076.512.158.079.263.118.302.184.039.065.039.38-.105.785z"/>
-                    </svg>
-                    <span>WhatsApp Hotline Center</span>
-                </a>
+                <div class="flex flex-col space-y-2.5 pt-1">
+                    <a href="https://wa.me/6281234567890" target="_blank" 
+                       class="inline-flex items-center space-x-2 text-sm font-semibold bg-[#7A1F2B] hover:bg-[#5A1620] text-white px-4 py-2.5 rounded-xl transition-all shadow border border-[#C9A227]/20">
+                        <svg class="w-4 h-4 fill-current text-emerald-400 shrink-0" viewBox="0 0 24 24">
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.981.536 1.769.814 2.796.815 3.182 0 5.767-2.587 5.768-5.766.001-3.181-2.585-5.801-5.768-5.801zm3.376 8.21c-.144.405-.837.774-1.17.824-.312.045-.634.072-1.849-.434-1.554-.647-2.548-2.222-2.627-2.327-.078-.105-.626-.832-.626-1.586 0-.754.394-1.125.533-1.282.144-.158.314-.197.419-.197.105 0 .21.002.302.007.098.005.229-.037.358.272.131.315.446 1.088.486 1.168.039.079.066.171.013.276-.053.105-.079.171-.157.263-.079.092-.165.205-.236.276-.079.079-.161.165-.069.322.092.158.408.673.875 1.089.601.535 1.109.7 1.267.779.158.079.25.066.342-.039.092-.105.394-.459.5-.617.105-.158.21-.131.354-.079.144.053.918.433 1.076.512.158.079.263.118.302.184.039.065.039.38-.105.785z"/>
+                        </svg>
+                        <span>WhatsApp Hotline Center</span>
+                    </a>
+
+                    <a href="{{ route('home') }}#download-app" 
+                       class="inline-flex items-center space-x-2 text-sm font-semibold bg-[#7A1F2B] hover:bg-[#5A1620] text-white px-4 py-2.5 rounded-xl transition-all shadow border border-[#C9A227]/20 group">
+                        <svg class="w-4 h-4 text-[#C9A227] shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        <span>Unduh Aplikasi Mobile</span>
+                        <span class="ml-auto px-1.5 py-0.5 rounded bg-[#C9A227] text-[10px] font-black text-[#241B16]">APK</span>
+                    </a>
+                </div>
             </div>
 
         </div>

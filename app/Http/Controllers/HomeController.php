@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QrCodeHelper;
 use App\Models\Branch;
+use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Review;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -35,14 +38,17 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        $categories = \App\Models\MenuCategory::select('id', 'nama as name', 'slug')->get();
+        $categories = MenuCategory::select('id', 'nama as name', 'slug')->get();
         // Add "Semua Hidangan" at the beginning
         $allCategories = collect([['id' => 'all', 'name' => 'Semua Hidangan', 'slug' => 'all']]);
         $categories = $allCategories->concat($categories);
 
-        $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
+        $settings = Setting::pluck('value', 'key')->toArray();
 
-        return view('pages.home', compact('branches', 'menuItems', 'reviews', 'categories', 'settings'));
+        $downloadUrl = route('app.download.apk');
+        $qrCodeSvg = QrCodeHelper::generate($downloadUrl, 320);
+
+        return view('pages.home', compact('branches', 'menuItems', 'reviews', 'categories', 'settings', 'downloadUrl', 'qrCodeSvg'));
     }
 
     public function storeReservation(Request $request)
@@ -77,7 +83,7 @@ class HomeController extends Controller
             ->where('order_number', $request->order_number)
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             return response()->json(['success' => false, 'message' => 'Pesanan tidak ditemukan.']);
         }
 
@@ -135,7 +141,7 @@ class HomeController extends Controller
                 ->where('menu_item_id', $reviewData['menu_item_id'])
                 ->exists();
 
-            if (!$exists) {
+            if (! $exists) {
                 Review::create([
                     'order_id' => $orderId,
                     'menu_item_id' => $reviewData['menu_item_id'],

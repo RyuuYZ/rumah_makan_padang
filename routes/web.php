@@ -9,12 +9,13 @@ use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PosController;
-use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ReservationController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\TwoFactorController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
+use App\Http\Controllers\AppDownloadController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SystemLogController;
 use App\Http\Middleware\IsAdmin;
@@ -43,6 +44,11 @@ Route::post('/cek-pesanan', [ApiOrderController::class, 'processSearch'])->name(
 
 // Halaman status order customer — tampilkan QR Order dan status pesanan (BRD CUS-08)
 Route::get('/pesanan/{token}', [ApiOrderController::class, 'orderStatus'])->name('order.status');
+
+// Unduh Aplikasi Mobile APK & Halaman Download Resmi
+Route::get('/download/apk', [AppDownloadController::class, 'downloadApk'])->name('app.download.apk');
+Route::get('/download/qr', [AppDownloadController::class, 'qrCode'])->name('app.download.qr');
+Route::get('/unduh-aplikasi', [AppDownloadController::class, 'unduhPage'])->name('app.download.page');
 
 /*
 |--------------------------------------------------------------------------
