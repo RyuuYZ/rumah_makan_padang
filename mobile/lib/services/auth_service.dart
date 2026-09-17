@@ -35,6 +35,11 @@ class AuthService {
     await _initGoogleSignIn();
 
     try {
+      // Bersihkan cache sesi Google sebelumnya agar dialog pemilih akun selalu muncul
+      try {
+        await GoogleSignIn.instance.signOut();
+      } catch (_) {}
+
       final GoogleSignInAccount account =
           await GoogleSignIn.instance.authenticate();
 
@@ -42,7 +47,8 @@ class AuthService {
       final String googleEmail = account.email;
       final String? googlePhoto = account.photoUrl;
       final String googleId = account.id;
-      final String? idToken = account.authentication.idToken;
+      final auth = account.authentication;
+      final String? idToken = auth.idToken;
 
       // Sinkronisasi ke backend Laravel
       final backendUser = await ApiService.syncGoogleUser(
