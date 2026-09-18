@@ -18,21 +18,25 @@ class DashboardController extends Controller
             $query->where('status', 'completed')
                 ->orWhere('payment_status', 'paid');
         })->where('status', '!=', 'cancelled')->sum('total');
-        $totalOrders = Order::count();
-        $pendingOrders = Order::where('status', 'pending')->count();
-        $totalMenuItems = MenuItem::where('is_active', true)->count();
-        $totalBranches = Branch::where('is_active', true)->count();
-        $pendingReviews = Review::where('is_approved', false)->count();
+        $rawStatusCounts = Order::select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status');
 
         // Status counts for visual pipeline
         $statusCounts = [
-            'pending' => Order::where('status', 'pending')->count(),
-            'confirmed' => Order::where('status', 'confirmed')->count(),
-            'cooking' => Order::where('status', 'cooking')->count(),
-            'ready' => Order::where('status', 'ready')->count(),
-            'completed' => Order::where('status', 'completed')->count(),
-            'cancelled' => Order::where('status', 'cancelled')->count(),
+            'pending' => (int) $rawStatusCounts->get('pending', 0),
+            'confirmed' => (int) $rawStatusCounts->get('confirmed', 0),
+            'cooking' => (int) $rawStatusCounts->get('cooking', 0),
+            'ready' => (int) $rawStatusCounts->get('ready', 0),
+            'completed' => (int) $rawStatusCounts->get('completed', 0),
+            'cancelled' => (int) $rawStatusCounts->get('cancelled', 0),
         ];
+
+        $totalOrders = (int) $rawStatusCounts->sum();
+        $pendingOrders = $statusCounts['pending'];
+        $totalMenuItems = MenuItem::where('is_active', true)->count();
+        $totalBranches = Branch::where('is_active', true)->count();
+        $pendingReviews = Review::where('is_approved', false)->count();
 
         // Recent orders
         $recentOrders = Order::with(['branch', 'items.menuItem'])
