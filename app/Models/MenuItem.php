@@ -40,7 +40,11 @@ class MenuItem extends Model
 
     public function getKategoriAttribute(): ?string
     {
-        return $this->category?->slug;
+        if ($this->relationLoaded('category')) {
+            return $this->category?->slug;
+        }
+
+        return null;
     }
 
     public function setKategoriAttribute(?string $value): void

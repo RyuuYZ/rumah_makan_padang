@@ -39,7 +39,7 @@ class DashboardController extends Controller
         $pendingReviews = Review::where('is_approved', false)->count();
 
         // Recent orders
-        $recentOrders = Order::with(['branch', 'items.menuItem'])
+        $recentOrders = Order::with(['branch', 'items.menuItem.category'])
             ->latest()
             ->take(6)
             ->get();
@@ -51,7 +51,7 @@ class DashboardController extends Controller
             })
             ->groupBy('menu_item_id')
             ->orderByDesc('total_qty')
-            ->with('menuItem')
+            ->with('menuItem.category')
             ->take(5)
             ->get();
 
