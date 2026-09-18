@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 class Order extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'branch_id',
         'cashier_id',

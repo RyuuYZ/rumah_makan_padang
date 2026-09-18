@@ -38,8 +38,8 @@ class ReviewController extends Controller
     public function togglePin($id)
     {
         $review = Review::findOrFail($id);
-        
-        if (!$review->is_pinned) {
+
+        if (! $review->is_pinned) {
             $pinnedCount = Review::where('is_pinned', true)->count();
             if ($pinnedCount >= 4) {
                 return redirect()->back()->with('error', 'Maksimal 4 ulasan dapat disematkan. Harap lepas sematan ulasan lain terlebih dahulu.');

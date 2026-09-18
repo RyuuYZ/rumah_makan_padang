@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -17,13 +18,13 @@ return new class extends Migration
 
         $categories = ['nasi-padang', 'daging', 'ayam', 'ikan', 'sayur', 'topping', 'minuman'];
         foreach ($categories as $cat) {
-            $id = \Illuminate\Support\Facades\DB::table('menu_categories')->insertGetId([
+            $id = DB::table('menu_categories')->insertGetId([
                 'nama' => ucwords(str_replace('-', ' ', $cat)),
                 'slug' => $cat,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            \Illuminate\Support\Facades\DB::table('menu_items')->where('kategori', $cat)->update(['menu_category_id' => $id]);
+            DB::table('menu_items')->where('kategori', $cat)->update(['menu_category_id' => $id]);
         }
     }
 

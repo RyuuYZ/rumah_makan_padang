@@ -25,11 +25,11 @@ class ReservationController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|in:pending,confirmed,cancelled,completed',
-            'table_id' => 'nullable|exists:tables,id'
+            'table_id' => 'nullable|exists:tables,id',
         ]);
 
         $reservation = Reservation::findOrFail($id);
-        
+
         $updateData = ['status' => $validated['status']];
         if ($request->filled('table_id')) {
             $updateData['table_id'] = $validated['table_id'];
@@ -39,12 +39,12 @@ class ReservationController extends Controller
 
         return redirect()->back()->with('success', "Status reservasi berhasil diperbarui menjadi {$validated['status']}.");
     }
-    
+
     public function destroy($id)
     {
         $reservation = Reservation::findOrFail($id);
         $reservation->delete();
-        
-        return redirect()->back()->with('success', "Reservasi berhasil dihapus.");
+
+        return redirect()->back()->with('success', 'Reservasi berhasil dihapus.');
     }
 }

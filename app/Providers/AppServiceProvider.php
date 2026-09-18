@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
+use App\Models\Review;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,11 +27,11 @@ class AppServiceProvider extends ServiceProvider
             \URL::forceScheme('https');
         }
 
-        \Illuminate\Database\Eloquent\Model::preventLazyLoading(! $this->app->isProduction());
+        Model::preventLazyLoading(! $this->app->isProduction());
 
-        \Illuminate\Support\Facades\View::composer('layouts.admin', function ($view) {
-            $view->with('pendingOrdersCount', \App\Models\Order::where('status', 'pending')->count());
-            $view->with('unapprovedReviewsCount', \App\Models\Review::where('is_approved', false)->count());
+        View::composer('layouts.admin', function ($view) {
+            $view->with('pendingOrdersCount', Order::where('status', 'pending')->count());
+            $view->with('unapprovedReviewsCount', Review::where('is_approved', false)->count());
         });
     }
 }

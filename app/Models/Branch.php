@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Branch extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'nama',
         'kota',

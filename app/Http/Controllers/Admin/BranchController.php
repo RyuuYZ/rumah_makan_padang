@@ -8,6 +8,7 @@ use App\Models\BranchMenuPrice;
 use App\Models\MenuItem;
 use App\Models\Table;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class BranchController extends Controller
 {
@@ -54,7 +55,7 @@ class BranchController extends Controller
             ]);
         }
 
-        \Illuminate\Support\Facades\Cache::forget('active_branches_v2');
+        Cache::forget('active_branches_v2');
 
         return redirect()->route('admin.branches.index')->with('success', "Cabang baru '{$branch->nama}' berhasil ditambahkan!");
     }
@@ -72,7 +73,7 @@ class BranchController extends Controller
         $branch = Branch::findOrFail($id);
         $branch->update($validated);
 
-        \Illuminate\Support\Facades\Cache::forget('active_branches_v2');
+        Cache::forget('active_branches_v2');
 
         return redirect()->route('admin.branches.index')->with('success', "Data cabang '{$branch->nama}' berhasil diperbarui!");
     }
@@ -84,7 +85,7 @@ class BranchController extends Controller
 
         $statusText = $branch->is_active ? 'dibuka kembali' : 'ditutup sementara';
 
-        \Illuminate\Support\Facades\Cache::forget('active_branches_v2');
+        Cache::forget('active_branches_v2');
 
         return redirect()->back()->with('success', "Status cabang '{$branch->nama}' {$statusText}.");
     }
@@ -95,7 +96,7 @@ class BranchController extends Controller
         $nama = $branch->nama;
         $branch->delete();
 
-        \Illuminate\Support\Facades\Cache::forget('active_branches_v2');
+        Cache::forget('active_branches_v2');
 
         return redirect()->route('admin.branches.index')->with('success', "Cabang '{$nama}' berhasil dihapus.");
     }

@@ -25,10 +25,10 @@ class BackupDatabase extends Command
      */
     public function handle()
     {
-        $filename = "backup-" . date('Y-m-d_H-i-s') . ".sql";
-        $path = storage_path("app/backups/" . $filename);
+        $filename = 'backup-'.date('Y-m-d_H-i-s').'.sql';
+        $path = storage_path('app/backups/'.$filename);
 
-        if (!file_exists(storage_path('app/backups'))) {
+        if (! file_exists(storage_path('app/backups'))) {
             mkdir(storage_path('app/backups'), 0755, true);
         }
 
@@ -41,14 +41,14 @@ class BackupDatabase extends Command
             $path
         );
 
-        $returnVar = NULL;
-        $output  = NULL;
+        $returnVar = null;
+        $output = null;
         exec($command, $output, $returnVar);
 
         if ($returnVar === 0) {
             $this->info("Database backup created successfully at: {$path}");
         } else {
-            $this->error("Failed to backup database.");
+            $this->error('Failed to backup database.');
         }
     }
 }

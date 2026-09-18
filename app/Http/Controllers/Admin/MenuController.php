@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\BranchMenuPrice;
+use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Services\WebpUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class MenuController extends Controller
 {
@@ -28,7 +30,7 @@ class MenuController extends Controller
 
         $menuItems = $query->latest()->paginate(10)->withQueryString();
 
-        $categories = \App\Models\MenuCategory::pluck('nama', 'id')->toArray();
+        $categories = MenuCategory::pluck('nama', 'id')->toArray();
 
         return view('admin.menu.index', compact('menuItems', 'categories'));
     }
@@ -87,7 +89,7 @@ class MenuController extends Controller
             ]);
         }
 
-        \Illuminate\Support\Facades\Cache::forget('active_menu_items_v2');
+        Cache::forget('active_menu_items_v2');
 
         return redirect()->route('admin.menu.index')->with('success', "Hidangan '{$menuItem->nama}' (WebP) berhasil ditambahkan ke menu!");
     }
@@ -141,7 +143,7 @@ class MenuController extends Controller
             'harga' => $validated['harga'],
         ]);
 
-        \Illuminate\Support\Facades\Cache::forget('active_menu_items_v2');
+        Cache::forget('active_menu_items_v2');
 
         return redirect()->route('admin.menu.index')->with('success', "Menu '{$menuItem->nama}' berhasil diperbarui!");
     }
@@ -153,7 +155,7 @@ class MenuController extends Controller
 
         $statusText = $menuItem->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
-        \Illuminate\Support\Facades\Cache::forget('active_menu_items_v2');
+        Cache::forget('active_menu_items_v2');
 
         return redirect()->back()->with('success', "Status menu '{$menuItem->nama}' berhasil {$statusText}.");
     }
@@ -164,7 +166,7 @@ class MenuController extends Controller
         $name = $menuItem->nama;
         $menuItem->delete();
 
-        \Illuminate\Support\Facades\Cache::forget('active_menu_items_v2');
+        Cache::forget('active_menu_items_v2');
 
         return redirect()->route('admin.menu.index')->with('success', "Menu '{$name}' berhasil dihapus.");
     }
