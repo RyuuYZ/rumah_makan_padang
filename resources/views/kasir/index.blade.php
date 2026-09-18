@@ -22,7 +22,7 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<<body class="bg-neutral-100 text-neutral-800 antialiased overflow-hidden">
+<body class="bg-neutral-100 text-neutral-800 antialiased overflow-hidden">
 
     <!-- MAIN WRAPPER TERKUNCI 100% -->
     <div x-data="kasirApp()" class="fixed inset-0 flex w-full h-full overflow-hidden">
