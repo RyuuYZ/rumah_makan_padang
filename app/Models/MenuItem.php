@@ -29,6 +29,10 @@ class MenuItem extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $appends = [
+        'kategori',
+    ];
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(MenuCategory::class, 'menu_category_id');
