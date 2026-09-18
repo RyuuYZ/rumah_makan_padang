@@ -56,15 +56,20 @@ class AppDownloadController extends Controller
     }
 
     /**
-     * Menghasilkan QR Code SVG base64 untuk mengunduh APK secara langsung.
+     * Menghasilkan QR Code SVG mentah untuk mengunduh APK secara langsung.
      */
     public function qrCode(): Response
     {
         $downloadUrl = route('app.download.apk');
-        $qrCodeSvg = QrCodeHelper::generate($downloadUrl, 320);
+        $qrCodeDataUri = QrCodeHelper::generate($downloadUrl, 320);
 
-        return response($qrCodeSvg, 200, [
+        $svgContent = str_contains($qrCodeDataUri, ',')
+            ? base64_decode(explode(',', $qrCodeDataUri)[1])
+            : $qrCodeDataUri;
+
+        return response($svgContent, 200, [
             'Content-Type' => 'image/svg+xml',
+            'Cache-Control' => 'public, max-age=86400',
         ]);
     }
 }
