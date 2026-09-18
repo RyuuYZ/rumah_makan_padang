@@ -14,7 +14,7 @@ class TableSeeder extends Seeder
 
         foreach ($branches as $branch) {
             for ($i = 1; $i <= 20; $i++) {
-                Table::firstOrCreate([
+                Table::updateOrCreate([
                     'branch_id' => $branch->id,
                     'table_number' => 'Meja '.str_pad($i, 2, '0', STR_PAD_LEFT),
                 ], [

@@ -84,7 +84,10 @@ class DatabaseSeeder extends Seeder
 
         $branches = [];
         foreach ($branchesData as $bData) {
-            $branches[] = Branch::create($bData);
+            $branches[] = Branch::firstOrCreate(
+                ['nama' => $bData['nama']],
+                $bData
+            );
         }
 
         // Seed Tables for all created branches
@@ -398,21 +401,47 @@ class DatabaseSeeder extends Seeder
             $kategoriSlug = $mData['kategori'] ?? null;
             unset($mData['kategori']);
 
-            $item = MenuItem::create(array_merge($mData, [
-                'menu_category_id' => $categoryIds[$kategoriSlug] ?? null,
-                'is_active' => true,
-            ]));
+            $item = MenuItem::firstOrCreate(
+                ['nama' => $mData['nama']],
+                array_merge($mData, [
+                    'menu_category_id' => $categoryIds[$kategoriSlug] ?? null,
+                    'is_active' => true,
+                ])
+            );
             $createdMenuItems[] = $item;
 
             // Seed pricing for all branches
-            foreach ($branches as $branch) {
+            $allBranches = Branch::all();
+            foreach ($allBranches as $branch) {
                 $adj = ($branch->kota === 'Jakarta Selatan') ? 2000 : 0;
-                BranchMenuPrice::create([
-                    'branch_id' => $branch->id,
-                    'menu_item_id' => $item->id,
-                    'harga' => $basePrice + $adj,
-                    'is_available' => true,
-                ]);
+                BranchMenuPrice::firstOrCreate(
+                    [
+                        'branch_id' => $branch->id,
+                        'menu_item_id' => $item->id,
+                    ],
+                    [
+                        'harga' => $basePrice + $adj,
+                        'is_available' => true,
+                    ]
+                );
+            }
+        }
+
+        // Backfill prices for any existing menu items and branches
+        $allBranches = Branch::all();
+        $allItems = MenuItem::all();
+        foreach ($allBranches as $branch) {
+            foreach ($allItems as $item) {
+                BranchMenuPrice::firstOrCreate(
+                    [
+                        'branch_id' => $branch->id,
+                        'menu_item_id' => $item->id,
+                    ],
+                    [
+                        'harga' => 30000,
+                        'is_available' => true,
+                    ]
+                );
             }
         }
 

@@ -1,4 +1,4 @@
-<section id="cabang" class="py-16 bg-white/70 border-y border-[#C9A227]/20">
+<section id="cabang" x-init="if (!selectedBranchId || !{{ $branches->pluck('id')->toJson() }}?.includes(Number(selectedBranchId))) selectBranch('{{ $branches->first()?->kota }}', {{ $branches->first()?->id ?? 1 }})" class="py-16 bg-white/70 border-y border-[#C9A227]/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-10">
             <span class="text-[#7A1F2B] font-semibold text-xs uppercase tracking-widest block mb-2">Lokasi Restoran</span>
