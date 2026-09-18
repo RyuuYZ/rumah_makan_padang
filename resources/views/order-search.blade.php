@@ -34,8 +34,7 @@
             </div>
 
             <form action="{{ route('order.search.submit') }}" method="POST" id="searchForm" class="space-y-6">
-    @csrf
- @csrf
+                @csrf
                 
                 <!-- Mode Manual -->
                 <div x-show="mode === 'manual'" class="space-y-6">

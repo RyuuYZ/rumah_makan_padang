@@ -106,8 +106,7 @@
                 <button @click="showAddModal = false" class="text-white/70 hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form action="{{ route('admin.tables.store') }}" method="POST" class="p-6">
-    @csrf
- @csrf
+                @csrf
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-bold text-neutral-700 mb-1">Pilih Cabang</label>
@@ -152,8 +151,7 @@
                 <button @click="showEditModal = false" class="text-neutral-400 hover:text-neutral-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <form :action="`/admin/tables/${editData?.id}`" method="POST" class="p-6">
-    @csrf
- @csrf
+                @csrf
                 @method('PUT')
                 <div class="space-y-4">
                     <div>

@@ -100,8 +100,7 @@
                 </div>
 
                 <form action="{{ route('admin.branches.store') }}" method="POST" class="space-y-3 text-xs">
-    @csrf
- @csrf
+                    @csrf
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Cabang *</label>
                         <input type="text" name="nama" required placeholder="Raso Mandeh - Yogyakarta" class="w-full text-xs p-2.5 rounded-xl border border-neutral-300 outline-none">
@@ -156,8 +155,7 @@
                 </div>
 
                 <form :action="'/admin/branches/' + editBranch.id" method="POST" class="space-y-3 text-xs">
-    @csrf
- @csrf
+                    @csrf
                     @method('PUT')
                     <div>
                         <label class="block font-semibold text-neutral-700 mb-1">Nama Cabang *</label>
