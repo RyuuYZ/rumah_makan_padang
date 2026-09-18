@@ -245,11 +245,19 @@ class OrderController extends Controller
         return redirect()->route('order.status', ['token' => $order->qr_code_token]);
     }
 
-    public function orderStatus(string $token)
+    public function orderStatus(Request $request, string $token)
     {
         $order = Order::with(['items.menuItem', 'branch'])
             ->where('qr_code_token', $token)
             ->firstOrFail();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'status' => $order->status,
+                'payment_status' => $order->payment_status,
+            ]);
+        }
 
         return view('order-status', compact('order'));
     }

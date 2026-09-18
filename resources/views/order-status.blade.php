@@ -31,7 +31,10 @@
                 <div class="flex items-center justify-between py-3 border-t border-b border-neutral-100">
                     <div class="text-left">
                         <p class="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-1">Status</p>
-                        <p class="font-bold text-[#C9A227] capitalize">{{ $order->status }}</p>
+                        <div class="flex items-center space-x-1.5">
+                            <span id="order-status-dot" class="w-2 h-2 rounded-full bg-[#C9A227] animate-pulse"></span>
+                            <p id="order-status-badge" class="font-bold text-[#C9A227] capitalize">{{ $order->status }}</p>
+                        </div>
                     </div>
                     <div class="text-right">
                         <p class="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-1">Total Bayar</p>
@@ -140,5 +143,42 @@ function generateCanvas(ticketElement, btn, originalText) {
         btn.disabled = false;
     });
 }
+
+// Polling live status pesanan otomatis setiap 5 detik
+(function() {
+    let currentStatus = '{{ $order->status }}';
+    if (currentStatus === 'completed' || currentStatus === 'cancelled') {
+        const dot = document.getElementById('order-status-dot');
+        if (dot) dot.classList.remove('animate-pulse');
+        return;
+    }
+
+    const pollInterval = setInterval(async () => {
+        try {
+            const res = await fetch(window.location.href, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.status && data.status !== currentStatus) {
+                    currentStatus = data.status;
+                    const badge = document.getElementById('order-status-badge');
+                    if (badge) {
+                        badge.textContent = data.status;
+                        badge.classList.add('transition-all', 'duration-300', 'scale-110');
+                        setTimeout(() => badge.classList.remove('scale-110'), 300);
+                    }
+                    if (data.status === 'completed' || data.status === 'cancelled') {
+                        const dot = document.getElementById('order-status-dot');
+                        if (dot) dot.classList.remove('animate-pulse');
+                        clearInterval(pollInterval);
+                    }
+                }
+            }
+        } catch (e) {
+            // Abaikan kegagalan jaringan sementara saat polling
+        }
+    }, 5000);
+})();
 </script>
 @endsection
