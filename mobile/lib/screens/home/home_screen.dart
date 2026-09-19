@@ -493,7 +493,7 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _buildFeatureCard(
-                                  icon: '🌶️',
+                                  iconAsset: 'assets/icons/ic_rempah_segar.png',
                                   title: 'Rempah Segar',
                                   subtitle: 'Giling langsung tiap hari',
                                 ),
@@ -501,7 +501,7 @@ class HomeScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: _buildFeatureCard(
-                                  icon: '🍲',
+                                  iconAsset: 'assets/icons/ic_resep_tradisional.png',
                                   title: 'Resep Tradisional',
                                   subtitle: 'Warisan 3 generasi',
                                 ),
@@ -513,7 +513,7 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _buildFeatureCard(
-                                  icon: '🍚',
+                                  iconAsset: 'assets/icons/ic_nasi_hangat.png',
                                   title: 'Nasi Hangat',
                                   subtitle: 'Beras Solok pulen alami',
                                 ),
@@ -521,7 +521,7 @@ class HomeScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: _buildFeatureCard(
-                                  icon: '⭐',
+                                  iconAsset: 'assets/icons/ic_rating.png',
                                   title: 'Rating 4.9 / 5',
                                   subtitle: '1.200+ ulasan',
                                 ),
@@ -584,7 +584,7 @@ class HomeScreen extends StatelessWidget {
 
   // Feature Card Widget (2x2)
   Widget _buildFeatureCard({
-    required String icon,
+    required String iconAsset,
     required String title,
     required String subtitle,
   }) {
@@ -612,7 +612,12 @@ class HomeScreen extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child: Text(icon, style: const TextStyle(fontSize: 16)),
+            child: Image.asset(
+              iconAsset,
+              width: 20,
+              height: 20,
+              fit: BoxFit.contain,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
