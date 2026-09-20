@@ -20,7 +20,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $branches = Branch::where('is_active', true)->get();
+        $branches = Branch::where('is_active', true)->orderBy('id')->get()->unique('nama')->values();
 
         $menuItems = MenuItem::where('is_active', true)
             ->with(['branchPrices', 'category'])
