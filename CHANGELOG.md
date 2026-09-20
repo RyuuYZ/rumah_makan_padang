@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **Integrasi Database Live ke Aplikasi Mobile (Flutter)**:
+  - Menyambungkan katalog menu `MenuProvider` di aplikasi Flutter ke API Laravel backend via `ApiService.getMenuItems()` dengan fitur *pull-to-refresh* `refreshMenu()`.
+  - Menyambungkan proses pemesanan `OrderProvider.createOrder()` di aplikasi Flutter ke endpoint `/api/v1/orders` Laravel backend via `ApiService.createOrder()`.
+  - Menambahkan dukungan parameter build `--dart-define=API_URL=https://api.domainanda.com` dan properti `ApiConfig.customProductionUrl` di `ApiConfig.dart` untuk *deployment online* yang 100% fleksibel di berbagai platform hosting/cloud (Laravel Cloud, Vercel, VPS).
+  - Menjaga pertahanan *offline fallback* otomatis ke data lokal/mock agar aplikasi Flutter tidak *crash* ketika koneksi server terputus.
+
 ### Fixed
 - **POS Kasir & Logika Transaksi**:
   - Memperbaiki parsing data scanner POS pada `PosController::findOrder` (`$item->menuItem->nama` dan `$order->branch->nama`) sehingga tidak lagi memunculkan label keliru *"Menu Dihapus"* dan cabang kosong.
