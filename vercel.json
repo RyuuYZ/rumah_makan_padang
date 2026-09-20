@@ -19,6 +19,10 @@
             "dest": "/public/assets/$1"
         },
         {
+            "src": "/downloads/(.*)",
+            "dest": "/public/downloads/$1"
+        },
+        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }

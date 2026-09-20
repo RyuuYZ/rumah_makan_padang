@@ -116,7 +116,6 @@
                     <div class="space-y-3 pt-1">
                         {{-- Tombol Utama: Download APK Android (Hero CTA) --}}
                         <a href="{{ $downloadUrl ?? (Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk')) }}" 
-                           download="rasa-mandeh-v1.0.0.apk"
                            class="w-full bg-[#7A1F2B] hover:bg-[#5A1620] text-white rounded-2xl p-4 sm:px-6 sm:py-4 shadow-md shadow-[#7A1F2B]/20 hover:shadow-xl hover:shadow-[#7A1F2B]/35 transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-between group border-2 border-[#C9A227]/40">
                             <div class="flex items-center space-x-3 sm:space-x-4">
                                 <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-[#C9A227] group-hover:scale-110 transition-transform shrink-0 ring-1 ring-white/20">
@@ -127,7 +126,7 @@
                                 <div class="text-left">
                                     <span class="block text-[10px] sm:text-[11px] font-extrabold tracking-widest text-[#C9A227] uppercase">INSTALASI LANGSUNG ANDROID</span>
                                     <span class="block text-base sm:text-lg font-black text-white leading-tight">Download APK Android</span>
-                                    <span class="block text-[10px] text-[#F5EFE2]/70 font-medium mt-0.5">Ukuran: ~161 MB • Versi Resmi Rasa Mandeh</span>
+                                    <span class="block text-[10px] text-[#F5EFE2]/70 font-medium mt-0.5">Ukuran: ~55 MB • Versi Rilis Resmi Rasa Mandeh</span>
                                 </div>
                             </div>
                             <div class="shrink-0 pl-2">
@@ -382,7 +381,6 @@
 
                                 {{-- In-App Download CTA Button --}}
                                 <a href="{{ $downloadUrl ?? (Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk')) }}" 
-                                   download="rasa-mandeh-v1.0.0.apk"
                                    class="w-full py-2 px-3 bg-[#7A1F2B] hover:bg-[#8B2332] text-white rounded-xl text-[10px] font-bold flex items-center justify-between shadow-xs border border-[#C9A227]/40 transition-transform active:scale-95 group">
                                     <div class="flex items-center space-x-1.5">
                                         <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[#C9A227] shrink-0">

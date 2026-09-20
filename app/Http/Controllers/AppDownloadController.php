@@ -28,6 +28,18 @@ class AppDownloadController extends Controller
      */
     public function downloadApk(): BinaryFileResponse|RedirectResponse
     {
+        // 1. Dukungan URL eksternal (Google Drive / GitHub Releases / Cloud Storage / CDN)
+        $externalUrl = env('APK_DOWNLOAD_URL');
+        if (! empty($externalUrl)) {
+            return redirect()->away($externalUrl);
+        }
+
+        // 2. Jika di Vercel / serverless, redirect langsung ke static asset agar dilayani oleh CDN (tanpa limit 4.5MB serverless)
+        if (isset($_SERVER['VERCEL']) && file_exists(public_path('downloads/rasa-mandeh.apk'))) {
+            return redirect('/downloads/rasa-mandeh.apk');
+        }
+
+        // 3. Cari berkas APK lokal dari prioritas release hingga debug
         $candidatePaths = [
             public_path('downloads/rasa-mandeh.apk'),
             base_path('mobile/build/app/outputs/flutter-apk/app-release.apk'),
@@ -44,11 +56,12 @@ class AppDownloadController extends Controller
         }
 
         if ($apkPath === null || ! file_exists($apkPath)) {
-            return redirect()->route('home')->with('error', 'Berkas APK sedang dalam pembaruan tim teknis.');
+            return redirect()->route('app.download.page')->with('error', 'Berkas APK sedang dalam pembaruan tim teknis.');
         }
 
         $headers = [
             'Content-Type' => 'application/vnd.android.package-archive',
+            'Content-Disposition' => 'attachment; filename="rasa-mandeh-v1.0.0.apk"',
             'Content-Length' => (string) filesize($apkPath),
             'Cache-Control' => 'no-cache, must-revalidate',
         ];
