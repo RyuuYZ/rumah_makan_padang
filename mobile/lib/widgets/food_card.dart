@@ -199,9 +199,9 @@ class FoodCard extends StatelessWidget {
                                   const Icon(Icons.star_rounded, color: Color(0xFFDF9C36), size: 12),
                                   const SizedBox(width: 2),
                                   Text(
-                                    item.rating.toStringAsFixed(1),
+                                    '${item.rating.toStringAsFixed(1)} (${item.reviewCount > 999 ? '${(item.reviewCount / 1000).toStringAsFixed(1)}k' : item.reviewCount})',
                                     style: const TextStyle(
-                                      fontSize: 10.5,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.w700,
                                       color: Color(0xFF4A3525),
                                     ),
@@ -377,6 +377,21 @@ class FoodCard extends StatelessWidget {
                           fontSize: 11.5,
                           color: AppColors.textSecondary,
                         ),
+                      ),
+                      const SizedBox(height: 3),
+                      Row(
+                        children: [
+                          const Icon(Icons.star_rounded, color: AppColors.gold, size: 14),
+                          const SizedBox(width: 3),
+                          Text(
+                            '${item.rating.toStringAsFixed(1)} (${item.reviewCount > 999 ? '${(item.reviewCount / 1000).toStringAsFixed(1)}k' : item.reviewCount} ulasan)',
+                            style: AppTypography.caption.copyWith(
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10.5,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 6),
                       Row(

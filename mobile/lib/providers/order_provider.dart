@@ -150,8 +150,15 @@ class OrderProvider extends ChangeNotifier {
     String? customerPhone,
     int branchId = 1,
   }) async {
+    if (_isLoading && activeOrder != null) {
+      return activeOrder!;
+    }
+
     _isLoading = true;
     notifyListeners();
+
+    // Simulasi jeda network & pencegah race-condition
+    await Future.delayed(const Duration(milliseconds: 300));
 
     String? remoteOrderId;
     String? remoteQrToken;

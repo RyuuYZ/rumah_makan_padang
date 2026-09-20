@@ -24,7 +24,10 @@ class MenuItemController extends Controller
 
     public function index(Request $request)
     {
-        $query = MenuItem::query()->where('is_active', true)->with('category');
+        $query = MenuItem::query()
+            ->where('is_active', true)
+            ->with('category')
+            ->withCount(['reviews' => fn ($q) => $q->where('is_approved', true)]);
 
         if ($request->has('kategori') && $request->kategori !== 'all') {
             $slug = $request->kategori;
@@ -54,7 +57,8 @@ class MenuItemController extends Controller
                         'foto_path' => $item->foto,
                         'foto_format' => str_ends_with(strtolower((string) $item->foto), '.webp') ? 'webp' : 'image',
                         'badge' => $item->badge,
-                        'rating' => (float) $item->rating,
+                        'rating' => (float) ($item->rating ?? 4.8),
+                        'review_count' => (int) ($item->reviews_count ?? 0),
                         'harga' => $price ? (int) $price->harga : null,
                         'harga_display' => $price ? 'Rp '.number_format((int) $price->harga, 0, ',', '.') : null,
                     ];
@@ -76,16 +80,21 @@ class MenuItemController extends Controller
                 'foto_path' => $item->foto,
                 'foto_format' => str_ends_with(strtolower((string) $item->foto), '.webp') ? 'webp' : 'image',
                 'badge' => $item->badge,
-                'rating' => (float) $item->rating,
+                'rating' => (float) ($item->rating ?? 4.8),
+                'review_count' => (int) ($item->reviews_count ?? 0),
             ]),
         ]);
     }
 
     public function show(string $id)
     {
-        $menuItem = MenuItem::with('branchPrices.branch')->findOrFail($id);
+        $menuItem = MenuItem::with('branchPrices.branch')
+            ->withCount(['reviews' => fn ($q) => $q->where('is_approved', true)])
+            ->findOrFail($id);
 
         $data = $menuItem->toArray();
+        $data['rating'] = (float) ($menuItem->rating ?? 4.8);
+        $data['review_count'] = (int) ($menuItem->reviews_count ?? 0);
         $data['foto_url'] = $this->formatFotoUrl($menuItem->foto);
         $data['foto_format'] = str_ends_with(strtolower((string) $menuItem->foto), '.webp') ? 'webp' : 'image';
 

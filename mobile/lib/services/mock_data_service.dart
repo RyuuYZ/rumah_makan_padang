@@ -1,4 +1,5 @@
 import '../models/menu_item_model.dart';
+import '../models/review_model.dart';
 
 /// Data mock otentik masakan Padang "Rasa Mandeh"
 class MockDataService {
@@ -246,4 +247,44 @@ class MockDataService {
       portionInfo: '1 Gelas Teh Talua',
     ),
   ];
+
+  static final List<ReviewModel> _userReviews = [];
+
+  /// Mengambil daftar ulasan untuk menu tertentu
+  static List<ReviewModel> getMockReviews(String menuItemId) {
+    final userAdded = _userReviews.where((r) => r.menuItemId == menuItemId).toList();
+    final defaultReviews = [
+      ReviewModel(
+        id: 'rev-1',
+        menuItemId: menuItemId,
+        customerName: 'Budi Santoso',
+        rating: 5,
+        comment: 'Rempahnya sangat terasa dan dagingnya luar biasa empuk. Bumbu meresap sempurna sampai ke serat terdalam!',
+        createdAt: '2 hari lalu',
+      ),
+      ReviewModel(
+        id: 'rev-2',
+        menuItemId: menuItemId,
+        customerName: 'Siti Rahmawati',
+        rating: 5,
+        comment: 'Paling favorit kalau ke Raso Mandeh! Porsinya pas dan rasanya autentik khas Payakumbuh.',
+        createdAt: '5 hari lalu',
+      ),
+      ReviewModel(
+        id: 'rev-3',
+        menuItemId: menuItemId,
+        customerName: 'Rian Pratama',
+        rating: 4,
+        comment: 'Gurihnya pas, sambalnya mantap sekali. Sangat direkomendasikan untuk santap siang!',
+        createdAt: '1 minggu lalu',
+      ),
+    ];
+
+    return [...userAdded, ...defaultReviews];
+  }
+
+  /// Menambahkan ulasan baru ke penyimpanan mock runtime
+  static void addReview(ReviewModel review) {
+    _userReviews.insert(0, review);
+  }
 }

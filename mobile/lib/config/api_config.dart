@@ -50,6 +50,7 @@ class ApiConfig {
   static const String endpointBranchesWithMenu = '/branches-with-menu';
   static const String endpointMenuItems = '/menu-items';
   static const String endpointOrders = '/orders';
+  static const String endpointReviews = '/reviews';
   static const String endpointDownloadApk = '/download/apk';
   static const String endpointAuthGoogle = '/auth/google';
 

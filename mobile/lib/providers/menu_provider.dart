@@ -15,7 +15,7 @@ enum SortOption {
 
 /// Provider katalog menu masakan Padang
 class MenuProvider extends ChangeNotifier {
-  List<MenuItemModel> _items = [];
+  List<MenuItemModel> _items = List.from(MockDataService.allMenuItems);
   String _selectedCategory = 'Semua';
   String _searchQuery = '';
   SortOption _selectedSort = SortOption.popular;
@@ -94,34 +94,71 @@ class MenuProvider extends ChangeNotifier {
       }).toList();
     }
 
-    // Filter pencarian
+    // Filter pencarian cerdas berbasis nama menu
     if (_searchQuery.trim().isNotEmpty) {
       final query = _searchQuery.toLowerCase().trim();
-      result = result.where((item) {
-        return item.name.toLowerCase().contains(query) ||
-            item.description.toLowerCase().contains(query) ||
-            item.category.toLowerCase().contains(query);
-      }).toList();
-    }
+      final queryWords = query.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
 
-    // Sorting
-    switch (_selectedSort) {
-      case SortOption.popular:
-        result.sort((a, b) {
-          if (a.isPopular && !b.isPopular) return -1;
-          if (!a.isPopular && b.isPopular) return 1;
-          return b.reviewCount.compareTo(a.reviewCount);
-        });
-        break;
-      case SortOption.ratingHigh:
-        result.sort((a, b) => b.rating.compareTo(a.rating));
-        break;
-      case SortOption.priceLow:
-        result.sort((a, b) => a.price.compareTo(b.price));
-        break;
-      case SortOption.priceHigh:
-        result.sort((a, b) => b.price.compareTo(a.price));
-        break;
+      result = result.where((item) {
+        final name = item.name.toLowerCase();
+        final category = item.category.toLowerCase();
+
+        // 1. Cocokkan query utuh pada nama (misal: "rendang", "gulai", "ayam pop")
+        if (name.contains(query)) return true;
+
+        // 2. Cocokkan jika seluruh kata pencarian ada di nama (misal: "ayam bakar")
+        if (queryWords.length > 1 && queryWords.every((w) => name.contains(w))) {
+          return true;
+        }
+
+        // 3. Cocokkan jika kata kunci adalah nama kategori persis (misal: "minuman", "paket")
+        if (category == query || queryWords.any((w) => category == w)) {
+          return true;
+        }
+
+        return false;
+      }).toList();
+
+      // Urutkan berdasarkan relevansi pencarian tertinggi
+      result.sort((a, b) {
+        final aName = a.name.toLowerCase();
+        final bName = b.name.toLowerCase();
+
+        // Prioritas 1: Nama yang diawali kata kunci pencarian (misal: "Gulai Daging" vs "Nasi Gulai")
+        final aStarts = aName.startsWith(query);
+        final bStarts = bName.startsWith(query);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+
+        // Prioritas 2: Nama yang mengandung kata kunci pencarian
+        final aContains = aName.contains(query);
+        final bContains = bName.contains(query);
+        if (aContains && !bContains) return -1;
+        if (!aContains && bContains) return 1;
+
+        // Prioritas 3: Popularitas / rating
+        return b.reviewCount.compareTo(a.reviewCount);
+      });
+    } else {
+      // Sorting normal saat tidak sedang mencari
+      switch (_selectedSort) {
+        case SortOption.popular:
+          result.sort((a, b) {
+            if (a.isPopular && !b.isPopular) return -1;
+            if (!a.isPopular && b.isPopular) return 1;
+            return b.reviewCount.compareTo(a.reviewCount);
+          });
+          break;
+        case SortOption.ratingHigh:
+          result.sort((a, b) => b.rating.compareTo(a.rating));
+          break;
+        case SortOption.priceLow:
+          result.sort((a, b) => a.price.compareTo(b.price));
+          break;
+        case SortOption.priceHigh:
+          result.sort((a, b) => b.price.compareTo(a.price));
+          break;
+      }
     }
 
     return result;

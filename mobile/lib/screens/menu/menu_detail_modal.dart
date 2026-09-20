@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../models/menu_item_model.dart';
+import '../../models/review_model.dart';
 import '../../providers/cart_provider.dart';
+import '../../services/api_service.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
 import '../../utils/currency_formatter.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/quantity_stepper.dart';
+import 'write_review_modal.dart';
 
 /// Modal bottom sheet detail makanan masakan Padang
 class MenuDetailModal extends StatefulWidget {
@@ -31,6 +34,32 @@ class MenuDetailModal extends StatefulWidget {
 class _MenuDetailModalState extends State<MenuDetailModal> {
   int _quantity = 1;
   final TextEditingController _notesController = TextEditingController();
+  List<ReviewModel> _reviews = [];
+  bool _isLoadingReviews = true;
+  late int _currentReviewCount;
+  late double _currentRating;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentReviewCount = widget.item.reviewCount;
+    _currentRating = widget.item.rating;
+    _loadReviews();
+  }
+
+  Future<void> _loadReviews() async {
+    final reviews = await ApiService.getReviews(widget.item.id);
+    if (!mounted) return;
+    setState(() {
+      _reviews = reviews;
+      _isLoadingReviews = false;
+      if (reviews.isNotEmpty) {
+        final totalStars = reviews.fold<int>(0, (sum, r) => sum + r.rating);
+        _currentRating = totalStars / reviews.length;
+        _currentReviewCount = reviews.length;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -138,7 +167,7 @@ class _MenuDetailModalState extends State<MenuDetailModal> {
                             const Icon(Icons.star_rounded, color: AppColors.gold, size: 18),
                             const SizedBox(width: 4),
                             Text(
-                              '${item.rating} (${item.reviewCount} ulasan)',
+                              '${_currentRating.toStringAsFixed(1)} ($_currentReviewCount ulasan)',
                               style: AppTypography.caption.copyWith(
                                 color: AppColors.textSecondary,
                                 fontWeight: FontWeight.w600,
@@ -213,6 +242,137 @@ class _MenuDetailModalState extends State<MenuDetailModal> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 20),
+
+                    // Bagian Ulasan Pelanggan
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Ulasan Pelanggan',
+                              style: AppTypography.subtitle2.copyWith(fontWeight: FontWeight.w700),
+                            ),
+                            Text(
+                              '$_currentReviewCount ulasan autentik',
+                              style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () {
+                            WriteReviewModal.show(
+                              context,
+                              item: widget.item,
+                              onReviewSubmitted: () {
+                                setState(() {
+                                  _currentReviewCount++;
+                                });
+                                _loadReviews();
+                              },
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFF8E7),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: const Color(0xFFDF9C36)),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.rate_review_outlined, size: 14, color: Color(0xFF8A5500)),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Tulis Ulasan',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF8A5500),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Daftar Ulasan
+                    if (_isLoadingReviews)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                          ),
+                        ),
+                      )
+                    else if (_reviews.isEmpty)
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceWarm,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'Belum ada ulasan untuk menu ini. Jadilah yang pertama memberikan ulasan!',
+                          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        ),
+                      )
+                    else
+                      ..._reviews.take(3).map((r) => Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFAF7F2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFFEFE8DF)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      r.customerName,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF301115),
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        ...List.generate(
+                                          r.rating,
+                                          (_) => const Icon(Icons.star_rounded, size: 13, color: Color(0xFFDF9C36)),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          r.createdAt,
+                                          style: const TextStyle(fontSize: 10, color: Color(0xFF8C7D75)),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  r.comment,
+                                  style: const TextStyle(fontSize: 11.5, color: Color(0xFF4A3525), height: 1.3),
+                                ),
+                              ],
+                            ),
+                          )),
                     const SizedBox(height: 16),
 
                     // Catatan Khusus

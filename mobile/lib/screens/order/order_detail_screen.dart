@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:provider/provider.dart';
+import '../../models/cart_item_model.dart';
+import '../../models/menu_item_model.dart';
 import '../../models/order_model.dart';
 import '../../providers/order_provider.dart';
+import '../../services/receipt_service.dart';
 import '../../utils/currency_formatter.dart';
 
 /// Halaman Detail Pesanan Rasa Mandeh (100% Persis Mockup Figma "order details page")
@@ -1691,152 +1695,333 @@ class OrderDetailScreen extends StatelessWidget {
 
   /// Modal Bottom Sheet Struk Digital Resmi Minang
   void _showDigitalReceipt(BuildContext context, OrderModel? order) {
+    final targetOrder = order ??
+        OrderModel(
+          id: '#RSO-88429',
+          createdAt: DateTime(2026, 9, 14, 12, 18),
+          items: const [
+            CartItemModel(
+              id: 'sample-1',
+              menuItem: MenuItemModel(
+                id: 'm-1',
+                name: 'Rendang Daging Sapi Karamel',
+                category: 'Lauk Utama',
+                description: '',
+                price: 28000,
+                rating: 4.9,
+                reviewCount: 120,
+                imageUrl: '',
+              ),
+              quantity: 1,
+            ),
+            CartItemModel(
+              id: 'sample-2',
+              menuItem: MenuItemModel(
+                id: 'm-2',
+                name: 'Paket Nasi Padang Komplit',
+                category: 'Paket Spesial',
+                description: '',
+                price: 38000,
+                rating: 4.8,
+                reviewCount: 95,
+                imageUrl: '',
+              ),
+              quantity: 1,
+            ),
+            CartItemModel(
+              id: 'sample-3',
+              menuItem: MenuItemModel(
+                id: 'm-3',
+                name: 'Es Teh Talua Tradisional',
+                category: 'Minuman Segar',
+                description: '',
+                price: 12000,
+                rating: 4.7,
+                reviewCount: 60,
+                imageUrl: '',
+              ),
+              quantity: 1,
+            ),
+          ],
+          deliveryMethod: 'delivery',
+          deliveryAddress: 'Jl. Kemang Raya No. 45, Jakarta Selatan',
+          paymentMethod: 'QRIS BCA Instan',
+          subtotal: 78000,
+          deliveryFee: 0,
+          serviceFee: 0,
+          discount: 0,
+          totalPrice: 78000,
+          status: OrderStatus.delivered,
+        );
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
-        return Container(
-          margin: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFFDF9),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFFEFE8DD)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(20),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD4C8B8),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'RM RASO MANDEH',
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: const Color(0xFF301115),
-                  letterSpacing: 1.2,
-                ),
-              ),
-              Text(
-                'CABANG KEMANG - JAKARTA SELATAN',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF7C6C64),
-                  letterSpacing: 0.8,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Divider(color: Color(0xFFEFE8DD), thickness: 1),
-              const SizedBox(height: 8),
+        bool isDownloading = false;
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('No. Transaksi', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF7C6C64))),
-                  Text(order?.id ?? '#RSO-88429', style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF301115))),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Waktu Pembayaran', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF7C6C64))),
-                  Text('14 Sep 2026, 12.18 WIB', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF301115))),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Metode Pembayaran', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF7C6C64))),
-                  Text('QRIS BCA Instan', style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w700, color: const Color(0xFF1B8A5A))),
-                ],
-              ),
-              const SizedBox(height: 12),
-              const Divider(color: Color(0xFFEFE8DD), thickness: 1),
-              const SizedBox(height: 8),
-
-              // Rincian Item di Struk
-              _receiptItem('1x Rendang Daging Sapi Karamel', 'Rp 28.000'),
-              _receiptItem('1x Paket Nasi Padang Komplit', 'Rp 38.000'),
-              _receiptItem('1x Es Teh Talua Tradisional', 'Rp 12.000'),
-
-              const SizedBox(height: 8),
-              const Divider(color: Color(0xFFEFE8DD), thickness: 1),
-              const SizedBox(height: 8),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('TOTAL BAYAR', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w800, color: const Color(0xFF301115))),
-                  Text('Rp 78.000', style: GoogleFonts.playfairDisplay(fontSize: 16, fontWeight: FontWeight.w800, color: const Color(0xFF4A141A))),
-                ],
-              ),
-              const SizedBox(height: 14),
-
-              // Cap Stempel LUNAS
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF1B8A5A), width: 1.5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '★ LUNAS / TELAH TERVERIFIKASI ★',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF1B8A5A),
-                    letterSpacing: 0.8,
+        return StatefulBuilder(
+          builder: (modalCtx, setModalState) {
+            return Container(
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFDF9),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFEFE8DD)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(20),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 18),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4A141A),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4C8B8),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Struk berhasil diunduh sebagai PDF!'),
-                        backgroundColor: Color(0xFF4A141A),
+                  const SizedBox(height: 16),
+                  Text(
+                    'RM RASO MANDEH',
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF301115),
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  Text(
+                    'CABANG KEMANG - JAKARTA SELATAN',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF7C6C64),
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Divider(color: Color(0xFFEFE8DD), thickness: 1),
+                  const SizedBox(height: 8),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('No. Transaksi', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF7C6C64))),
+                      Text(targetOrder.id, style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF301115))),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Waktu Pembayaran', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF7C6C64))),
+                      Text('${DateFormat('dd MMM yyyy, HH.mm').format(targetOrder.createdAt)} WIB', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF301115))),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Metode Pembayaran', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF7C6C64))),
+                      Text(targetOrder.paymentMethod, style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w700, color: const Color(0xFF1B8A5A))),
+                    ],
+                  ),
+                  if (targetOrder.deliveryAddress.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Tujuan Antar', style: GoogleFonts.plusJakartaSans(fontSize: 11, color: const Color(0xFF7C6C64))),
+                        Flexible(
+                          child: Text(
+                            targetOrder.deliveryAddress,
+                            style: GoogleFonts.plusJakartaSans(fontSize: 10.5, color: const Color(0xFF301115)),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  const Divider(color: Color(0xFFEFE8DD), thickness: 1),
+                  const SizedBox(height: 8),
+
+                  // Rincian Item di Struk Aktual
+                  ...targetOrder.items.map((item) => _receiptItem(
+                        '${item.quantity}x ${item.menuItem.name}',
+                        CurrencyFormatter.format(item.menuItem.price * item.quantity),
+                      )),
+
+                  const SizedBox(height: 8),
+                  const Divider(color: Color(0xFFEFE8DD), thickness: 1),
+                  const SizedBox(height: 8),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('TOTAL BAYAR', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w800, color: const Color(0xFF301115))),
+                      Text(CurrencyFormatter.format(targetOrder.totalPrice), style: GoogleFonts.playfairDisplay(fontSize: 16, fontWeight: FontWeight.w800, color: const Color(0xFF4A141A))),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Cap Stempel Status
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: targetOrder.status == OrderStatus.cancelled ? const Color(0xFFD32F2F) : const Color(0xFF1B8A5A),
+                        width: 1.5,
                       ),
-                    );
-                  },
-                  child: Text('Unduh Struk Digital (PDF)',
-                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, color: Colors.white)),
-                ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      targetOrder.status == OrderStatus.cancelled ? '★ PESANAN DIBATALKAN ★' : '★ LUNAS / TELAH TERVERIFIKASI ★',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: targetOrder.status == OrderStatus.cancelled ? const Color(0xFFD32F2F) : const Color(0xFF1B8A5A),
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4A141A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      onPressed: isDownloading
+                          ? null
+                          : () async {
+                              setModalState(() {
+                                isDownloading = true;
+                              });
+
+                              final result = await ReceiptService.downloadReceipt(targetOrder);
+
+                              if (context.mounted) {
+                                Navigator.pop(modalCtx);
+
+                                if (result.success) {
+                                  // Tampilkan Dialog Sukses Berisi Opsi Buka & Bagikan
+                                  showDialog(
+                                    context: context,
+                                    builder: (dialogCtx) => AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                      title: Row(
+                                        children: [
+                                          const Icon(Icons.check_circle, color: Color(0xFF1B8A5A), size: 26),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Struk Berhasil Diunduh!',
+                                            style: GoogleFonts.plusJakartaSans(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFF301115)),
+                                          ),
+                                        ],
+                                      ),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Berkas PDF struk digital resmi telah disimpan di:',
+                                            style: GoogleFonts.plusJakartaSans(fontSize: 12.5, color: const Color(0xFF55443D)),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFF9F6F0),
+                                              borderRadius: BorderRadius.circular(10),
+                                              border: Border.all(color: const Color(0xFFEFE8DD)),
+                                            ),
+                                            child: Text(
+                                              result.filePath,
+                                              style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF4A141A)),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(dialogCtx);
+                                            ReceiptService.shareReceipt(result.fileName, result.bytes);
+                                          },
+                                          child: Text(
+                                            'Bagikan',
+                                            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, color: const Color(0xFF7C6C64)),
+                                          ),
+                                        ),
+                                        ElevatedButton.icon(
+                                          icon: const Icon(Icons.picture_as_pdf, size: 16, color: Colors.white),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(0xFF4A141A),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(dialogCtx);
+                                            ReceiptService.openReceipt(result.fileName, result.bytes);
+                                          },
+                                          label: Text(
+                                            'Buka PDF',
+                                            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Gagal mengunduh struk: ${result.errorMessage ?? "Kesalahan tidak diketahui"}'),
+                                      backgroundColor: Colors.red.shade800,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                      child: isDownloading
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.2),
+                            )
+                          : Text(
+                              'Unduh Struk Digital (PDF)',
+                              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, color: Colors.white),
+                            ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
+
+
 
   Widget _receiptItem(String name, String price) {
     return Padding(

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BranchController;
 use App\Http\Controllers\Api\MenuItemController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +25,10 @@ Route::prefix('v1')->group(function () {
     // Public Menu Item routes
     Route::get('/menu-items', [MenuItemController::class, 'index']);
     Route::get('/menu-items/{id}', [MenuItemController::class, 'show']);
+    Route::get('/menu-items/{id}/reviews', [ReviewController::class, 'index']);
+
+    // Public Customer Review routes
+    Route::post('/reviews', [ReviewController::class, 'store']);
 
     // Public Customer Order routes
     Route::post('/orders', [OrderController::class, 'store']);

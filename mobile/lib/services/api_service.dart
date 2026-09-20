@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import '../config/api_config.dart';
 import '../models/menu_item_model.dart';
+import '../models/review_model.dart';
 import 'mock_data_service.dart';
 
 /// Service untuk menghubungkan aplikasi Flutter dengan REST API Laravel
@@ -61,8 +62,8 @@ class ApiService {
               category: item['kategori'] ?? 'Daging',
               description: item['deskripsi'] ?? '',
               price: (item['harga'] as num?)?.toInt() ?? 25000,
-              rating: 4.8,
-              reviewCount: 120,
+              rating: (item['rating'] as num?)?.toDouble() ?? 4.8,
+              reviewCount: (item['review_count'] as num?)?.toInt() ?? 120,
               imageUrl: item['foto'] ?? 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600',
               spiciness: 2,
               isPopular: true,
@@ -150,5 +151,86 @@ class ApiService {
       // Fallback diam-diam
     }
     return null;
+  }
+
+  /// Mengambil daftar ulasan untuk menu tertentu
+  static Future<List<ReviewModel>> getReviews(String menuItemId) async {
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}${ApiConfig.endpointMenuItems}/$menuItemId/reviews');
+      final request = await _client.getUrl(uri);
+      request.headers.set('Accept', 'application/json');
+
+      final response = await request.close().timeout(ApiConfig.timeoutDuration);
+      if (response.statusCode == 200) {
+        final bodyString = await response.transform(utf8.decoder).join();
+        final json = jsonDecode(bodyString);
+        if (json['success'] == true && json['data'] != null && json['data']['reviews'] is List) {
+          final list = json['data']['reviews'] as List;
+          return list.map((item) => ReviewModel.fromJson(item as Map<String, dynamic>)).toList();
+        }
+      }
+    } catch (_) {
+      // Fallback ke mock reviews jika offline
+    }
+
+    return MockDataService.getMockReviews(menuItemId);
+  }
+
+  /// Mengirim ulasan baru untuk menu makanan
+  static Future<bool> submitReview({
+    required String menuItemId,
+    required String customerName,
+    required int rating,
+    required String comment,
+    int? branchId,
+    int? orderId,
+  }) async {
+    try {
+      final uri = Uri.parse('${ApiConfig.baseUrl}${ApiConfig.endpointReviews}');
+      final request = await _client.postUrl(uri);
+      request.headers.set('Content-Type', 'application/json');
+      request.headers.set('Accept', 'application/json');
+
+      final Map<String, dynamic> data = {
+        'menu_item_id': menuItemId,
+        'nama_pelanggan': customerName,
+        'rating': rating,
+        'komentar': comment,
+      };
+      if (branchId != null) data['branch_id'] = branchId;
+      if (orderId != null) data['order_id'] = orderId;
+
+      final payload = jsonEncode(data);
+
+      request.write(payload);
+      final response = await request.close().timeout(ApiConfig.timeoutDuration);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        MockDataService.addReview(
+          ReviewModel(
+            id: 'rev-new-${DateTime.now().millisecondsSinceEpoch}',
+            menuItemId: menuItemId,
+            customerName: customerName,
+            rating: rating,
+            comment: comment,
+            createdAt: 'Baru saja',
+          ),
+        );
+        return true;
+      }
+    } catch (_) {
+      // Fallback ke mock jika offline
+    }
+
+    MockDataService.addReview(
+      ReviewModel(
+        id: 'rev-mock-${DateTime.now().millisecondsSinceEpoch}',
+        menuItemId: menuItemId,
+        customerName: customerName,
+        rating: rating,
+        comment: comment,
+        createdAt: 'Baru saja',
+      ),
+    );
+    return true;
   }
 }

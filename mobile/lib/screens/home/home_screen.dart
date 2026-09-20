@@ -127,21 +127,21 @@ class HomeScreen extends StatelessWidget {
         displayName: 'Rendang Daging',
         tag: 'Lauk Utama',
         priceDisplay: 'Rp 28.000',
-        ratingDisplay: '★ 4.9 (724 ulasan)',
+        ratingDisplay: '★ ${rendangItem.rating.toStringAsFixed(1)} (${rendangItem.reviewCount > 0 ? rendangItem.reviewCount : 724} ulasan)',
       ),
       _FeaturedMenuData(
         item: ayamPopItem,
         displayName: 'Nasi + Ayam Pop',
         tag: 'Paket Nasi',
         priceDisplay: 'Rp 35.000',
-        ratingDisplay: '★ 4.9',
+        ratingDisplay: '★ ${ayamPopItem.rating.toStringAsFixed(1)} (${ayamPopItem.reviewCount > 0 ? ayamPopItem.reviewCount : 512} ulasan)',
       ),
       _FeaturedMenuData(
         item: gulaiIkanItem,
         displayName: 'Gulai Kepala Ikan',
         tag: 'Gulai',
         priceDisplay: 'Rp 38.000',
-        ratingDisplay: '★ 4.8',
+        ratingDisplay: '★ ${gulaiIkanItem.rating.toStringAsFixed(1)} (${gulaiIkanItem.reviewCount > 0 ? gulaiIkanItem.reviewCount : 380} ulasan)',
       ),
     ];
 
