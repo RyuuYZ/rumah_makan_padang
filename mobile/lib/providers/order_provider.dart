@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/order_model.dart';
 import '../models/cart_item_model.dart';
 import '../models/menu_item_model.dart';
+import '../services/api_service.dart';
 import '../services/storage_service.dart';
 
 /// Provider riwayat pesanan dan tracking status pengiriman
@@ -145,22 +146,54 @@ class OrderProvider extends ChangeNotifier {
     required int serviceFee,
     required int discount,
     required int totalPrice,
+    String? customerName,
+    String? customerPhone,
+    int branchId = 1,
   }) async {
     _isLoading = true;
     notifyListeners();
 
-    // Simulasi jeda network
-    await Future.delayed(const Duration(milliseconds: 500));
+    String? remoteOrderId;
+    String? remoteQrToken;
+
+    try {
+      final payloadItems = items.map((cartItem) {
+        final menuIdInt = int.tryParse(cartItem.menuItem.id) ?? 1;
+        return {
+          'menu_item_id': menuIdInt,
+          'quantity': cartItem.quantity,
+          'notes': cartItem.notes,
+        };
+      }).toList();
+
+      final apiResponse = await ApiService.createOrder(
+        branchId: branchId,
+        customerName: customerName ?? 'Pelanggan Mobile',
+        customerPhone: customerPhone ?? '081234567890',
+        orderType: deliveryMethod == 'takeaway' ? 'takeaway' : 'dine_in',
+        items: payloadItems,
+      );
+
+      if (apiResponse != null && apiResponse['success'] == true && apiResponse['data'] != null) {
+        final data = apiResponse['data'];
+        remoteOrderId = data['order_number'] ?? data['order_id']?.toString();
+        remoteQrToken = data['qr_code_token'];
+      }
+    } catch (_) {
+      // Fallback diam-diam ke pemrosesan lokal jika backend offline
+    }
 
     final now = DateTime.now();
-    final orderId = 'RM-${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}-${now.minute}${now.second}';
+    final orderId = remoteOrderId ??
+        'RM-${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}-${now.minute}${now.second}';
 
     final initialTimeline = [
       OrderTimelineMilestone(
         status: OrderStatus.confirmed,
         timestamp: now,
         title: 'Pesanan Diterima Dapur',
-        description: 'Rincian pesanan terverifikasi & pembayaran tervalidasi',
+        description: 'Rincian pesanan terverifikasi & pembayaran tervalidasi' +
+            (remoteQrToken != null ? ' (Token: $remoteQrToken)' : ''),
       ),
     ];
 

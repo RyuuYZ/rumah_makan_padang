@@ -5,11 +5,27 @@ import 'package:flutter/foundation.dart';
 class ApiConfig {
   ApiConfig._();
 
+  /// URL API dinamis dari parameter build `--dart-define=API_URL=https://api.domainanda.com`
+  static const String _envApiUrl = String.fromEnvironment('API_URL');
+
+  /// URL Domain Production Online (Opsional override saat runtime)
+  static String? customProductionUrl;
+
   /// Port default server Laravel development
   static const int defaultPort = 8000;
 
-  /// Mendapatkan Base URL yang adaptif berdasarkan platform eksekusi
+  /// Mendapatkan Base URL yang adaptif berdasarkan platform eksekusi & environment
   static String get baseUrl {
+    if (_envApiUrl.trim().isNotEmpty) {
+      final cleaned = _envApiUrl.trim().replaceAll(RegExp(r'/+$'), '');
+      return cleaned.endsWith('/api/v1') ? cleaned : '$cleaned/api/v1';
+    }
+
+    if (customProductionUrl != null && customProductionUrl!.trim().isNotEmpty) {
+      final cleaned = customProductionUrl!.trim().replaceAll(RegExp(r'/+$'), '');
+      return cleaned.endsWith('/api/v1') ? cleaned : '$cleaned/api/v1';
+    }
+
     if (kIsWeb) {
       return 'http://localhost:$defaultPort/api/v1';
     }

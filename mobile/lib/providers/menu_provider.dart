@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/menu_item_model.dart';
+import '../services/api_service.dart';
 import '../services/mock_data_service.dart';
 
 enum SortOption {
@@ -126,9 +127,36 @@ class MenuProvider extends ChangeNotifier {
     return result;
   }
 
-  void _loadMenu() {
+  Future<void> _loadMenu() async {
     _isLoading = true;
-    _items = List.from(MockDataService.allMenuItems);
+    notifyListeners();
+
+    try {
+      final remoteItems = await ApiService.getMenuItems(branchId: 1);
+      if (remoteItems.isNotEmpty) {
+        _items = remoteItems;
+      } else {
+        _items = List.from(MockDataService.allMenuItems);
+      }
+    } catch (_) {
+      _items = List.from(MockDataService.allMenuItems);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> refreshMenu({int? branchId}) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final remoteItems = await ApiService.getMenuItems(branchId: branchId ?? 1);
+      if (remoteItems.isNotEmpty) {
+        _items = remoteItems;
+      }
+    } catch (_) {}
+
     _isLoading = false;
     notifyListeners();
   }
