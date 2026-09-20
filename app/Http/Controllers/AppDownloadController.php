@@ -6,6 +6,7 @@ use App\Helpers\QrCodeHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -16,7 +17,7 @@ class AppDownloadController extends Controller
      */
     public function unduhPage(Request $request): View
     {
-        $downloadUrl = route('app.download.apk');
+        $downloadUrl = Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk');
         $qrCodeSvg = QrCodeHelper::generate($downloadUrl, 320);
 
         return view('pages.download', compact('downloadUrl', 'qrCodeSvg'));
@@ -60,7 +61,7 @@ class AppDownloadController extends Controller
      */
     public function qrCode(): Response
     {
-        $downloadUrl = route('app.download.apk');
+        $downloadUrl = Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk');
         $qrCodeDataUri = QrCodeHelper::generate($downloadUrl, 320);
 
         $svgContent = str_contains($qrCodeDataUri, ',')

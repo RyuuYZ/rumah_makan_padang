@@ -115,7 +115,7 @@
                     {{-- BAR AKSI TOMBOL (HERO DOWNLOAD BUTTON + 2 TOMBOL PENDUKUNG) --}}
                     <div class="space-y-3 pt-1">
                         {{-- Tombol Utama: Download APK Android (Hero CTA) --}}
-                        <a href="{{ route('app.download.apk') }}" 
+                        <a href="{{ $downloadUrl ?? (Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk')) }}" 
                            download="rasa-mandeh-v1.0.0.apk"
                            class="w-full bg-[#7A1F2B] hover:bg-[#5A1620] text-white rounded-2xl p-4 sm:px-6 sm:py-4 shadow-md shadow-[#7A1F2B]/20 hover:shadow-xl hover:shadow-[#7A1F2B]/35 transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-between group border-2 border-[#C9A227]/40">
                             <div class="flex items-center space-x-3 sm:space-x-4">
@@ -381,7 +381,7 @@
                                 </div>
 
                                 {{-- In-App Download CTA Button --}}
-                                <a href="{{ route('app.download.apk') }}" 
+                                <a href="{{ $downloadUrl ?? (Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk')) }}" 
                                    download="rasa-mandeh-v1.0.0.apk"
                                    class="w-full py-2 px-3 bg-[#7A1F2B] hover:bg-[#8B2332] text-white rounded-xl text-[10px] font-bold flex items-center justify-between shadow-xs border border-[#C9A227]/40 transition-transform active:scale-95 group">
                                     <div class="flex items-center space-x-1.5">
@@ -538,7 +538,7 @@
 
             {{-- Action Buttons --}}
             <div class="flex items-center space-x-3">
-                <a href="{{ route('app.download.apk') }}" 
+                <a href="{{ $downloadUrl ?? (Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk')) }}" 
                    class="flex-1 py-3 px-5 bg-[#7A1F2B] hover:bg-[#5A1620] text-white rounded-xl text-center text-sm font-bold shadow-md shadow-[#7A1F2B]/20 transition-colors">
                     Download APK Sekarang
                 </a>
@@ -597,7 +597,7 @@
                 @if(isset($qrCodeSvg) && !empty($qrCodeSvg))
                     <img src="{{ $qrCodeSvg }}" alt="QR Code Unduh APK Rasa Mandeh" class="w-48 h-48 mx-auto object-contain">
                 @else
-                    <img src="{{ route('app.download.qr') }}" alt="QR Code Unduh APK Rasa Mandeh" class="w-48 h-48 mx-auto object-contain">
+                    <img src="{{ Route::has('app.download.qr') ? route('app.download.qr') : url('/download/qr') }}" alt="QR Code Unduh APK Rasa Mandeh" class="w-48 h-48 mx-auto object-contain">
                 @endif
             </div>
 
@@ -620,14 +620,14 @@
             {{-- Copy Link Button --}}
             <div class="flex items-center space-x-2">
                 <button type="button" 
-                        @click="copyUrl('{{ route('app.download.apk') }}')"
+                        @click="copyUrl('{{ $downloadUrl ?? (Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk')) }}')"
                         class="flex-1 py-2.5 px-4 bg-neutral-100 hover:bg-neutral-200 text-[#241B16] rounded-xl text-xs font-bold transition-colors flex items-center justify-center space-x-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                     <span x-text="copied ? 'Tautan Berhasil Disalin!' : 'Salin Tautan Unduh'"></span>
                 </button>
-                <a href="{{ route('app.download.apk') }}" 
+                <a href="{{ $downloadUrl ?? (Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk')) }}" 
                    class="py-2.5 px-4 bg-[#7A1F2B] hover:bg-[#5A1620] text-white rounded-xl text-xs font-bold transition-colors">
                     Unduh di PC
                 </a>

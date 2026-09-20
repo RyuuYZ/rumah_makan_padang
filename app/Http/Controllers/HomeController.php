@@ -11,6 +11,7 @@ use App\Models\Reservation;
 use App\Models\Review;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class HomeController extends Controller
 {
@@ -45,7 +46,7 @@ class HomeController extends Controller
 
         $settings = Setting::pluck('value', 'key')->toArray();
 
-        $downloadUrl = route('app.download.apk');
+        $downloadUrl = Route::has('app.download.apk') ? route('app.download.apk') : url('/download/apk');
         $qrCodeSvg = QrCodeHelper::generate($downloadUrl, 320);
 
         return view('pages.home', compact('branches', 'menuItems', 'reviews', 'categories', 'settings', 'downloadUrl', 'qrCodeSvg'));
