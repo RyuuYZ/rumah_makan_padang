@@ -33,10 +33,11 @@ class HomeController extends Controller
                 return $item;
             });
 
-        $reviews = Review::where('is_pinned', true)
+        $reviews = Review::where('is_approved', true)
             ->with(['branch', 'menuItem'])
+            ->orderByDesc('is_pinned')
             ->latest()
-            ->take(4)
+            ->take(8)
             ->get();
 
         $categories = MenuCategory::select('id', 'nama as name', 'slug')->get();

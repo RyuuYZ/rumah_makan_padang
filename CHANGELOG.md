@@ -37,6 +37,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Menyelaraskan seluruh kategori menu (`daging`, `ayam`, `ikan`, `sayur`, `topping`, `minuman`, `nasi-padang`) di `HomeController.php`, `Admin/MenuController.php`, `DatabaseSeeder.php`, dan form modal admin menu.
   - Memperbaiki tampilan duplikat kartu cabang di beranda (`branch-selector.blade.php` & `reservation-form.blade.php`) yang menjadi 3 baris akibat *seeding* berulang di database hosting; menambahkan filter `.unique('nama')` pada `HomeController.php` agar selalu tampil presisi 1 baris (6 cabang) di desktop (`lg:grid-cols-6`), serta membuat migrasi pembersih `2026_09_20_162500_cleanup_duplicate_branches.php` untuk mendeduplikasi data cabang dan merekonsiliasi relasi meja, pesanan, dan harga menu secara otomatis.
   - Menambahkan penanganan *safe fallback* pada rute unduh aplikasi APK mobile (`route('app.download.apk')` & `route('app.download.qr')`) di `HomeController.php`, `AppDownloadController.php`, dan `app-download-section.blade.php` dengan pengecekan `Route::has()` dan URL fallback guna mencegah `RouteNotFoundException` (500) saat *route cache* server hosting belum disinkronkan.
+  - **Ulasan Pelanggan & Modal Ulasan (Web & Mobile)**:
+    - Memperbaiki data ulasan di halaman Beranda (`HomeController.php`) yang sebelumnya kosong pada tampilan web mobile & desktop karena query hanya mengambil `is_pinned = true`; kini mengambil seluruh ulasan yang disetujui (`where('is_approved', true)`) dengan memprioritaskan ulasan tersemat (`orderByDesc('is_pinned')`).
+    - Menambahkan *empty state* yang elegan pada komponen `testimonial-section.blade.php` serta lencana `★ Pilihan` untuk ulasan tersemat.
+    - Memperbaiki proporsi rasio dan layout modal *Tulis Ulasan Pesanan* (`reviewModal`):
+      - Mengatur lebar modal adaptif secara dinamis (`max-w-md sm:max-w-lg` pada verifikasi kode pesanan dan `max-w-3xl sm:max-w-4xl` pada formulir penilaian hidangan) agar proporsional dan tidak meregang kosong berlebihan.
+      - Menghapus teks *"Close"* yang menumpuk di atas tombol silang (*X*) pada header modal.
+      - Menyelaraskan form input, icon prefix, grid kartu hidangan yang dipesan, dan tombol aksi (*Batal*, *Lanjut*, *Kembali*, *Kirim Ulasan*) untuk pengalaman pengguna yang rapi di desktop dan mobile.
+  - **Pembuatan Pesanan Universal (Admin, Kasir, Customer Web & Mobile)**:
+    - Memperbaiki kegagalan pembuatan pesanan di `Api/OrderController.php` dengan menormalisasi variasi format payload dari berbagai klien (Customer Web, POS Kasir Walk-in, Mobile Flutter):
+      - Mendukung berbagai format ID menu (`menu_item_id`, `id`, `menu_id`).
+      - Mendukung berbagai format tipe layanan (`order_type` dan `service_type`: `dine_in`, `dine-in`, `takeaway`).
+      - Menyediakan resolusi fallback `branch_id` otomatis jika ID cabang belum terpasang atau salah.
+      - Memperbaiki validasi nomor meja agar fleksibel dengan format nomor meja (`Meja 01`, `Meja 1`, `1`) serta tidak memblokir kasir/admin saat input walk-in.
+      - Memastikan menu dengan stok tidak terbatas (`stock_quantity === null`) selalu dapat dipesan dan harga cabang dibuat otomatis jika belum ada.
+      - Menghapus pembatasan *rate-limit* throttle berlebih pada rute `/orders` (`routes/web.php`) serta menyempurnakan penanganan respons error dan reset keranjang pada terminal Kasir POS (`resources/views/kasir/index.blade.php`).
+  - **Layout Panel Admin Cabang Restoran**:
+    - Memperbaiki kerusakan sintaks HTML kartu cabang pada `resources/views/admin/branches/index.blade.php` (tag tidak berpasangan yang menghilangkan nama cabang, badge kota, dan status).
+    - Menambahkan tombol interaktif toggle status Buka/Tutup Cabang langsung dari kartu cabang (`admin.branches.toggleActive`).
 
 ### Added
 - Komponen paginasi kustom (`x-admin-pagination`) dengan lencana `TOTAL: X [ENTITY]`, tombol `< Prev` dan `Next >`, serta kotak lompat halaman interaktif `KE HAL: [input] / Y [Go]` yang mempertahankan parameter filter URL.

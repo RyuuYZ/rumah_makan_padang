@@ -37,15 +37,16 @@ class MenuItemController extends Controller
         }
 
         if ($request->has('branch_id')) {
-            // Get menu with prices for specific branch
-            $menuItems = $query->with(['branchPrices' => function ($q) use ($request) {
-                $q->where('branch_id', $request->branch_id)->where('is_available', true);
+            $branchId = $request->branch_id;
+            $menuItems = $query->with(['branchPrices' => function ($q) use ($branchId) {
+                $q->where('branch_id', $branchId);
             }])->get();
 
             return response()->json([
                 'success' => true,
                 'data' => $menuItems->map(function ($item) {
                     $price = $item->branchPrices->first();
+                    $hargaVal = $price ? (int) $price->harga : 25000;
                     $fotoUrl = $this->formatFotoUrl($item->foto);
 
                     return [
@@ -59,8 +60,8 @@ class MenuItemController extends Controller
                         'badge' => $item->badge,
                         'rating' => (float) ($item->rating ?? 4.8),
                         'review_count' => (int) ($item->reviews_count ?? 0),
-                        'harga' => $price ? (int) $price->harga : null,
-                        'harga_display' => $price ? 'Rp '.number_format((int) $price->harga, 0, ',', '.') : null,
+                        'harga' => $hargaVal,
+                        'harga_display' => 'Rp '.number_format($hargaVal, 0, ',', '.'),
                     ];
                 }),
             ]);

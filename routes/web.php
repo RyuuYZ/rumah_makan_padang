@@ -28,7 +28,7 @@ use Illuminate\Support\Str;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/orders', [ApiOrderController::class, 'store'])->name('orders.store')->middleware('throttle:10,1');
+Route::post('/orders', [ApiOrderController::class, 'store'])->name('orders.store');
 Route::post('/reservation', [HomeController::class, 'storeReservation'])->name('reservation.store')->middleware('throttle:5,1');
 Route::post('/reviews/check-order', [HomeController::class, 'checkOrderForReview'])->name('reviews.check-order')->middleware('throttle:10,1');
 Route::post('/reviews', [HomeController::class, 'storeReview'])->name('reviews.store')->middleware('throttle:3,1');

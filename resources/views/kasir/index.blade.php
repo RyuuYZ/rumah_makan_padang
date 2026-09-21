@@ -467,11 +467,12 @@
                 const payload = {
                     customer_name: this.walkin.customer_name,
                     customer_phone: 'Walk-in Kasir',
+                    order_type: this.walkin.service_type === 'takeaway' ? 'takeaway' : 'dine_in',
                     service_type: this.walkin.service_type,
                     table_number: this.walkin.service_type === 'dine-in' ? this.walkin.table_number : null,
                     notes: 'Diproses dari kasir (Walk-in)',
-                    branch_id: this.walkin.branch_id,
-                    source: 'kasir_pos',
+                    branch_id: this.walkin.branch_id || 1,
+                    source: 'pos',
                     payment_status: 'paid',
                     items: this.cart.map(item => ({
                         menu_item_id: item.id,
@@ -489,24 +490,24 @@
                     },
                     body: JSON.stringify(payload)
                 })
-                .then(res => {
-                    if(!res.ok) throw new Error('Gagal mengirim pesanan');
-                    return res.json();
-                })
-                .then(data => {
-                    if(data.success) {
-                        return data.data;
-                    } else {
-                        throw new Error(data.message);
+                .then(async res => {
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || 'Gagal mengirim pesanan');
                     }
+                    return data.data;
                 })
                 .then(order => {
                     this.paying = false;
-                    this.successMessage = 'Pembayaran Berhasil!';
+                    this.cart = [];
+                    this.walkin.customer_name = '';
+                    this.walkin.table_number = '';
+                    this.successMessage = `Pembayaran Berhasil! Pesanan #${order.order_number || order.id} telah tercatat.`;
+                    setTimeout(() => { this.successMessage = ''; }, 4000);
                 })
                 .catch(err => {
                     this.paying = false;
-                    alert('Gagal: ' + err.message);
+                    alert('Gagal: ' + (err.message || 'Terjadi kesalahan sistem.'));
                 });
             },
             
