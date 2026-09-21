@@ -101,7 +101,7 @@ class DatabaseSeeder extends Seeder
             'daging' => 'Daging Sapi',
             'ikan' => 'Ikan & Seafood',
             'sayur' => 'Sayur & Kuah',
-            'topping' => 'Lauk Tambahan',
+            'topping' => 'Menu Tambahan',
             'minuman' => 'Minuman Tradisional',
             'nasi-padang' => 'Paket Nasi Padang',
         ];
@@ -228,7 +228,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.6,
                 'base_price' => 35000,
             ],
-            // === TOPPING & BUMBU (LAUK TAMBAHAN) ===
+            // === MENU TAMBAHAN (LAUK TAMBAHAN & EKSTRA) ===
             [
                 'nama' => 'Tambahan Ayam Pop',
                 'kategori' => 'topping',
