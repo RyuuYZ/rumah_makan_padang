@@ -5,7 +5,7 @@ test.use({ storageState: 'playwright/.auth/admin.json' });
 
 test.describe('CUJ-04: Admin Orders & POS Kasir Workflow', () => {
   test('Admin dapat melihat daftar pesanan, memfilter status, dan memperbarui status dapur', async ({ page }) => {
-    // 1. Akses halaman Pesanan Masuk (filter pending agar dapat diubah ke cooking sesuai state machine)
+    // 1. Akses halaman Pesanan Masuk (filter pending agar dapat diubah ke process sesuai state machine)
     await page.goto('/admin/orders?status=pending');
     await expect(page).toHaveTitle(/Pesanan Masuk/i);
 
@@ -17,23 +17,23 @@ test.describe('CUJ-04: Admin Orders & POS Kasir Workflow', () => {
     const firstRow = page.locator('tbody tr').first();
     await expect(firstRow).toBeVisible();
 
-    // 4. Ubah status pesanan pending menjadi 'cooking'
+    // 4. Ubah status pesanan pending menjadi 'process'
     const statusSelect = firstRow.locator('select').first();
     await expect(statusSelect).toBeVisible();
-    await statusSelect.selectOption('cooking');
+    await statusSelect.selectOption('process');
 
     // Beri jeda sejenak untuk autosave fetch API
     await page.waitForTimeout(1000);
 
-    // Buka filter cooking dan pastikan pesanan telah berpindah ke cooking
-    await page.goto('/admin/orders?status=cooking');
+    // Buka filter process dan pastikan pesanan telah berpindah ke process
+    await page.goto('/admin/orders?status=process');
     const updatedStatusSelect = page.locator('tbody tr').first().locator('select').first();
-    await expect(updatedStatusSelect).toHaveValue('cooking');
+    await expect(updatedStatusSelect).toHaveValue('process');
   });
 
   test('POS Kasir: Cari order via input manual dan selesaikan transaksi (Lunas)', async ({ page }) => {
-    // 1. Dapatkan kode pesanan aktif dari pesanan berstatus cooking atau pending
-    await page.goto('/admin/orders?status=cooking');
+    // 1. Dapatkan kode pesanan aktif dari pesanan berstatus process atau pending
+    await page.goto('/admin/orders?status=process');
     let orderCodeEl = page.locator('span[title="Kode Pesanan"]').first();
     if (!await orderCodeEl.isVisible()) {
       await page.goto('/admin/orders');
@@ -60,7 +60,7 @@ test.describe('CUJ-04: Admin Orders & POS Kasir Workflow', () => {
     await expect(page.getByText(/Total Tagihan/i)).toBeVisible();
     await expect(page.getByText(/Rincian Menu/i)).toBeVisible();
 
-    // 6. Klik tombol 'Tandai Selesai (Lunas)' jika status masih pending/cooking/ready
+    // 6. Klik tombol 'Tandai Selesai (Lunas)' jika status masih pending/process/ready
     const payBtn = page.locator('button:has-text("Tandai Selesai (Lunas)")');
     if (await payBtn.isVisible()) {
       await payBtn.click();

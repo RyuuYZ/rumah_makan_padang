@@ -3,7 +3,7 @@ import 'cart_item_model.dart';
 /// Status pesanan makanan
 enum OrderStatus {
   confirmed,
-  cooking,
+  process,
   delivering,
   delivered,
   cancelled;
@@ -12,8 +12,8 @@ enum OrderStatus {
     switch (this) {
       case OrderStatus.confirmed:
         return 'Pesanan Dikonfirmasi';
-      case OrderStatus.cooking:
-        return 'Sedang Dimasak';
+      case OrderStatus.process:
+        return 'Sedang Diproses';
       case OrderStatus.delivering:
         return 'Sedang Diantar';
       case OrderStatus.delivered:
@@ -26,9 +26,9 @@ enum OrderStatus {
   String get description {
     switch (this) {
       case OrderStatus.confirmed:
-        return 'Pesanan telah diterima oleh dapur Rasa Mandeh';
-      case OrderStatus.cooking:
-        return 'Koki sedang meracik bumbu & memanaskan lauk Padang Anda';
+        return 'Pesanan telah diterima oleh Rasa Mandeh';
+      case OrderStatus.process:
+        return 'Staf sedang menyiapkan & mengemas lauk Padang Anda';
       case OrderStatus.delivering:
         return 'Kurir Ranah Express sedang meluncur menuju alamat Anda';
       case OrderStatus.delivered:
@@ -42,7 +42,7 @@ enum OrderStatus {
     switch (this) {
       case OrderStatus.confirmed:
         return 0;
-      case OrderStatus.cooking:
+      case OrderStatus.process:
         return 1;
       case OrderStatus.delivering:
         return 2;
@@ -230,8 +230,9 @@ class OrderModel {
   }
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
+    final statusStr = json['status'] == 'cooking' ? 'process' : json['status'];
     final status = OrderStatus.values.firstWhere(
-      (e) => e.name == json['status'],
+      (e) => e.name == statusStr,
       orElse: () => OrderStatus.confirmed,
     );
     final createdAt = DateTime.parse(json['createdAt'] as String);

@@ -55,6 +55,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Layout Panel Admin Cabang Restoran**:
     - Memperbaiki kerusakan sintaks HTML kartu cabang pada `resources/views/admin/branches/index.blade.php` (tag tidak berpasangan yang menghilangkan nama cabang, badge kota, dan status).
     - Menambahkan tombol interaktif toggle status Buka/Tutup Cabang langsung dari kartu cabang (`admin.branches.toggleActive`).
+  - **Penyesuaian Pipeline & Status Pesanan (`cooking` -> `process`)**:
+    - Mengubah status alur pesanan dari `cooking` (*Sedang Dimasak*) menjadi `process` (*Sedang Diproses*) di seluruh sistem backend Laravel (`Order.php`, `Admin/OrderController.php`, `Api/OrderController.php`, `DashboardController.php`, migrasi `orders`), antarmuka admin & POS (`admin/orders`, `admin/pos`, `admin/dashboard`), database seeder, dan aplikasi mobile Flutter (`order_model.dart`, `order_provider.dart`, `status_badge.dart`, `order_detail_screen.dart`), disesuaikan dengan operasional rumah makan Padang tanpa bagian dapur/koki terpisah.
+    - Menyelaraskan teks judul *"Pipeline Status Dapur"* dan *"Status Dapur"* menjadi *"Pipeline Status Pesanan"* dan *"Status Pesanan"*.
+    - Memperbaiki inisialisasi status pembuatan pesanan baru (`Api/OrderController.php`): pesanan baru yang dibuat (baik via web pelanggan, kasir POS walk-in, maupun admin) kini selalu dimulai dengan status `pending` (tidak langsung `completed`), sehingga alur pemrosesan pesanan dapat dipantau secara berjenjang dari `pending` -> `process` -> `ready` -> `completed`.
+  - **Tabel Pesanan Masuk Terbaru di Dashboard Admin (`admin/dashboard.blade.php`)**:
+    - Menyederhanakan tata letak tabel ringkasan pesanan masuk terbaru di Dashboard dengan menghapus elemen dropdown ganda dan menampilkan lencana status statis (*pill status badge*) yang bersih, rapi, dan proporsional sesuai palet warna status. Pengelolaan status pesanan interaktif terpusat secara penuh di halaman manajemen pesanan (`/admin/orders`).
 
 ### Added
 - Komponen paginasi kustom (`x-admin-pagination`) dengan lencana `TOTAL: X [ENTITY]`, tombol `< Prev` dan `Next >`, serta kotak lompat halaman interaktif `KE HAL: [input] / Y [Go]` yang mempertahankan parameter filter URL.

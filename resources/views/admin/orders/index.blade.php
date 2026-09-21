@@ -66,7 +66,7 @@
                         <th class="w-[14%] py-3.5 px-3">Cabang & Metode</th>
                         <th class="w-[26%] py-3.5 px-3">Menu Dipesan</th>
                         <th class="w-[13%] py-3.5 px-3">Total Tagihan</th>
-                        <th class="w-[15%] py-3.5 px-3">Status Dapur</th>
+                        <th class="w-[15%] py-3.5 px-3">Status Pesanan</th>
                         <th class="w-[6%] py-3.5 px-3 text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -265,7 +265,7 @@
                     statusClasses: {
                         'pending': 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100',
                         'confirmed': 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100',
-                        'cooking': 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100',
+                        'process': 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100',
                         'ready': 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100',
                         'completed': 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100',
                         'cancelled': 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'

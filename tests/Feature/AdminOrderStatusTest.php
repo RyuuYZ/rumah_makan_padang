@@ -46,7 +46,7 @@ class AdminOrderStatusTest extends TestCase
         ]);
 
         $response = $this->actingAs($admin)->postJson(route('admin.orders.updateStatus', $order->id), [
-            'status' => 'cooking',
+            'status' => 'process',
         ]);
 
         $response->assertStatus(200)
@@ -54,15 +54,15 @@ class AdminOrderStatusTest extends TestCase
                 'success' => true,
                 'order' => [
                     'id' => $order->id,
-                    'status' => 'cooking',
-                    'status_label' => 'Cooking',
+                    'status' => 'process',
+                    'status_label' => 'Process',
                 ],
                 'pending_count' => 0,
             ]);
 
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
-            'status' => 'cooking',
+            'status' => 'process',
         ]);
     }
 
@@ -114,7 +114,7 @@ class AdminOrderStatusTest extends TestCase
         ]);
 
         $response = $this->postJson(route('admin.orders.updateStatus', $order->id), [
-            'status' => 'cooking',
+            'status' => 'process',
         ]);
 
         $response->assertStatus(401);

@@ -98,7 +98,7 @@
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold capitalize"
                                   :class="{
                                       'bg-amber-100 text-amber-800': orderData?.status === 'pending',
-                                      'bg-blue-100 text-blue-800': orderData?.status === 'cooking',
+                                      'bg-blue-100 text-blue-800': orderData?.status === 'process',
                                       'bg-indigo-100 text-indigo-800': orderData?.status === 'ready',
                                       'bg-emerald-100 text-emerald-800': orderData?.status === 'confirmed' || orderData?.status === 'completed',
                                       'bg-rose-100 text-rose-800': orderData?.status === 'cancelled'
@@ -157,7 +157,7 @@
                             <button @click="orderData = null; manualCode = ''; error = ''; startScanner()" class="px-6 py-3.5 bg-neutral-100 hover:bg-neutral-200 text-[#241B16] font-bold rounded-xl transition-colors text-sm">
                                 Batal / Pindai Lain
                             </button>
-                            <div class="flex-1" x-show="orderData?.status === 'pending' || orderData?.status === 'cooking' || orderData?.status === 'ready' || orderData?.status === 'confirmed'">
+                            <div class="flex-1" x-show="orderData?.status === 'pending' || orderData?.status === 'process' || orderData?.status === 'ready' || orderData?.status === 'confirmed'">
                                 <button type="button" 
                                         @click="completeOrder()" 
                                         :disabled="completing"

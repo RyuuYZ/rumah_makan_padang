@@ -495,7 +495,7 @@ class DatabaseSeeder extends Seeder
                 'customer_name' => 'Faris Pratama',
                 'customer_phone' => '081298765432',
                 'method' => 'dine-in',
-                'status' => 'cooking',
+                'status' => 'process',
                 'notes' => 'Meja 04, sambal ijo dipisah',
                 'items' => [
                     ['item_index' => 0, 'qty' => 2, 'price' => 37000], // Rendang

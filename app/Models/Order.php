@@ -34,7 +34,7 @@ class Order extends Model
         'total' => 'decimal:2',
     ];
 
-    const STATUSES = ['pending', 'confirmed', 'cooking', 'ready', 'completed', 'cancelled'];
+    const STATUSES = ['pending', 'confirmed', 'process', 'ready', 'completed', 'cancelled'];
 
     const METHODS = ['dine-in', 'online', 'delivery'];
 

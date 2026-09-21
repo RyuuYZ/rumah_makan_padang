@@ -51,7 +51,7 @@ class OrderProvider extends ChangeNotifier {
   void _seedSampleOrders() {
     final now = DateTime.now();
     final createdAt = now.subtract(const Duration(minutes: 18));
-    final cookingAt = now.subtract(const Duration(minutes: 12));
+    final processAt = now.subtract(const Duration(minutes: 12));
 
     final sampleOrder = OrderModel(
       id: '#RSO-88429',
@@ -68,61 +68,55 @@ class OrderProvider extends ChangeNotifier {
             rating: 4.9,
             reviewCount: 300,
             imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400',
+            badge: 'Signature',
+            isAvailable: true,
           ),
-          quantity: 1,
+          quantity: 2,
+          notes: 'Tolong kuah gulainya dibanyakin ya uda',
+          options: ['Pedas Sedang'],
         ),
         CartItemModel(
           id: 'item_2',
           menuItem: MenuItemModel(
             id: 'm2',
-            name: 'Paket Nasi Padang Komplit',
-            category: 'Paket',
-            description: 'Gulai Cincang, sayur kapau, kuah lado',
-            price: 38000,
-            rating: 5.0,
-            reviewCount: 400,
-            imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400',
-          ),
-          quantity: 1,
-        ),
-        CartItemModel(
-          id: 'item_3',
-          menuItem: MenuItemModel(
-            id: 'm3',
-            name: 'Es Teh Talua Tradisional',
-            category: 'Minuman',
-            description: 'Kocokan telur bebek, jeruk nipis & teh pekat',
-            price: 12000,
+            name: 'Ayam Pop Gurih Minang',
+            category: 'Ayam',
+            description: 'Ayam kampung rebus air kelapa',
+            price: 22000,
             rating: 4.8,
-            reviewCount: 200,
-            imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400',
+            reviewCount: 210,
+            imageUrl: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400',
+            badge: 'Favorit',
+            isAvailable: true,
           ),
           quantity: 1,
+          notes: 'Sambal merah dicampur terpisah',
+          options: [],
         ),
       ],
       deliveryMethod: 'delivery',
-      deliveryAddress: 'Jl. Kemang Raya No. 14, Jakarta Selatan',
-      paymentMethod: 'QRIS BCA (Lunas • 12.18 WIB)',
-      notes: 'Patokan: Pagar hitam depan Apotek. Titip di meja pos satpam.',
+      deliveryAddress: 'Jl. Sudirman Kav. 52-53, Senayan, Jakarta Selatan (Lantai 18 Ruang 1804)',
+      paymentMethod: 'QRIS',
+      notes: 'Antar sebelum jam makan siang selesai ya uda.',
       subtotal: 78000,
       deliveryFee: 0,
       serviceFee: 0,
       discount: 0,
       totalPrice: 78000,
-      status: OrderStatus.cooking,
+      status: OrderStatus.process,
       estimatedMinutes: 20,
       timeline: [
         OrderTimelineMilestone(
           status: OrderStatus.confirmed,
           timestamp: createdAt,
-          title: 'Pesanan Diterima Dapur',
+          title: 'Pesanan Diterima',
           description: 'Rincian pesanan terverifikasi & pembayaran tervalidasi',
         ),
         OrderTimelineMilestone(
-          status: OrderStatus.cooking,
-          timestamp: cookingAt,
-          title: 'Sedang Dimasak & Dibungkus',
-          description: 'Lauk dipanaskan di kuali tanah liat & dibungkus daun pisang berlapis.',
+          status: OrderStatus.process,
+          timestamp: processAt,
+          title: 'Sedang Disiapkan & Dibungkus',
+          description: 'Lauk disiapkan & dibungkus rapi khas Minang.',
         ),
       ],
     );
@@ -250,12 +244,12 @@ class OrderProvider extends ChangeNotifier {
     String milestoneDesc;
     switch (newStatus) {
       case OrderStatus.confirmed:
-        milestoneTitle = 'Pesanan Diterima Dapur';
+        milestoneTitle = 'Pesanan Diterima';
         milestoneDesc = 'Rincian pesanan terverifikasi & pembayaran tervalidasi';
         break;
-      case OrderStatus.cooking:
-        milestoneTitle = 'Sedang Dimasak & Dibungkus';
-        milestoneDesc = 'Lauk dipanaskan di kuali tanah liat & dibungkus daun pisang berlapis.';
+      case OrderStatus.process:
+        milestoneTitle = 'Sedang Disiapkan & Dibungkus';
+        milestoneDesc = 'Lauk disiapkan & dibungkus rapi khas Minang.';
         break;
       case OrderStatus.delivering:
         milestoneTitle = 'Kurir Menjemput & Mengantar';

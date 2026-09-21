@@ -132,12 +132,12 @@ void main() {
       expect(order.remainingMinutes >= 0, true);
       expect(order.formattedEstimatedArrivalTime.contains('WIB'), true);
 
-      // Advance stage to cooking
-      await orderProvider.updateOrderStatus(order.id, OrderStatus.cooking);
+      // Advance stage to process
+      await orderProvider.updateOrderStatus(order.id, OrderStatus.process);
       final updated = orderProvider.getOrderById(order.id);
-      expect(updated?.status, OrderStatus.cooking);
+      expect(updated?.status, OrderStatus.process);
       expect(updated?.timeline.length, 2);
-      expect(updated?.timeline.last.status, OrderStatus.cooking);
+      expect(updated?.timeline.last.status, OrderStatus.process);
 
       // Batalkan pesanan dengan alasan
       const reason = 'Ingin menambah atau mengubah pilihan menu';

@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $statusCounts = [
             'pending' => (int) $rawStatusCounts->get('pending', 0),
             'confirmed' => (int) $rawStatusCounts->get('confirmed', 0),
-            'cooking' => (int) $rawStatusCounts->get('cooking', 0),
+            'process' => (int) $rawStatusCounts->get('process', 0),
             'ready' => (int) $rawStatusCounts->get('ready', 0),
             'completed' => (int) $rawStatusCounts->get('completed', 0),
             'cancelled' => (int) $rawStatusCounts->get('cancelled', 0),

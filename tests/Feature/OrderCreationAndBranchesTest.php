@@ -104,7 +104,7 @@ class OrderCreationAndBranchesTest extends TestCase
         $response->assertJsonPath('success', true);
         $this->assertDatabaseHas('orders', [
             'customer_name' => 'Ibu Rahma',
-            'status' => 'completed',
+            'status' => 'pending',
             'payment_status' => 'paid',
             'source' => 'pos',
         ]);

@@ -80,7 +80,7 @@
     <!-- Clean Status Pipeline -->
     <div class="bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-xs">
         <div class="flex items-center justify-between mb-3.5">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-500">Pipeline Status Dapur</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-500">Pipeline Status Pesanan</h3>
             <span class="text-xs text-neutral-400 font-normal">Klik untuk memfilter pesanan</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
@@ -97,10 +97,10 @@
                 <span class="text-[10px] text-blue-700">Dikonfirmasi</span>
             </a>
 
-            <a href="{{ route('admin.orders.index', ['status' => 'cooking']) }}" class="p-3 rounded-xl bg-orange-50/70 border border-orange-200/70 text-center hover:bg-orange-100/60 transition-colors">
-                <span class="text-[11px] font-semibold text-orange-800 uppercase tracking-wider block">Cooking</span>
-                <span class="text-xl font-bold text-orange-900 mt-0.5 block">{{ $statusCounts['cooking'] }}</span>
-                <span class="text-[10px] text-orange-700">Sedang Dimasak</span>
+            <a href="{{ route('admin.orders.index', ['status' => 'process']) }}" class="p-3 rounded-xl bg-orange-50/70 border border-orange-200/70 text-center hover:bg-orange-100/60 transition-colors">
+                <span class="text-[11px] font-semibold text-orange-800 uppercase tracking-wider block">Process</span>
+                <span class="text-xl font-bold text-orange-900 mt-0.5 block">{{ $statusCounts['process'] }}</span>
+                <span class="text-[10px] text-orange-700">Sedang Diproses</span>
             </a>
 
             <a href="{{ route('admin.orders.index', ['status' => 'ready']) }}" class="p-3 rounded-xl bg-purple-50/70 border border-purple-200/70 text-center hover:bg-purple-100/60 transition-colors">
@@ -143,56 +143,42 @@
                 <table class="w-full text-left text-xs table-fixed">
                     <thead>
                         <tr class="bg-neutral-50/70 border-b border-neutral-200/80 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider font-serif">
-                            <th class="w-[32%] py-3 px-4">ID & Pelanggan</th>
-                            <th class="w-[18%] py-3 px-4">Cabang</th>
-                            <th class="w-[18%] py-3 px-4">Total</th>
-                            <th class="w-[16%] py-3 px-4">Status</th>
-                            <th class="w-[16%] py-3 px-4 text-right">Perbarui</th>
+                            <th class="w-[40%] py-3 px-4">ID & Pelanggan</th>
+                            <th class="w-[20%] py-3 px-4">Cabang</th>
+                            <th class="w-[20%] py-3 px-4">Total</th>
+                            <th class="w-[20%] py-3 px-4 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-100">
                         @forelse($recentOrders as $order)
-                        <tr class="hover:bg-neutral-50/50 transition-colors" x-data="dashboardOrderRow({{ $order->id }}, '{{ $order->status }}')">
-                            <td class="py-3 px-4">
+                        <tr class="hover:bg-neutral-50/50 transition-colors">
+                            <td class="py-3.5 px-4">
                                 <span class="font-bold text-neutral-900">#{{ $order->id }}</span>
-                                <span class="text-neutral-600 font-medium"> - {{ $order->customer_name ?? 'Walk-in' }}</span>
+                                <span class="text-neutral-700 font-medium"> - {{ $order->customer_name ?? 'Walk-in' }}</span>
                                 <span class="text-[10px] text-neutral-400 block mt-0.5">{{ $order->created_at->diffForHumans() }} ({{ ucfirst($order->method) }})</span>
                             </td>
-                            <td class="py-3 px-4 font-medium text-neutral-700 truncate">
+                            <td class="py-3.5 px-4 font-medium text-neutral-700 truncate">
                                 {{ $order->branch->kota ?? '-' }}
                             </td>
-                            <td class="py-3 px-4 font-bold text-neutral-900 whitespace-nowrap">
+                            <td class="py-3.5 px-4 font-bold text-[#7A1F2B] whitespace-nowrap text-sm">
                                 Rp {{ number_format($order->total, 0, ',', '.') }}
                             </td>
-                            <td class="py-3 px-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold transition-all"
-                                      :class="badgeClasses[status] || 'bg-neutral-50 text-neutral-700 border border-neutral-200'"
-                                      x-text="status.charAt(0).toUpperCase() + status.slice(1)">
+                            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border
+                                    @if($order->status === 'pending') bg-amber-50 text-amber-700 border-amber-200
+                                    @elseif($order->status === 'confirmed') bg-blue-50 text-blue-700 border-blue-200
+                                    @elseif($order->status === 'process') bg-orange-50 text-orange-700 border-orange-200
+                                    @elseif($order->status === 'ready') bg-purple-50 text-purple-700 border-purple-200
+                                    @elseif($order->status === 'completed') bg-emerald-50 text-emerald-700 border-emerald-200
+                                    @elseif($order->status === 'cancelled') bg-rose-50 text-rose-700 border-rose-200
+                                    @else bg-neutral-50 text-neutral-700 border-neutral-200 @endif">
                                     {{ ucfirst($order->status) }}
                                 </span>
-                            </td>
-                            <td class="py-3 px-4 text-right whitespace-nowrap">
-                                <div class="inline-flex items-center relative">
-                                    <select 
-                                        x-model="status" 
-                                        @change="updateStatus($event.target.value)" 
-                                        class="text-[11px] font-bold py-1 pl-2 pr-6 rounded-lg border border-neutral-300 bg-white focus:ring-1 focus:ring-[#7A1F2B] outline-none disabled:opacity-60 cursor-pointer shadow-2xs">
-                                        @foreach(\App\Models\Order::STATUSES as $st)
-                                            <option value="{{ $st }}">{{ ucfirst($st) }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div x-show="saving" class="absolute right-1.5 pointer-events-none" style="display: none;" x-cloak>
-                                        <svg class="animate-spin h-3 w-3 text-neutral-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    </div>
-                                </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="py-8 text-center text-neutral-400">Belum ada pesanan masuk.</td>
+                            <td colspan="4" class="py-8 text-center text-neutral-400">Belum ada pesanan masuk.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -248,73 +234,5 @@
         </div>
 
     </div>
-
-    <script>
-    (function() {
-        function initDashboardOrderStatus() {
-            if (typeof Alpine !== 'undefined' && !Alpine._dashboardOrderStatusRegistered) {
-                Alpine._dashboardOrderStatusRegistered = true;
-                Alpine.data('dashboardOrderRow', (orderId, initialStatus) => ({
-                    orderId: orderId,
-                    status: initialStatus,
-                    previousStatus: initialStatus,
-                    saving: false,
-                    badgeClasses: {
-                        'pending': 'bg-amber-50 text-amber-700 border border-amber-200/60',
-                        'confirmed': 'bg-blue-50 text-blue-700 border border-blue-200/60',
-                        'cooking': 'bg-orange-50 text-orange-700 border border-orange-200/60',
-                        'ready': 'bg-purple-50 text-purple-700 border border-purple-200/60',
-                        'completed': 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
-                        'cancelled': 'bg-rose-50 text-rose-700 border border-rose-200/60'
-                    },
-                    async updateStatus(newStatus) {
-                        if (this.saving) return;
-                        this.saving = true;
-                        const targetStatus = newStatus;
-                        try {
-                            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                            const res = await fetch(`/admin/orders/${this.orderId}/status`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': token
-                                },
-                                body: JSON.stringify({ status: targetStatus })
-                            });
-                            const data = await res.json();
-                            if (res.ok && data.success) {
-                                this.status = targetStatus;
-                                this.previousStatus = targetStatus;
-                                if (window.showToast) {
-                                    window.showToast(data.message || 'Status pesanan berhasil diperbarui!', 'success');
-                                }
-                                window.dispatchEvent(new CustomEvent('order-status-updated', {
-                                    detail: { orderId: this.orderId, status: targetStatus, pendingCount: data.pending_count }
-                                }));
-                            } else {
-                                throw new Error(data.message || 'Gagal memperbarui status');
-                            }
-                        } catch (err) {
-                            console.error('Error updating dashboard order status:', err);
-                            this.status = this.previousStatus;
-                            if (window.showToast) {
-                                window.showToast(err.message || 'Gagal memperbarui status pesanan', 'error');
-                            }
-                        } finally {
-                            this.saving = false;
-                        }
-                    }
-                }));
-            }
-        }
-
-        if (window.Alpine) {
-            initDashboardOrderStatus();
-        } else {
-            document.addEventListener('alpine:init', initDashboardOrderStatus);
-        }
-    })();
-    </script>
 </div>
 @endsection

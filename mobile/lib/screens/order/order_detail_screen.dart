@@ -88,7 +88,7 @@ class OrderDetailScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // 3. Card 1: Status Stepper Dapur & Estimasi
-              _buildCookingStatusCard(context, order),
+              _buildProcessStatusCard(context, order),
               const SizedBox(height: 16),
 
               // 4. Card 2: Live Tracking Map & Informasi Kurir
@@ -228,14 +228,14 @@ class OrderDetailScreen extends StatelessWidget {
   }
 
   /// Card 1: Status Stepper Memasak & Estimasi Tiba Dinamis
-  Widget _buildCookingStatusCard(BuildContext context, OrderModel? order) {
-    final status = order?.status ?? OrderStatus.cooking;
+  Widget _buildProcessStatusCard(BuildContext context, OrderModel? order) {
+    final status = order?.status ?? OrderStatus.process;
     final currentStep = status.stepIndex;
     final isCancelled = status == OrderStatus.cancelled;
 
     // Ambil milestone dari riwayat log timeline
     final confirmedMilestone = order?.getMilestone(OrderStatus.confirmed);
-    final cookingMilestone = order?.getMilestone(OrderStatus.cooking);
+    final processMilestone = order?.getMilestone(OrderStatus.process);
     final deliveringMilestone = order?.getMilestone(OrderStatus.delivering);
     final deliveredMilestone = order?.getMilestone(OrderStatus.delivered);
     final cancelledMilestone = order?.getMilestone(OrderStatus.cancelled);
@@ -255,12 +255,12 @@ class OrderDetailScreen extends StatelessWidget {
         pillTextColor = const Color(0xFF8A5D19);
         headerIcon = Icons.receipt_long_rounded;
         break;
-      case OrderStatus.cooking:
+      case OrderStatus.process:
         pillText = 'SEDANG DISIAPKAN';
         pillDotColor = const Color(0xFFC0151E);
         pillBgColor = const Color(0xFFF6ECEC);
         pillTextColor = const Color(0xFF4A141A);
-        headerIcon = Icons.soup_kitchen_rounded;
+        headerIcon = Icons.inventory_2_rounded;
         break;
       case OrderStatus.delivering:
         pillText = 'SEDANG DIANTAR';
@@ -537,15 +537,15 @@ class OrderDetailScreen extends StatelessWidget {
               subtitle: 'Rincian pesanan terverifikasi & pembayaran tervalidasi',
               icon: Icons.check_rounded,
             ),
-            if (cookingMilestone != null)
+            if (processMilestone != null)
               _buildTimelineItem(
                 isDone: true,
                 isActive: false,
                 isLast: false,
-                time: _formatMilestoneTime(cookingMilestone.timestamp),
-                title: 'Sedang Dimasak & Dibungkus',
-                subtitle: 'Lauk dipanaskan di kuali tanah liat.',
-                icon: Icons.restaurant_rounded,
+                time: _formatMilestoneTime(processMilestone.timestamp),
+                title: 'Sedang Disiapkan & Dibungkus',
+                subtitle: 'Lauk disiapkan & dibungkus rapi.',
+                icon: Icons.inventory_2_rounded,
               ),
             _buildTimelineItem(
               isDone: false,
@@ -569,7 +569,7 @@ class OrderDetailScreen extends StatelessWidget {
               time: confirmedMilestone != null
                   ? _formatMilestoneTime(confirmedMilestone.timestamp)
                   : (order != null ? _formatMilestoneTime(order.createdAt) : '12.18 WIB'),
-              title: 'Pesanan Diterima Dapur',
+              title: 'Pesanan Diterima',
               subtitle: confirmedMilestone?.description ??
                   'Rincian pesanan terverifikasi & pembayaran tervalidasi',
               badgeText: currentStep == 0 ? 'Proses' : null,
@@ -579,14 +579,14 @@ class OrderDetailScreen extends StatelessWidget {
               isDone: currentStep > 1,
               isActive: currentStep == 1,
               isLast: false,
-              time: cookingMilestone != null
-                  ? _formatMilestoneTime(cookingMilestone.timestamp)
+              time: processMilestone != null
+                  ? _formatMilestoneTime(processMilestone.timestamp)
                   : null,
-              title: 'Sedang Dimasak & Dibungkus',
-              subtitle: cookingMilestone?.description ??
-                  'Lauk dipanaskan di kuali tanah liat & dibungkus daun pisang berlapis.',
+              title: 'Sedang Disiapkan & Dibungkus',
+              subtitle: processMilestone?.description ??
+                  'Lauk disiapkan & dibungkus rapi khas Minang.',
               badgeText: currentStep == 1 ? 'Proses' : null,
-              icon: Icons.restaurant_rounded,
+              icon: Icons.inventory_2_rounded,
             ),
             _buildTimelineItem(
               isDone: currentStep > 2,
@@ -1252,7 +1252,7 @@ class OrderDetailScreen extends StatelessWidget {
   /// Tombol Aksi: Pesan Menu Lainnya, Struk Digital, dan Batalkan Pesanan
   Widget _buildActionButtons(BuildContext context, OrderModel? order) {
     final canCancel = order != null &&
-        (order.status == OrderStatus.confirmed || order.status == OrderStatus.cooking);
+        (order.status == OrderStatus.confirmed || order.status == OrderStatus.process);
 
     return Column(
       children: [
@@ -1326,7 +1326,7 @@ class OrderDetailScreen extends StatelessWidget {
           ),
         ),
 
-        // Tombol Merah Halus: Batalkan Pesanan (Hanya jika tahap awal: Confirmed/Cooking)
+        // Tombol Merah Halus: Batalkan Pesanan (Hanya jika tahap awal: Confirmed/Process)
         if (canCancel) ...[
           const SizedBox(height: 12),
           SizedBox(

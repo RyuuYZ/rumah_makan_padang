@@ -22,7 +22,7 @@
   - [x] Penanganan kesalahan saat kredensial salah (alert pesan error tampil)
   - [x] Login sukses dengan kredensial valid dan alur logout bersih
 - [x] **CUJ-04 (Admin Orders & POS Kasir)**: `e2e/admin-order-pos.spec.ts`
-  - [x] Filter status pesanan dapur & transisi state: `pending` -> `cooking`
+  - [x] Filter status pesanan & transisi state: `pending` -> `process`
   - [x] Integrasi Kasir POS: pencarian kode pesanan manual & penyelesaian transaksi lunas (Bayar Tunai)
   - [x] Verifikasi aturan bisnis: status bayar menjadi `paid`, order `completed`, struk siap dicetak
 - [x] **CUJ-05 (Admin Master Data)**: `e2e/admin-master-data.spec.ts`

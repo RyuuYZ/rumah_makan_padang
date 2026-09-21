@@ -153,7 +153,7 @@ class OrderController extends Controller
             $total = collect($items)->sum(fn ($item) => $item['quantity'] * $item['price']);
 
             $paymentStatus = ($isCashierPos && $request->input('payment_status') === 'paid') ? 'paid' : 'unpaid';
-            $orderStatus = ($paymentStatus === 'paid') ? 'completed' : 'pending';
+            $orderStatus = 'pending';
             $cashierId = $isCashierPos ? (auth()->id() ?? 1) : null;
             $source = $isCashierPos ? 'pos' : ($request->input('source') === 'mobile_app' ? 'pos' : 'customer_web');
 
@@ -239,6 +239,7 @@ class OrderController extends Controller
             ], 201);
         });
     }
+
     public function show(string $id)
     {
         $order = Order::with(['items.menuItem', 'branch'])->findOrFail($id);
@@ -305,16 +306,16 @@ class OrderController extends Controller
     public function updateStatus(Request $request, string $id)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,cooking,ready,completed,cancelled',
+            'status' => 'required|in:pending,confirmed,process,ready,completed,cancelled',
         ]);
 
         $order = Order::findOrFail($id);
 
         // Bug 14: Status Order Bisa Loncat-Loncat (State Machine Validation)
         $validTransitions = [
-            'pending' => ['confirmed', 'cooking', 'ready', 'completed', 'cancelled'],
-            'confirmed' => ['pending', 'cooking', 'ready', 'completed', 'cancelled'],
-            'cooking' => ['pending', 'ready', 'completed', 'cancelled'],
+            'pending' => ['confirmed', 'process', 'ready', 'completed', 'cancelled'],
+            'confirmed' => ['pending', 'process', 'ready', 'completed', 'cancelled'],
+            'process' => ['pending', 'ready', 'completed', 'cancelled'],
             'ready' => ['pending', 'completed', 'cancelled'],
             'completed' => [],
             'cancelled' => [],

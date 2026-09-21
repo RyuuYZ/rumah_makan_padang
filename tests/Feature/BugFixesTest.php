@@ -115,7 +115,7 @@ class BugFixesTest extends TestCase
             'table_number' => 'Meja 08',
             'customer_name' => 'Faisal',
             'total' => 35000,
-            'status' => 'cooking',
+            'status' => 'process',
             'payment_status' => 'unpaid',
         ]);
 

@@ -21,10 +21,10 @@ class StatusBadge extends StatelessWidget {
         textColor = AppColors.info;
         icon = Icons.receipt_long_rounded;
         break;
-      case OrderStatus.cooking:
+      case OrderStatus.process:
         bgColor = AppColors.warningBg;
         textColor = AppColors.warning;
-        icon = Icons.soup_kitchen_rounded;
+        icon = Icons.inventory_2_rounded;
         break;
       case OrderStatus.delivering:
         bgColor = const Color(0xFFFFF8E1);
