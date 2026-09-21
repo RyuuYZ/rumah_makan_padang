@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../models/menu_item_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/menu_provider.dart';
+import '../../utils/snackbar_helper.dart';
 import '../menu/menu_detail_modal.dart';
 
 /// Halaman Beranda (Home Page) persis sesuai mockup Figma
@@ -776,12 +777,9 @@ class HomeScreen extends StatelessWidget {
                                 InkWell(
                                   onTap: () {
                                     cart.addItem(data.item);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('${data.displayName} ditambahkan ke keranjang'),
-                                        backgroundColor: const Color(0xFF5A1920),
-                                        duration: const Duration(seconds: 1),
-                                      ),
+                                    SnackBarHelper.showCartSnackBar(
+                                      message: '${data.displayName} berhasil ditambahkan!',
+                                      context: context,
                                     );
                                   },
                                   borderRadius: BorderRadius.circular(15),

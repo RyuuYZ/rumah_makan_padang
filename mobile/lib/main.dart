@@ -64,6 +64,7 @@ class RasaMandehApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       routerConfig: appRouter,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
     );
   }
 }

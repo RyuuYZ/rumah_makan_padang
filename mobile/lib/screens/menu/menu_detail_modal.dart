@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../models/menu_item_model.dart';
 import '../../models/review_model.dart';
@@ -8,6 +7,7 @@ import '../../services/api_service.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
 import '../../utils/currency_formatter.dart';
+import '../../utils/snackbar_helper.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/quantity_stepper.dart';
 import 'write_review_modal.dart';
@@ -420,28 +420,18 @@ class _MenuDetailModalState extends State<MenuDetailModal> {
                             text: 'Tambah • ${CurrencyFormatter.format(totalPrice)}',
                             onPressed: () {
                               final cartProvider = context.read<CartProvider>();
+                              final quantity = _quantity;
+                              final itemName = item.name;
                               cartProvider.addItem(
                                 item,
-                                quantity: _quantity,
+                                quantity: quantity,
                                 notes: _notesController.text.trim(),
                               );
                               Navigator.pop(context);
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '$_quantity x ${item.name} berhasil ditambahkan!',
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                  backgroundColor: AppColors.primary,
-                                  behavior: SnackBarBehavior.floating,
-                                  duration: const Duration(seconds: 2),
-                                  action: SnackBarAction(
-                                    label: 'Lihat Keranjang',
-                                    textColor: AppColors.goldLight,
-                                    onPressed: () => context.push('/cart'),
-                                  ),
-                                ),
+                              SnackBarHelper.showCartSnackBar(
+                                message: '$quantity x $itemName berhasil ditambahkan!',
+                                context: context,
                               );
                             },
                           ),

@@ -15,6 +15,8 @@ import 'package:rasa_mandeh/screens/cart/cart_screen.dart';
 import 'package:rasa_mandeh/screens/checkout/order_loading_screen.dart';
 import 'package:rasa_mandeh/screens/checkout/payment_screen.dart';
 import 'package:rasa_mandeh/screens/home/home_screen.dart';
+import 'package:rasa_mandeh/routes/app_router.dart';
+import 'package:rasa_mandeh/screens/menu/menu_detail_modal.dart';
 import 'package:rasa_mandeh/screens/menu/menu_screen.dart';
 import 'package:rasa_mandeh/screens/order/order_detail_screen.dart';
 import 'package:rasa_mandeh/screens/order/order_history_screen.dart';
@@ -22,6 +24,7 @@ import 'package:rasa_mandeh/screens/splash_screen.dart';
 import 'package:rasa_mandeh/services/auth_service.dart';
 import 'package:rasa_mandeh/services/storage_service.dart';
 import 'package:rasa_mandeh/utils/currency_formatter.dart';
+import 'package:rasa_mandeh/utils/snackbar_helper.dart';
 import 'package:rasa_mandeh/widgets/food_card.dart';
 import 'package:rasa_mandeh/widgets/rm_logo.dart';
 
@@ -775,6 +778,102 @@ void main() {
 
       // Jumlah order bertambah tepat 1, tidak terjadi duplikasi ganda
       expect(orderProvider.orders.length, initialOrderCount + 1);
+    });
+
+    testWidgets('MenuDetailModal adds item and shows cart snackbar with functioning action and auto-dismiss', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final storage = StorageService(prefs);
+      final cartProvider = CartProvider(storage);
+      final authProvider = AuthProvider(AuthService(storage));
+      final menuProvider = MenuProvider();
+      final orderProvider = OrderProvider(storage);
+
+      const testItem = MenuItemModel(
+        id: 'r1',
+        name: 'Rendang Daging',
+        category: 'Lauk Utama',
+        description: 'Daging sapi pilihan empuk gurih',
+        price: 28000,
+        rating: 4.9,
+        reviewCount: 1240,
+        imageUrl: 'https://example.com/rendang.jpg',
+      );
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: authProvider),
+            ChangeNotifierProvider.value(value: menuProvider),
+            ChangeNotifierProvider.value(value: orderProvider),
+            ChangeNotifierProvider.value(value: cartProvider),
+          ],
+          child: MaterialApp.router(
+            routerConfig: appRouter,
+            scaffoldMessengerKey: rootScaffoldMessengerKey,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final context = rootNavigatorKey.currentContext!;
+      MenuDetailModal.show(context, testItem);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Rendang Daging'), findsOneWidget);
+      expect(find.text('Tambah • Rp 28.000'), findsOneWidget);
+
+      // Tekan tombol Tambah
+      await tester.tap(find.text('Tambah • Rp 28.000'));
+      await tester.pumpAndSettle();
+
+      // Modal harus tertutup dan item bertambah di keranjang
+      expect(cartProvider.totalItemCount, 1);
+
+      // SnackBar harus muncul dengan pesan dan tombol 'Lihat Keranjang'
+      expect(find.text('1 x Rendang Daging berhasil ditambahkan!'), findsOneWidget);
+      final actionButton = find.text('Lihat Keranjang');
+      expect(actionButton, findsOneWidget);
+
+      // Tekan tombol 'Lihat Keranjang', tidak boleh melempar error dan membuka CartScreen
+      await tester.tap(actionButton);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Keranjang Pesanan'), findsOneWidget);
+    });
+
+    testWidgets('SnackBarHelper cart snackbar auto-dismisses after duration', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          scaffoldMessengerKey: rootScaffoldMessengerKey,
+          home: const Scaffold(
+            body: Center(child: Text('Test Page')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      SnackBarHelper.showCartSnackBar(
+        message: '1 x Rendang Daging berhasil ditambahkan!',
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('1 x Rendang Daging berhasil ditambahkan!'), findsOneWidget);
+      expect(find.text('Lihat Keranjang'), findsOneWidget);
+
+      // Tunggu durasi berakhir
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pumpAndSettle();
+
+      // SnackBar harus otomatis hilang karena persist: false
+      expect(find.text('1 x Rendang Daging berhasil ditambahkan!'), findsNothing);
+      expect(find.text('Lihat Keranjang'), findsNothing);
     });
   });
 }

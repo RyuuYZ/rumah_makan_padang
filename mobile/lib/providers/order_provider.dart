@@ -199,8 +199,8 @@ class OrderProvider extends ChangeNotifier {
         status: OrderStatus.confirmed,
         timestamp: now,
         title: 'Pesanan Diterima Dapur',
-        description: 'Rincian pesanan terverifikasi & pembayaran tervalidasi' +
-            (remoteQrToken != null ? ' (Token: $remoteQrToken)' : ''),
+        description:
+            'Rincian pesanan terverifikasi & pembayaran tervalidasi${remoteQrToken != null ? ' (Token: $remoteQrToken)' : ''}',
       ),
     ];
 

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../models/menu_item_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/menu_provider.dart';
-import '../../theme/app_colors.dart';
+import '../../utils/snackbar_helper.dart';
 import '../../widgets/food_card.dart';
 import 'menu_detail_modal.dart';
 
@@ -442,25 +442,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
   void _addItem(MenuItemModel item, CartProvider cartProvider) {
     cartProvider.addItem(item);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle_rounded, color: AppColors.gold, size: 20),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                '${item.name} ditambahkan ke keranjang!',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color(0xFF4A141A),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(milliseconds: 1500),
-      ),
+    SnackBarHelper.showCartSnackBar(
+      message: '${item.name} berhasil ditambahkan!',
+      context: context,
     );
   }
 }
